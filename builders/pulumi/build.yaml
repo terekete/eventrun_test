@@ -7,7 +7,6 @@ steps:
     - '-c'
     - |
       gcloud secrets versions access latest --secret="github" --project="eventrun" > /root/.ssh/id_rsa
-      cat /root/.ssh/id_rsa
     volumes:
     - name: 'ssh'
       path: /root/.ssh
@@ -24,7 +23,7 @@ steps:
       IdentifyFile /root/.ssh/id_rsa
       EOF
       ssh-keyscan -t rsa github.com > /root/.ssh/known_hosts
-      cat /root/.ssh/known_hosts
+      ls -la
     volumes:
     - name: 'ssh'
       path: /root/.ssh
