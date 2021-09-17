@@ -8,4 +8,122 @@ from pulumi_gcp import storage, bigquery, serviceaccount, projects
 from pulumi import automation as auto
 from cerberus import Validator
 
-print("Hello")
+def dataset(manifest: str):
+    bigquery.Dataset(
+        resource_name=manifest['resource_name'],
+        dataset_id=manifest['dataset_id'],
+        description=manifest['description'],
+        labels={
+            'cost_center': manifest['metadata']['cost_center'],
+            'dep': manifest['metadata']['dep'],
+            'bds': manifest['metadata']['bds'],
+        },
+        default_table_expiration_ms=manifest['table_expiration_ms'],
+        location='northamerica-northeast1'
+    )
+
+
+def dataset_user_access(
+    manifest: str,
+    user: str,
+    role: str):
+
+    bigquery.DatasetAccess(
+        resource_name=manifest['resource_name'],
+        dataset_id=manifest['dataset_id'],
+        user_by_email=user,
+        role=role
+    )
+
+
+def validate_dataset_manifest(manifest: str):
+    schema = eval(open('./schemas/dataset.py', 'r').read())
+    validator = Validator(schema)
+    try:
+        if validator.validate(manifest, schema):
+            return
+    except:
+        print("##### Dataset Exception - " + manifest['dataset_id'])
+        raise auto.InlineSourceRuntimeError(validator.errors)
+
+
+def read_yml(path: str):
+    file = open(path, 'r')
+    try:
+        return yaml.safe_load(file)
+    except yaml.YAMLError as e:
+        raise e
+
+
+def read_diff(path: str = '/workspace/DIFF_TEAM.txt'):
+    with open(path, 'r') as file:
+        return [item.strip() for item in file.readlines()]
+
+
+def list_manifests(root: str):
+    yml_list = []
+    for path, subdirs, files in os.walk(root):
+        for name in files:
+            if name.endswith('.yaml'):
+                yml_list.append(path + '/' + name)
+    return yml_list
+
+
+def pulumi_program():
+    team_stack = pulumi.get_stack()
+
+    for dataset in datasets.list:
+        if re.search('/workspace/teams/(.+?)/+', dataset).group(1) == team_stack:
+            update(dataset)
+
+
+def update(path:str):
+    yml = read_yml(path)
+
+    try:
+        if yml and yml['kind'] == 'dataset':
+            validate_dataset_manifest(yml)
+            dataset(yml)
+    except auto.errors.CommandError as e:
+        raise e
+
+
+def get_kind(
+    manifest: str,
+    kind: str):
+
+    with open(manifest) as file:
+        yml = yaml.safe_load(file)
+        if yml and yml['kind'] == kind:
+            return manifest
+
+
+
+teams_root = '/workspace/teams/'
+manifests_set = list_manifests(teams_root)
+datasets_list = []
+
+for manifest in manifests_set:
+    if get_kind(manifest, 'dataset'):
+        datasets_list.append(manifest)
+
+
+teams_set = set([
+    re.search('teams/(.+?)/+', team).group(1)
+    for team in manifests_set
+    if re.search('teams/(.+?)/+', team)
+])
+
+teams_diff = read_diff()
+for team in teams_diff:
+    print('#####################')
+    stack = auto.create_or_select_stack(
+        stack_name=team,
+        project_name='eventrun',
+        program=pulumi_program,
+        work_dir='/workspace')
+    stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
+    stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
+    stack.refresh(on_output=print)
+    stack.preview(on_output=print)
+    stack.up(on_output=print)
