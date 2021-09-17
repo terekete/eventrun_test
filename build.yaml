@@ -48,7 +48,7 @@ steps:
     - name: 'ssh'
       path: /root/.ssh
     env: [
-      'BASE_REPO_URL=git@github.com:terekete/pulumi_test.git',
+      'BASE_REPO_URL=git@github.com:terekete/eventrun_test.git',
       'BASE_BRANCH=${_BASE_BRANCH}',
       'PR_NUMBER=${_PR_NUMBER}',
     ]
