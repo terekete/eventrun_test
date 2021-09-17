@@ -8,6 +8,7 @@ from pulumi_gcp import storage, bigquery, serviceaccount, projects
 from pulumi import automation as auto
 from cerberus import Validator
 
+
 def dataset(manifest: str):
     bigquery.Dataset(
         resource_name=manifest['resource_name'],

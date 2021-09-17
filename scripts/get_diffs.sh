@@ -46,22 +46,18 @@ git status
 
 #! /bin/bash
 DIFF=$(git diff --name-only origin/"${BASE_BRANCH}"...HEAD)
-
 DIFF_TEAM=""
-DIFF_LIST=""
 
 
 for file in $DIFF
 do
-  if [[ "$file" =~ ^teams/([^/]*)/([^/]*)/([^/]*)/ ]]
+  if [[ "$file" =~ ^teams/([^/]*)/([^/]*)/ ]]
   then
     DIFF_TEAM+="${BASH_REMATCH[1]}\n"
-    DIFF_LIST+="${BASH_REMATCH[0]}\n"
   fi
 done
 
 printf "${DIFF_TEAM}" | sort | uniq > DIFF_TEAM.txt
-printf "${DIFF_LIST}" | sort | uniq > DIFF_LIST.txt
 
-printf "\nDIFF_LIST:\n"
-cat DIFF_LIST.txt
+printf "\nDIFF_TEAM:\n"
+ls -la
