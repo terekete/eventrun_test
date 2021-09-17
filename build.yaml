@@ -39,10 +39,10 @@ steps:
     - name: 'ssh'
       path: /root/.ssh
   - name: 'gcr.io/cloud-builders/git'
-    id: 'gen-diffs'
+    id: 'get-diffs'
     entrypoint: 'bash'
     args: [
-      '/workspace/scripts/gen_diffs.sh'
+      '/workspace/scripts/get_diffs.sh'
     ]
     volumes:
     - name: 'ssh'
