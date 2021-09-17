@@ -1,0 +1,85 @@
+steps:
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'get-key'
+    entrypoint: 'bash'
+    dir: .
+    args:
+    - '-c'
+    - |
+      gcloud secrets versions access latest --secret="github" --project="intrepid-memory-321513" > /root/.ssh/id_rsa
+    volumes:
+    - name: 'ssh'
+      path: /root/.ssh
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'add-key'
+    entrypoint: 'bash'
+    dir: .
+    args:
+    - '-c'
+    - |
+      chmod 600 /root/.ssh/id_rsa
+      cat <<EOF >/root/.ssh/config
+      Hostname github.com
+      IdentityFile /root/.ssh/id_rsa
+      EOF
+      ssh-keyscan -t rsa github.com > /root/.ssh/known_hosts
+    volumes:
+    - name: 'ssh'
+      path: /root/.ssh
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'crlf'
+    entrypoint: 'bash'
+    args:
+    - '-c'
+    - |
+      git config --global core.autocrlf input
+      git reset --hard
+      git clean -fdx
+    volumes:
+    - name: 'ssh'
+      path: /root/.ssh
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'gen-diffs'
+    entrypoint: 'bash'
+    args: [
+      '/workspace/scripts/gen_diffs.sh'
+    ]
+    volumes:
+    - name: 'ssh'
+      path: /root/.ssh
+    env: [
+      'BASE_REPO_URL=git@github.com:terekete/pulumi_test.git',
+      'BASE_BRANCH=${_BASE_BRANCH}',
+      'PR_NUMBER=${_PR_NUMBER}',
+    ]
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'create-staging-dir'
+    entrypoint: 'bash'
+    args:
+    - -exc
+    - |
+      mkdir staging
+  - name: 'gcr.io/intrepid-memory-321513/pulumi:latest'
+    id: 'build-pulumi'
+    entrypoint: 'bash'
+    args: [
+      '/workspace/scripts/build_pulumi.sh'
+    ]
+    env: [
+      'PROJECT_ID=${_KEY_PROJECT}'
+    ]
+    waitFor: ['create-staging-dir']
+
+
+options:
+  substitution_option: 'ALLOW_LOOSE'
+
+substitutions:
+  _KEY_VERISON: "latest"
+  _KEY_PROJECT: "intrepid-memory-321513"
+  _BASE_BRANCH: "main"
+  _ENV: "np"
+  _CUSTOM_TAG: ""
+  _SNAPSHOT_ARTIFACTS_BUCKET: ""
+
+timeout: 10000s
