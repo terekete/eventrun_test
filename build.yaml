@@ -6,7 +6,7 @@ steps:
     args:
     - '-c'
     - |
-      gcloud secrets versions access latest --secret="github" --project="intrepid-memory-321513" > /root/.ssh/id_rsa
+      gcloud secrets versions access latest --secret="github" --project="eventrun" > /root/.ssh/id_rsa
     volumes:
     - name: 'ssh'
       path: /root/.ssh
@@ -59,7 +59,7 @@ steps:
     - -exc
     - |
       mkdir staging
-  - name: 'gcr.io/intrepid-memory-321513/pulumi:latest'
+  - name: 'gcr.io/eventrun/pulumi:latest'
     id: 'build-pulumi'
     entrypoint: 'bash'
     args: [
@@ -76,7 +76,7 @@ options:
 
 substitutions:
   _KEY_VERISON: "latest"
-  _KEY_PROJECT: "intrepid-memory-321513"
+  _KEY_PROJECT: "eventrun"
   _BASE_BRANCH: "main"
   _ENV: "np"
   _CUSTOM_TAG: ""
