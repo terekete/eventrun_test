@@ -1,3 +1,5 @@
+from pulumi import resource
+from pulumi.automation import errors
 import yaml
 import re
 import pulumi
@@ -48,6 +50,92 @@ def validate_dataset_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
+def table(manifest: str):
+    bigquery.Table(
+        resource_name=manifest['resource_name'],
+        datasets_id=manifest['dataset_id'],
+        table_id=manifest['table_id'],
+        deletion_protection=False,
+        expiration_time=manifest['expiration_ms'],
+        friendly_name=manifest['friendly_name'],
+        labels={
+            'cost_center': manifest['metadata']['cost_center'],
+            'dep': manifest['metadata']['dep'],
+            'bds': manifest['metadata']['bds'],
+        },
+        schema=manifest['schema']
+    )
+
+
+def table_user_access(
+    manifest: str,
+    table: str,
+    role: str = 'roles/bigquery.dataViewer'):
+
+    readers = manifest['users']['readers']
+    readers = ["users:" + reader for reader in readers]
+    writers = manifest['users']['writers']
+    writers = ["users:" + writer for writer in writers]
+    bigquery.IamBinding(
+        resource_name=manifest['resource_name'],
+        dataset_id=manifest['dataset_id'],
+        table_id=table.table_id,
+        role=role,
+        member=readers
+    )
+    bigquery.IamBinding(
+        resource_name=manifest['resource_name'],
+        dataset_id=manifest['dataset_id'],
+        table_id=table.table_id,
+        role=role,
+        member=writers
+    )
+
+
+def validate_table_manifest(manifest: str):
+    schema = eval(open('./schemas/table.py', 'r').read())
+    validator = Validator(schema)
+    try:
+        if validator.validate(manifest, schema):
+            return
+    except:
+        print("##### Table Exception - " + manifest['table_id'])
+        raise auto.InlineSourceRuntimeError(validator.error)
+
+
+def read_yml(path: str):
+    file = open(path, 'r')
+    try:
+        return yaml.safe_load(file)
+    except yaml.YAMLError as e:
+        raise e
+
+
+def read_diff(path: str = '/workspace/DIFF_TEAM.txt'):
+    with open(path, 'r') as file:
+        return [item.strip() for item in file.readlines()]
+
+
+def list_manifest(root: str):
+    yml_list = []
+    for path, subdirs, files in os.walk(root):
+        for name in files:
+            if name.endswith('.yaml'):
+                yml_list.append(path, '/' + name)
+    return yml_list
+
+
+def pulumi_program():
+    team_stack = pulumi.get_stack()
+
+    for dataset in datasets_list:
+        if re.search('/workspace/teams/(.+?)/+', dataset).group(1) == team_stack:
+            update(dataset)
+    for table in table_list:
+        if re.search('/workspace/team/(.+?)/+', table).group(1) == team_stack:
+            update(table)
+
+
 def read_yml(path: str):
     file = open(path, 'r')
     try:
@@ -85,6 +173,9 @@ def update(path:str):
         if yml and yml['kind'] == 'dataset':
             validate_dataset_manifest(yml)
             dataset(yml)
+        if yml and yml['kind'] == 'table':
+            validate_table_manifest(yml)
+            table(yml)
     except auto.errors.CommandError as e:
         raise e
 
@@ -97,6 +188,7 @@ def get_kind(
         yml = yaml.safe_load(file)
         if yml and yml['kind'] == kind:
             return manifest
+
 
 
 
@@ -114,6 +206,7 @@ teams_set = set([
     for team in manifests_set
     if re.search('teams/(.+?)/+', team)
 ])
+
 
 teams_diff = read_diff()
 for team in teams_diff:

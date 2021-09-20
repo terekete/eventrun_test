@@ -1,0 +1,35 @@
+version: v1
+kind: table
+metadata:
+  cost_center: "12"
+  dep: "144"
+  bds: "test_user"
+team: "tsbt"
+description: "Table for testing"
+resource_name: tsbt_new_table
+dataset_id: tsbt_new_dataset
+table_id: tsbt_new_table
+expiration_ms:
+friendly_name: tsbt_new_table
+dependencies:
+  - tsbt_new_dataset
+schema: >
+  [
+    {
+      "name": "id_number",
+      "type": "STRING",
+      "mode": "NULLABLE",
+      "description": "The Id number of the order"
+    },
+    {
+      "name": "order_name",
+      "type": "STRING",
+      "mode": "NULLABLE",
+      "description": "The Order Name"
+    }
+  ]
+users:
+  readers:
+    - mark.gates@telus.com
+  writers:
+    - mark.gates@telus.com
