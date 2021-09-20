@@ -105,9 +105,9 @@ def validate_table_manifest(manifest: str):
 
 def create_sa(team: str):
     service_account = serviceaccount.Account(
-    team + '_sa',
-    account_id=team + '_sa',
-    display_name=team + '_sa - service account')
+    team + '-sa',
+    account_id=team + '-sa',
+    display_name=team + '-sa - service account')
 
 
 def read_yml(path: str):
