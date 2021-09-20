@@ -109,6 +109,7 @@ def create_sa(team: str):
         account_id=team + '-sa',
         display_name=team + '-sa - service account')
     sa_email = sa.email.apply(lambda email: f"serviceAccount:{email}")
+    print(sa_email)
     serviceaccount.IAMBinding(
         team + '-iam',
         service_account_id=sa.name,
