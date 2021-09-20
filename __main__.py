@@ -53,7 +53,7 @@ def validate_dataset_manifest(manifest: str):
 def table(manifest: str):
     bigquery.Table(
         resource_name=manifest['resource_name'],
-        datasets_id=manifest['dataset_id'],
+        dataset_id=manifest['dataset_id'],
         table_id=manifest['table_id'],
         deletion_protection=False,
         expiration_time=manifest['expiration_ms'],
