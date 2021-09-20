@@ -166,7 +166,7 @@ def pulumi_program():
             update(dataset)
     for tables in tables_list:
         if re.search('/workspace/teams/(.+?)/+', table).group(1) == team_stack:
-            update(table)
+            update(tables)
 
 
 def update(path:str):
