@@ -103,7 +103,7 @@ def validate_table_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
-def sa(team: str):
+def create_sa(team: str):
     service_account = serviceaccount.Account(
     team + '_sa',
     account_id=team + '_sa',
@@ -166,7 +166,7 @@ def list_manifests(root: str):
 
 def pulumi_program():
     team_stack = pulumi.get_stack()
-    sa = sa(team)
+    sa = create_sa(team_stack)
 
     for dataset in datasets_list:
         if re.search('/workspace/teams/(.+?)/+', dataset).group(1) == team_stack:
