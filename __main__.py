@@ -6,7 +6,7 @@ import pulumi
 import os
 import glob
 
-from pulumi_gcp import storage, bigquery, serviceaccount, projects
+from pulumi_gcp import storage, bigquery, serviceaccount, projects, organizations
 from pulumi import automation as auto
 from cerberus import Validator
 
@@ -104,11 +104,17 @@ def validate_table_manifest(manifest: str):
 
 
 def create_sa(team: str):
-    service_account = serviceaccount.Account(
-    team + '-sa',
-    account_id=team + '-sa',
-    display_name=team + '-sa - service account')
-
+    sa = serviceaccount.Account(
+        team + '-sa',
+        account_id=team + '-sa',
+        display_name=team + '-sa - service account')
+    sa_email = sa.email.apply(lambda email: f"serviceAccount:{email}")
+    serviceaccount.IAMBinding(
+        team + '-iam',
+        service_account_id=sa.name,
+        role="roles/storage.bigquery.dataViewer",
+        members=[sa_email])
+    
 
 def read_yml(path: str):
     file = open(path, 'r')
