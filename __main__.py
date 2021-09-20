@@ -164,6 +164,9 @@ def pulumi_program():
     for dataset in datasets_list:
         if re.search('/workspace/teams/(.+?)/+', dataset).group(1) == team_stack:
             update(dataset)
+    for tables in tables_list:
+        if re.search('/workspace/teams/(.+?)/+', table).group(1) == team_stack:
+            update(table)
 
 
 def update(path:str):
@@ -195,6 +198,7 @@ def get_kind(
 teams_root = '/workspace/teams/'
 manifests_set = list_manifests(teams_root)
 datasets_list = []
+table_list = []
 
 for manifest in manifests_set:
     if get_kind(manifest, 'dataset'):
