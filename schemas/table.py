@@ -66,7 +66,7 @@
         'nullable': False
     },
     'dependencies': {
-        'reqired': False,
+        'required': False,
         'type': 'list',
         'nullable': True
     },
