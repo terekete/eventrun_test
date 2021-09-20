@@ -60,4 +60,5 @@ done
 printf "${DIFF_TEAM}" | sort | uniq > DIFF_TEAM.txt
 
 printf "\nDIFF_TEAM:\n"
+cat DIFF_TEAM.txt
 ls -la

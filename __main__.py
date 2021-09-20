@@ -100,7 +100,7 @@ def validate_table_manifest(manifest: str):
             return
     except:
         print("##### Table Exception - " + manifest['table_id'])
-        raise auto.InlineSourceRuntimeError(validator.error)
+        raise auto.InlineSourceRuntimeError(validator.errors)
 
 
 def read_yml(path: str):
@@ -127,7 +127,6 @@ def list_manifest(root: str):
 
 def pulumi_program():
     team_stack = pulumi.get_stack()
-
     for dataset in datasets_list:
         if re.search('/workspace/teams/(.+?)/+', dataset).group(1) == team_stack:
             update(dataset)
@@ -153,7 +152,7 @@ def list_manifests(root: str):
     yml_list = []
     for path, subdirs, files in os.walk(root):
         for name in files:
-            if name.endswith('.yaml'):
+            if name.endswith('.yaml') or name.endswith('.yml'):
                 yml_list.append(path + '/' + name)
     return yml_list
 
