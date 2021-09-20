@@ -1,6 +1,3 @@
-from typing_extensions import Required
-
-
 {
     'version': {
         'required': True,
