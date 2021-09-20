@@ -131,7 +131,7 @@ def pulumi_program():
     for dataset in datasets_list:
         if re.search('/workspace/teams/(.+?)/+', dataset).group(1) == team_stack:
             update(dataset)
-    for table in table_list:
+    for table in tables_list:
         if re.search('/workspace/team/(.+?)/+', table).group(1) == team_stack:
             update(table)
 
