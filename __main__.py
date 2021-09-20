@@ -202,6 +202,8 @@ tables_list = []
 for manifest in manifests_set:
     if get_kind(manifest, 'dataset'):
         datasets_list.append(manifest)
+    elif get_kind(manifest, 'table'):
+        tables_list.append(manifest)
 
 
 teams_set = set([
