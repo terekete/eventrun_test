@@ -3,7 +3,7 @@ kind: dataset
 metadata:
   cost_center: "1"
   dep: "12"
-  bds: "test user"
+  bds: "test_user"
 team: tsbt
 description: "TSBT Test Dataset"
 resource_name: tsbt_new_dataset
