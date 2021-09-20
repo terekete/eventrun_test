@@ -198,7 +198,7 @@ def get_kind(
 teams_root = '/workspace/teams/'
 manifests_set = list_manifests(teams_root)
 datasets_list = []
-table_list = []
+tables_list = []
 
 for manifest in manifests_set:
     if get_kind(manifest, 'dataset'):
