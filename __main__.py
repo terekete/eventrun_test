@@ -73,7 +73,7 @@ def list_manifests(root: str):
 def pulumi_program():
     team_stack = pulumi.get_stack()
 
-    for dataset in datasets.list:
+    for dataset in datasets_list:
         if re.search('/workspace/teams/(.+?)/+', dataset).group(1) == team_stack:
             update(dataset)
 
