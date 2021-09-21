@@ -113,7 +113,6 @@ def create_sa(team: str):
     projects.IAMBinding(
         team + '-iam',
         members=[sa_email],
-        project='your-project-id',
         role='roles/bigquery.dataEditor')
 
 
