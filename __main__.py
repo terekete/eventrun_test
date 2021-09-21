@@ -122,7 +122,7 @@ def scheduled(manifest: str, sa=None):
             'write_disposition': manifest['params']['write_disposition'],
             'query': manifest['params']['query']
         },
-        service_account_name=sa)
+        service_account_name=sa.email)
 
 
 def validate_scheduled_manifest(manifest: str):
@@ -212,6 +212,7 @@ def pulumi_program():
     print(context['sa'])
     sa = context['sa']
     print(dir(sa))
+
     for dataset_path in datasets_list:
         if re.search('/workspace/teams/(.+?)/+', dataset_path).group(1) == context['team_stack']:
             update(dataset_path, context)
