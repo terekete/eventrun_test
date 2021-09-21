@@ -113,14 +113,9 @@ def create_sa(team: str):
     serviceaccount.IAMBinding(
         team + '-iam',
         service_account_id=sa.name,
-        role='roles/iam.serviceAccountAdmin',
-        members=[sa_email])
-    serviceaccount.IAMBinding(
-        team + '-iam',
-        service_account_id=sa.name,
         role='roles/bigquery.admin',
         members=[sa_email])
-    
+
 
 def read_yml(path: str):
     file = open(path, 'r')
