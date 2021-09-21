@@ -1,12 +1,14 @@
-from pulumi import resource
-from pulumi.automation import errors
-from pulumi.metadata import get_stack
 import yaml
 import re
 import pulumi
 import os
 import glob
+import uuid
+import datetime
 
+from pulumi import resource
+from pulumi.automation import errors
+from pulumi.metadata import get_stack
 from pulumi_gcp import storage, bigquery, serviceaccount, projects, organizations
 from pulumi import automation as auto
 from cerberus import Validator
@@ -104,7 +106,10 @@ def validate_table_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
-def scheduled(manifest: str):
+def scheduled(manifest: str, sa=None):
+    # hex = uuid.uuid4().hex
+    # dt = datetime.datetime.today()
+    # sql = f'select {hex}, {dt}, '
     bigquery.DataTransferConfig(
         resource_name=manifest['resource_name'],
         display_name=manifest['display_name'],
@@ -116,7 +121,8 @@ def scheduled(manifest: str):
             'destination_table_name_template': manifest['params']['destination_table_name'],
             'write_disposition': manifest['params']['write_disposition'],
             'query': manifest['params']['query']
-        }
+        },
+        service_account_name=sa.email.apply(lambda email: f"serviceAccount:{email}")
     )
 
 
@@ -147,6 +153,10 @@ def set_iam_sa(sa):
             title='data-editor-iam-expiration'),
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
         role='roles/bigquery.dataEditor')
+
+
+def get_sa(team):
+    return set_iam_sa(create_sa(team))
 
 
 def read_yml(path: str):
@@ -194,22 +204,24 @@ def list_manifests(root: str):
 
 
 def pulumi_program():
-    team_stack = pulumi.get_stack()
-    sa = create_sa(team_stack)
-    set_iam_sa(sa)
-    
-    for dataset in datasets_list:
-        if re.search('/workspace/teams/(.+?)/+', dataset).group(1) == team_stack:
-            update(dataset)
-    for table in tables_list:
-        if re.search('/workspace/teams/(.+?)/+', table).group(1) == team_stack:
-            update(table)
-    for query in scheduled_list:
-        if re.search('/workspace/teams/(.+?)/+', query).group(1) == team_stack:
-            update(query)
+    context = {
+        'team_stack': pulumi.get_stack(),
+        'sa': get_sa(),
+        'project': pulumi.get_project()
+    }
+
+    for dataset_path in datasets_list:
+        if re.search('/workspace/teams/(.+?)/+', dataset_path).group(1) == context['team_stack']:
+            update(dataset_path, context)
+    for table_path in tables_list:
+        if re.search('/workspace/teams/(.+?)/+', table_path).group(1) == context['team_stack']:
+            update(table_path, context)
+    for query_path in scheduled_list:
+        if re.search('/workspace/teams/(.+?)/+', query_path).group(1) == context['team_stack']:
+            update(query_path, context)
 
 
-def update(path:str):
+def update(path:str, context=None):
     yml = read_yml(path)
 
     try:
@@ -221,7 +233,7 @@ def update(path:str):
             table(yml)
         if yml and yml['kind'] == 'scheduled':
             validate_scheduled_manifest(yml)
-            scheduled(yml)
+            scheduled(yml, context['sa'])
     except auto.errors.CommandError as e:
         raise e
 
