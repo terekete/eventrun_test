@@ -144,7 +144,7 @@ def create_sa(team: str):
 
 
 def set_iam_sa(sa):
-    projects.IAMBinding(
+    iam = projects.IAMBinding(
         team + '-data-editor-iam',
         condition=projects.IAMBindingConditionArgs(
             description=team + 'data-editor-iam',
