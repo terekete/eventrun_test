@@ -123,7 +123,6 @@ def scheduled(manifest: str, sa=None):
             'query': manifest['params']['query']
         },
         service_account_name=sa.name)
-    )
 
 
 def validate_scheduled_manifest(manifest: str):
