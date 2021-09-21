@@ -122,7 +122,7 @@ def scheduled(manifest: str, sa=None):
             'write_disposition': manifest['params']['write_disposition'],
             'query': manifest['params']['query']
         },
-        service_account_name=sa.id)
+        service_account_name=sa)
 
 
 def validate_scheduled_manifest(manifest: str):
