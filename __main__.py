@@ -104,16 +104,17 @@ def validate_table_manifest(manifest: str):
 
 
 def create_sa(team: str):
-    sa = serviceaccount.Account(
+    return serviceaccount.Account(
         team + '-sa',
         account_id=team + '-sa',
         display_name=team + '-sa - service account')
-    sa_email = sa.email.apply(lambda email: f"serviceAccount:{email}")
-    print(sa_email)
-    # projects.IAMBinding(
-    #     team + '-iam',
-    #     members=[sa_email],
-    #     role='roles/bigquery.dataEditor')
+
+
+def set_iam_sa(sa):
+    return projects.IAMBinding(
+        team + '-iam',
+        members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
+        role='roles/bigquery.dataEditor')   
 
 
 def read_yml(path: str):
@@ -172,8 +173,9 @@ def list_manifests(root: str):
 
 def pulumi_program():
     team_stack = pulumi.get_stack()
-    # sa = create_sa(team_stack)
-
+    sa = create_sa(team_stack)
+    set_iam_sa(sa)
+    
     for dataset in datasets_list:
         if re.search('/workspace/teams/(.+?)/+', dataset).group(1) == team_stack:
             update(dataset)
