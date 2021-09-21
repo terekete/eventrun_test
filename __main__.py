@@ -121,7 +121,8 @@ def scheduled(manifest: str, sa=None):
             'destination_table_name_template': manifest['params']['destination_table_name'],
             'write_disposition': manifest['params']['write_disposition'],
             'query': manifest['params']['query']
-        })
+        },
+        service_account_name=sa.id)
 
 
 def validate_scheduled_manifest(manifest: str):
@@ -207,9 +208,6 @@ def pulumi_program():
         'sa': get_sa(pulumi.get_stack()),
         'project': pulumi.get_project()
     }
-    sa = get_sa(pulumi.get_stack())
-    print(dir(sa))
-    print(sa.id)
 
     for dataset_path in datasets_list:
         if re.search('/workspace/teams/(.+?)/+', dataset_path).group(1) == context['team_stack']:
