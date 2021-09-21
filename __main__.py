@@ -207,8 +207,8 @@ def pulumi_program():
         'sa': get_sa(pulumi.get_stack()),
         'project': pulumi.get_project()
     }
-
-    print(context['sa'])
+    sa = get_sa(pulumi.get_stack()
+    print(dir(sa))
 
     for dataset_path in datasets_list:
         if re.search('/workspace/teams/(.+?)/+', dataset_path).group(1) == context['team_stack']:
