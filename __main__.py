@@ -113,7 +113,7 @@ def create_sa(team: str):
     serviceaccount.IAMBinding(
         team + '-iam',
         service_account_id=sa.name,
-        role="roles/storage.bigquery.dataViewer",
+        role='roles/iam.serviceAccountAdmin',
         members=[sa_email])
     
 
