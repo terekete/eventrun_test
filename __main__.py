@@ -121,8 +121,7 @@ def scheduled(manifest: str, sa=None):
             'destination_table_name_template': manifest['params']['destination_table_name'],
             'write_disposition': manifest['params']['write_disposition'],
             'query': manifest['params']['query']
-        },
-        service_account_name=sa.email)
+        })
 
 
 def validate_scheduled_manifest(manifest: str):
