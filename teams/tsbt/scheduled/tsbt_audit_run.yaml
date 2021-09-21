@@ -10,7 +10,7 @@ data_source_id: "scheduled_query"
 resource_name: tsbt_audit_run
 default_refresh_window_days: 1
 destination_dataset_id: tsbt_new_dataset
-scheduled: "every 15 minutes"
+schedule: "every 15 minutes"
 params:
   destination_table_name: tsbt_audit_run
   write_disposition: "WRITE_TRUNCATE"
