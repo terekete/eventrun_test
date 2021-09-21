@@ -207,7 +207,7 @@ def pulumi_program():
         'sa': get_sa(pulumi.get_stack()),
         'project': pulumi.get_project()
     }
-    sa = get_sa(pulumi.get_stack()
+    sa = get_sa(pulumi.get_stack())
     print(dir(sa))
 
     for dataset_path in datasets_list:
