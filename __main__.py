@@ -144,7 +144,7 @@ def create_sa(team: str):
 
 
 def set_iam_sa(sa):
-    return projects.IAMBinding(
+    projects.IAMBinding(
         team + '-data-editor-iam',
         condition=projects.IAMBindingConditionArgs(
             description=team + 'data-editor-iam',
@@ -152,6 +152,7 @@ def set_iam_sa(sa):
             title='data-editor-iam-expiration'),
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
         role='roles/bigquery.dataEditor')
+    return sa
 
 
 def get_sa(team):
