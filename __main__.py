@@ -171,16 +171,6 @@ def list_manifest(root: str):
     return yml_list
 
 
-def pulumi_program():
-    team_stack = pulumi.get_stack()
-    for dataset in datasets_list:
-        if re.search('/workspace/teams/(.+?)/+', dataset).group(1) == team_stack:
-            update(dataset)
-    for table in tables_list:
-        if re.search('/workspace/teams/(.+?)/+', table).group(1) == team_stack:
-            update(table)
-
-
 def read_yml(path: str):
     file = open(path, 'r')
     try:
