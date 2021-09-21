@@ -208,6 +208,8 @@ def pulumi_program():
         'project': pulumi.get_project()
     }
 
+    print(context['sa'].email)
+
     for dataset_path in datasets_list:
         if re.search('/workspace/teams/(.+?)/+', dataset_path).group(1) == context['team_stack']:
             update(dataset_path, context)
