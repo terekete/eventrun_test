@@ -121,7 +121,7 @@ def scheduled(manifest: str):
 
 
 def validate_scheduled_manifest(manifest: str):
-    schema = eval(open('./schema/scheduled.py').read())
+    schema = eval(open('./schemas/scheduled.py').read())
     validator = Validator(schema)
     try:
         if validator.validate(manifest, schema):
