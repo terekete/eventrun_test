@@ -147,7 +147,7 @@ def set_iam_sa(sa):
     iam = projects.IAMBinding(
         team + '-data-editor-iam',
         condition=projects.IAMBindingConditionArgs(
-            description=team + 'data-editor-iam',
+            description=team + '-data-editor-iam',
             expression='request.time < timestamp(\"2021-01-01T00:00:00Z\")',
             title='data-editor-iam-expiration'),
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
@@ -155,7 +155,7 @@ def set_iam_sa(sa):
     iam = projects.IAMBinding(
         team + '-data-editor-iam',
         condition=projects.IAMBindingConditionArgs(
-            description=team + 'data-editor-iam',
+            description=team + '-project-admin-iam',
             expression='request.time < timestamp(\"2021-01-01T00:00:00Z\")',
             title='data-editor-iam-expiration'),
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
