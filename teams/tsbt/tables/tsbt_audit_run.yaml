@@ -35,7 +35,7 @@ schema: >
     },
     {
       "name": "run_status",
-      "type": "DATETIME",
+      "type": "STRING",
       "mode": "REQUIRED",
       "description": "run_status"
     },

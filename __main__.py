@@ -1,5 +1,6 @@
 from pulumi import resource
 from pulumi.automation import errors
+from pulumi.metadata import get_stack
 import yaml
 import re
 import pulumi
@@ -103,6 +104,33 @@ def validate_table_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
+def scheduled(manifest: str):
+    bigquery.DataTransferConfig(
+        resource_name=manifest['resource_name'],
+        display_name=manifest['display_name'],
+        data_source_id=manifest['data_source_id'],
+        schedule=manifest['schedule'],
+        destination_dataset_id=manifest['destination_dataset_id'],
+        location='northamerica-northeast1',
+        params={
+            'destination_table_name_template': manifest['params']['destination_table_name'],
+            'write_disposition': manifest['params']['write_disposition'],
+            'query': manifest['params']['query']
+        }
+    )
+
+
+def validate_scheduled_manifest(manifest: str):
+    schema = eval(open('./schema/scheduled.py').read())
+    validator = Validator(schema)
+    try:
+        if validator.validate(manifest, schema):
+            return
+    except:
+        print("##### Scheduled Exception - " + manifest['display_name'])
+        raise auto.InlineSourceRuntimeError(validator.errors)
+
+
 def create_sa(team: str):
     return serviceaccount.Account(
         team + '-sa',
@@ -186,6 +214,9 @@ def pulumi_program():
     for table in tables_list:
         if re.search('/workspace/teams/(.+?)/+', table).group(1) == team_stack:
             update(table)
+    for query in scheduled_list:
+        if re.search('/workspace/teams/(.+?)/+', query).group(1) == team_stack:
+            update(query)
 
 
 def update(path:str):
@@ -198,6 +229,9 @@ def update(path:str):
         if yml and yml['kind'] == 'table':
             validate_table_manifest(yml)
             table(yml)
+        if yml and yml['kind'] == 'scheduled':
+            validate_scheduled_manifest(yml)
+            scheduled(yml)
     except auto.errors.CommandError as e:
         raise e
 
@@ -218,12 +252,16 @@ teams_root = '/workspace/teams/'
 manifests_set = list_manifests(teams_root)
 datasets_list = []
 tables_list = []
+scheduled_list = []
+
 
 for manifest in manifests_set:
     if get_kind(manifest, 'dataset'):
         datasets_list.append(manifest)
     elif get_kind(manifest, 'table'):
         tables_list.append(manifest)
+    elif get_kind(manifest, 'scheduled'):
+        scheduled_list.append(manifest)
 
 
 teams_set = set([
