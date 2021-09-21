@@ -110,10 +110,10 @@ def create_sa(team: str):
         display_name=team + '-sa - service account')
     sa_email = sa.email.apply(lambda email: f"serviceAccount:{email}")
     print(sa_email)
-    projects.IAMBinding(
-        team + '-iam',
-        members=[sa_email],
-        role='roles/bigquery.dataEditor')
+    # projects.IAMBinding(
+    #     team + '-iam',
+    #     members=[sa_email],
+    #     role='roles/bigquery.dataEditor')
 
 
 def read_yml(path: str):
