@@ -112,9 +112,13 @@ def create_sa(team: str):
 
 def set_iam_sa(sa):
     return projects.IAMBinding(
-        team + '-iam',
+        team + 'data-editor-iam',
+        condition=projects.IAMBindingConditionArgs(
+            description=team + 'data-editor-iam',
+            expression='request.time < timestamp(\"2021-01-01T00:00:00Z\")',
+            title='expiration-iam'),
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
-        role='roles/bigquery.dataEditor')   
+        role='roles/bigquery.dataEditor')
 
 
 def read_yml(path: str):
