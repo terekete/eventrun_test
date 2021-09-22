@@ -112,7 +112,7 @@ def scheduled(manifest: str, sa=None):
     bigquery.DataTransferConfig(
         resource_name=manifest['resource_name'],
         display_name=manifest['display_name'],
-        data_source_id=manifest['data_source_id'],
+        data_source_id='scheduled_query',
         schedule=manifest['schedule'],
         destination_dataset_id=manifest['destination_dataset_id'],
         location='northamerica-northeast1',

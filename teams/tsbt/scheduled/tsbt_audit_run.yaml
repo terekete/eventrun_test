@@ -6,7 +6,6 @@ metadata:
   bds: "test_user"
 team: tsbt
 display_name: "tsbt - audit table"
-data_source_id: "scheduled_query"
 resource_name: tsbt_audit_run
 default_refresh_window_days: 1
 destination_dataset_id: tsbt_new_dataset
@@ -14,7 +13,7 @@ schedule: "every 15 minutes"
 params:
   destination_table_name: tsbt_audit_run
   write_disposition: "WRITE_TRUNCATE"
-  query: "select * from tsbt_new_table limit 1"
+  query: "insert into tsbt_audit_run as select * from tsbt_audit_run limit 1"
 dependencies:
   - tsbt_new_dataseta
   - tsbt_new_table
