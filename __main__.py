@@ -213,7 +213,7 @@ def list_manifests(root: str):
 def pulumi_program():
     context = {
         'team_stack': pulumi.get_stack(),
-        #'sa': get_sa(pulumi.get_stack()),
+        'sa': get_sa(pulumi.get_stack()),
         'project': pulumi.get_project()
     }
 
