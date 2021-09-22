@@ -240,7 +240,7 @@ def update(path:str, context=None):
             table(yml)
         if yml and yml['kind'] == 'scheduled':
             validate_scheduled_manifest(yml)
-            scheduled(yml, context['sa'])
+            scheduled(yml)
     except auto.errors.CommandError as e:
         raise e
 
