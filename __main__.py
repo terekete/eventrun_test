@@ -53,8 +53,8 @@ def validate_dataset_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
-def table(manifest: str, sa=None):
-    bigquery.Table(
+def table(manifest: str):
+    tbl = bigquery.Table(
         resource_name=manifest['resource_name'],
         dataset_id=manifest['dataset_id'],
         table_id=manifest['table_id'],
@@ -68,16 +68,15 @@ def table(manifest: str, sa=None):
         },
         schema=manifest['schema']
     )
+    table_user_access(manifest)
 
 
 def table_user_access(
     manifest: str,
     role: str = 'roles/bigquery.dataViewer'):
 
-    readers = manifest['users']['readers']
-    readers = ["users:" + reader for reader in readers]
-    writers = manifest['users']['writers']
-    writers = ["users:" + writer for writer in writers]
+    readers = ["users:" + reader for reader in manifest['users']['readers']]
+    writers = ["users:" + writer for writer in manifest['users']['writers']]
     bigquery.IamBinding(
         resource_name=manifest['resource_name'],
         dataset_id=manifest['dataset_id'],
@@ -240,7 +239,7 @@ def update(path:str, context=None):
             dataset(yml)
         if yml and yml['kind'] == 'table':
             validate_table_manifest(yml)
-            table(yml,  context['sa'])
+            table(yml)
         if yml and yml['kind'] == 'scheduled':
             validate_scheduled_manifest(yml)
             scheduled(yml, context['sa'])
