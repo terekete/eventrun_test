@@ -1,53 +1,53 @@
-# version: v1
-# kind: table
-# metadata:
-#   cost_center: "12"
-#   dep: "144"
-#   bds: "test_user"
-# team: tsbt
-# description: "Table for testing"
-# resource_name: tsbt_audit_run
-# dataset_id: tsbt_new_dataset
-# table_id: tsbt_audit_run
-# expiration_ms:
-# friendly_name: tsbt_audit_run
-# dependencies:
-#   - tsbt_new_dataset
-# schema: >
-#   [
-#     {
-#       "name": "run_id",
-#       "type": "STRING",
-#       "mode": "REQUIRED",
-#       "description": "run_id"
-#     },
-#     {
-#       "name": "run_ts",
-#       "type": "DATETIME",
-#       "mode": "REQUIRED",
-#       "description": "run_ts"
-#     },
-#     {
-#       "name": "run_sa",
-#       "type": "STRING",
-#       "mode": "REQUIRED",
-#       "description": "run_sa"
-#     },
-#     {
-#       "name": "run_status",
-#       "type": "STRING",
-#       "mode": "REQUIRED",
-#       "description": "run_status"
-#     },
-#     {
-#       "name": "run_query",
-#       "type": "STRING",
-#       "mode": "REQUIRED",
-#       "description": "run_query"
-#     }
-#   ]
-# users:
-#   readers:
-#     - mark.gates@telus.com
-#   writers:
-#     - mark.gates@telus.com
+version: v1
+kind: table
+metadata:
+  cost_center: "12"
+  dep: "144"
+  bds: "test_user"
+team: tsbt
+description: "Table for testing"
+resource_name: tsbt_audit_run
+dataset_id: tsbt_new_dataset
+table_id: tsbt_audit_run
+expiration_ms:
+friendly_name: tsbt_audit_run
+dependencies:
+  - tsbt_new_dataset
+schema: >
+  [
+    {
+      "name": "run_id",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "description": "run_id"
+    },
+    {
+      "name": "run_ts",
+      "type": "DATETIME",
+      "mode": "REQUIRED",
+      "description": "run_ts"
+    },
+    {
+      "name": "run_sa",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "description": "run_sa"
+    },
+    {
+      "name": "run_status",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "description": "run_status"
+    },
+    {
+      "name": "run_query",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "description": "run_query"
+    }
+  ]
+users:
+  readers:
+    - mark.gates@telus.com
+  writers:
+    - mark.gates@telus.com
