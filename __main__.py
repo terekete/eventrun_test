@@ -82,14 +82,14 @@ def table_user_access(
         dataset_id=manifest['dataset_id'],
         table_id=manifest['table_id'],
         role=role,
-        member=readers
+        members=readers
     )
     bigquery.IamBinding(
         resource_name=manifest['resource_name'],
         dataset_id=manifest['dataset_id'],
         table_id=manifest['table_id'],
         role=role,
-        member=writers
+        members=writers
     )
 
 
@@ -215,9 +215,6 @@ def pulumi_program():
         'sa': get_sa(pulumi.get_stack()),
         'project': pulumi.get_project()
     }
-    print(context['sa'])
-    sa = context['sa']
-    print(dir(sa))
 
     for dataset_path in datasets_list:
         if re.search('/workspace/teams/(.+?)/+', dataset_path).group(1) == context['team_stack']:
