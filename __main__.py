@@ -120,8 +120,8 @@ def scheduled(manifest: str, sa=None):
             'destination_table_name_template': manifest['params']['destination_table_name'],
             'write_disposition': manifest['params']['write_disposition'],
             'query': manifest['params']['query']
-        },
-        service_account_name=sa.email)
+        })
+        # service_account_name=sa.email)
 
 
 def validate_scheduled_manifest(manifest: str):
@@ -213,7 +213,7 @@ def list_manifests(root: str):
 def pulumi_program():
     context = {
         'team_stack': pulumi.get_stack(),
-        'sa': get_sa(pulumi.get_stack()),
+        #'sa': get_sa(pulumi.get_stack()),
         'project': pulumi.get_project()
     }
 
