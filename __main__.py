@@ -70,7 +70,7 @@ def table(manifest: str):
         },
         schema=manifest['schema']
     )
-    table_user_access(manifest)
+    #table_user_access(manifest)
 
 
 def table_user_access(
