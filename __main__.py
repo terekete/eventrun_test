@@ -133,10 +133,14 @@ def validate_scheduled_manifest(manifest: str):
 
 
 def bucket(manifest: str):
+    retention = storage.BucketRetentionPolicyArgs(
+        retention_period=manifest['retention_seconds']
+    )
     storage.Bucket(
         id=manifest['bucket_name'],
         resource_name=manifest['bucket_name'],
-        retention_policy=manifest['retention_seconds'],
+        retention_policy=retention,
+        location='northamerica-northeast1',
         labels={
             'cost_center': manifest['metadata']['cost_center'],
             'dep': manifest['metadata']['dep'],
