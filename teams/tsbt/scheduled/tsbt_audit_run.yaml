@@ -13,7 +13,7 @@ schedule: "every 15 minutes"
 params:
   destination_table_name: tsbt_audit_run
   write_disposition: "WRITE_TRUNCATE"
-  query: "insert into tsbt_audit_run as select * from tsbt_audit_run limit 1"
+  query: "insert into `eventrun.tsbt_new_dataset.tsbt_audit_run` select * from `eventrun.tsbt_new_dataset.tsbt_audit_run` limit 1"
 dependencies:
   - tsbt_new_dataseta
   - tsbt_new_table
