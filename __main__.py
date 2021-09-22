@@ -151,7 +151,7 @@ def set_iam_sa(sa):
             expression='request.time < timestamp(\"2021-01-01T00:00:00Z\")',
             title='data-editor-iam-expiration'),
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
-        role='roles/bigquery.dataEditor')
+        role='roles/bigquery.admin')
     iam = projects.IAMBinding(
         team + '-project-admin-iam',
         condition=projects.IAMBindingConditionArgs(
