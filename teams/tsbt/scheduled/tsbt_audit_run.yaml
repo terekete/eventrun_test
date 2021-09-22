@@ -12,7 +12,7 @@ destination_dataset_id: tsbt_new_dataset
 schedule: "every 15 minutes"
 params:
   destination_table_name: tsbt_audit_run
-  write_disposition: "WRITE_TRUNCATE"
+  write_disposition: "WRITE_APPEND"
   query: >
     insert into `eventrun.tsbt_new_dataset.tsbt_audit_run` values (GENERATE_UUID(), CURRENT_DATETIME, 'test', 'STARTED', 'select 1')
 dependencies:
