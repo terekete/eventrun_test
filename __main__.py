@@ -120,9 +120,8 @@ def scheduled(manifest: str, sa=None):
             'destination_table_name_template': manifest['params']['destination_table_name'],
             'write_disposition': manifest['params']['write_disposition'],
             'query': manifest['params']['query']
-        }
-    )
-        # service_account_name=sa.email)
+        },
+    service_account_name=sa.email)
 
 
 def validate_scheduled_manifest(manifest: str):
@@ -241,7 +240,7 @@ def update(path:str, context=None):
             table(yml)
         if yml and yml['kind'] == 'scheduled':
             validate_scheduled_manifest(yml)
-            scheduled(yml)
+            scheduled(yml, context['sa'])
     except auto.errors.CommandError as e:
         raise e
 
