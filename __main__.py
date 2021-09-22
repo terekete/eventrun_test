@@ -106,9 +106,6 @@ def validate_table_manifest(manifest: str):
 
 
 def scheduled(manifest: str, sa=None):
-    # hex = uuid.uuid4().hex
-    # dt = datetime.datetime.today()
-    # sql = f'select {hex}, {dt}, '
     bigquery.DataTransferConfig(
         resource_name=manifest['resource_name'],
         display_name=manifest['display_name'],
@@ -133,6 +130,19 @@ def validate_scheduled_manifest(manifest: str):
     except:
         print("##### Scheduled Exception - " + manifest['display_name'])
         raise auto.InlineSourceRuntimeError(validator.errors)
+
+
+def bucket(manifest: str):
+    storage.Bucket(
+        id=manifest['bucket_name'],
+        resource_name=manifest['bucket_name'],
+        retention_policy=manifest['retention_seconds'],
+        labels={
+            'cost_center': manifest['metadata']['cost_center'],
+            'dep': manifest['metadata']['dep'],
+            'bds': manifest['metadata']['bds'],
+        }
+    )
 
 
 def create_sa(team: str):
