@@ -70,9 +70,7 @@ def validate_table_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
-def table(
-    manifest: str,
-    role: str = 'roles/bigquery.dataViewer'):
+def table(manifest: str):
 
     validate_table_manifest(manifest)
     readers = [reader for reader in manifest['users']['readers']]
@@ -96,14 +94,14 @@ def table(
         resource_name=manifest['resource_name'],
         dataset_id=manifest['dataset_id'],
         table_id=tbl.table_id,
-        role=role,
+        role='roles/bigquery.dataViewer',
         members=readers
     )
     writers = bigquery.IamBinding(
         resource_name=manifest['resource_name'],
         dataset_id=manifest['dataset_id'],
         table_id=tbl.id,
-        role=role,
+        role='roles/bigquery.dataEditor',
         members=writers
     )
     
