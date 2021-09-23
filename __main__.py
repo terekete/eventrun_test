@@ -90,36 +90,20 @@ def table(manifest: str):
         },
         schema=manifest['schema']
     )
-    return tbl
-
-
-def table_reader_access(
-    manifest: str,
-    tbl):
-
-    readers = [reader for reader in manifest['users']['readers']]
     readers = bigquery.IamBinding(
-        resource_name=manifest['resource_name'],
+        resource_name=manifest['resource_name'] + '_read_iam',
         dataset_id=manifest['dataset_id'],
         table_id=tbl.table_id,
         role='roles/bigquery.dataViewer',
         members=readers
     )
-
-
-def table_writer_access(
-    manifest: str,
-    tbl):
-
-    writers = [writer for writer in manifest['users']['writers']]
     writers = bigquery.IamBinding(
-        resource_name=manifest['resource_name'],
+        resource_name=manifest['resource_name'] + '_write_iam',
         dataset_id=manifest['dataset_id'],
-        table_id=tbl.table_id,
+        table_id=tbl.id,
         role='roles/bigquery.dataEditor',
         members=writers
     )
-    return writers
     
 
 
@@ -328,9 +312,7 @@ def update(path:str, context=None):
             dataset(yml)
         if yml and yml['kind'] == 'table':
             validate_table_manifest(yml)
-            tbl = table(yml)
-            table_reader_access(yml, tbl)
-            table_writer_access(yml, tbl)
+            table(yml)
         if yml and yml['kind'] == 'scheduled':
             validate_scheduled_manifest(yml)
             scheduled(yml)
