@@ -45,18 +45,18 @@ def dataset(manifest: str):
     
 
 
-def dataset_user_access(
-    manifest: str,
-    role: str):
+# def dataset_user_access(
+#     manifest: str,
+#     role: str):
 
-    # readers = ["users:" + reader for reader in manifest['users']['readers']]
-    # writers = ["users:" + writer for writer in manifest['users']['writers']]
-    bigquery.DatasetAccess(
-        resource_name=manifest['resource_name'],
-        dataset_id=manifest['dataset_id'],
-        user_by_email=user,
-        role=role
-    )
+#     # readers = ["users:" + reader for reader in manifest['users']['readers']]
+#     # writers = ["users:" + writer for writer in manifest['users']['writers']]
+#     bigquery.DatasetAccess(
+#         resource_name=manifest['resource_name'],
+#         dataset_id=manifest['dataset_id'],
+#         user_by_email=user,
+#         role=role
+#     )
 
 
 def validate_table_manifest(manifest: str):
