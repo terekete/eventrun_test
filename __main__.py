@@ -95,7 +95,7 @@ def table(
     readers = bigquery.IamBinding(
         resource_name=manifest['resource_name'],
         dataset_id=manifest['dataset_id'],
-        table_id=tbl.id,
+        table_id=tbl.table_id,
         role=role,
         members=readers
     )
