@@ -14,6 +14,17 @@ from pulumi import automation as auto
 from cerberus import Validator
 
 
+def validate_dataset_manifest(manifest: str):
+    schema = eval(open('./schemas/dataset.py', 'r').read())
+    validator = Validator(schema)
+    try:
+        if validator.validate(manifest, schema):
+            return
+    except:
+        print("##### Dataset Exception - " + manifest['dataset_id'])
+        raise auto.InlineSourceRuntimeError(validator.errors)
+
+
 def dataset(manifest: str):
     dts = bigquery.Dataset(
         resource_name=manifest['resource_name'],
@@ -29,7 +40,6 @@ def dataset(manifest: str):
     )
 
 
-
 def dataset_user_access(
     manifest: str,
     role: str):
@@ -42,17 +52,6 @@ def dataset_user_access(
         user_by_email=user,
         role=role
     )
-
-
-# def validate_dataset_manifest(manifest: str):
-#     schema = eval(open('./schemas/dataset.py', 'r').read())
-#     validator = Validator(schema)
-#     try:
-#         if validator.validate(manifest, schema):
-#             return
-#     except:
-#         print("##### Dataset Exception - " + manifest['dataset_id'])
-#         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
 def validate_table_manifest(manifest: str):
