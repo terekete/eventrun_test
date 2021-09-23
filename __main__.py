@@ -99,13 +99,13 @@ def table(
         role=role,
         members=readers
     )
-    # writers = bigquery.IamBinding(
-    #     resource_name=manifest['resource_name'],
-    #     dataset_id=manifest['dataset_id'],
-    #     table_id=tbl.id,
-    #     role=role,
-    #     members=writers
-    # )
+    writers = bigquery.IamBinding(
+        resource_name=manifest['resource_name'],
+        dataset_id=manifest['dataset_id'],
+        table_id=tbl.id,
+        role=role,
+        members=writers
+    )
     
 
 
