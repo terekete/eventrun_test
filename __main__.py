@@ -107,7 +107,7 @@ def table(
         #     role=role,
         #     members=writers
         # )
-    except auto.InlineSourceRuntimeError as e:
+    except Exception as e:
         print("##### Table Exception - IAM or Table definition")
         raise e
 
