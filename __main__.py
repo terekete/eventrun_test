@@ -93,20 +93,20 @@ def table(
             },
             schema=manifest['schema']
         )
-        readers = bigquery.IamBinding(
-            resource_name=manifest['resource_name'],
-            dataset_id=manifest['dataset_id'],
-            table_id=tbl.id,
-            role=role,
-            members=readers
-        )
-        writers = bigquery.IamBinding(
-            resource_name=manifest['resource_name'],
-            dataset_id=manifest['dataset_id'],
-            table_id=tbl.id,
-            role=role,
-            members=writers
-        )
+        # readers = bigquery.IamBinding(
+        #     resource_name=manifest['resource_name'],
+        #     dataset_id=manifest['dataset_id'],
+        #     table_id=tbl.id,
+        #     role=role,
+        #     members=readers
+        # )
+        # writers = bigquery.IamBinding(
+        #     resource_name=manifest['resource_name'],
+        #     dataset_id=manifest['dataset_id'],
+        #     table_id=tbl.id,
+        #     role=role,
+        #     members=writers
+        # )
     except auto.InlineSourceRuntimeError as e:
         print("##### Table Exception - IAM or Table definition")
         raise e
