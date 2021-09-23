@@ -26,18 +26,23 @@ def validate_dataset_manifest(manifest: str):
 
 
 def dataset(manifest: str):
-    dts = bigquery.Dataset(
-        resource_name=manifest['resource_name'],
-        dataset_id=manifest['dataset_id'],
-        description=manifest['description'],
-        labels={
-            'cost_center': manifest['metadata']['cost_center'],
-            'dep': manifest['metadata']['dep'],
-            'bds': manifest['metadata']['bds'],
-        },
-        default_table_expiration_ms=manifest['table_expiration_ms'],
-        location='northamerica-northeast1'
-    )
+    try:
+        dts = bigquery.Dataset(
+            resource_name=manifest['resource_name'],
+            dataset_id=manifest['dataset_id'],
+            description=manifest['description'],
+            labels={
+                'cost_center': manifest['metadata']['cost_center'],
+                'dep': manifest['metadata']['dep'],
+                'bds': manifest['metadata']['bds'],
+            },
+            default_table_expiration_ms=manifest['table_expiration_ms'],
+            location='northamerica-northeast1'
+        )
+    except auto.InlineSourceRuntimeError as e:
+        print("##### Dataset Exception - IAM or Dataset definition")
+        raise e
+    
 
 
 def dataset_user_access(
