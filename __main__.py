@@ -70,7 +70,6 @@ def validate_table_manifest(manifest: str):
 
 
 def table(manifest: str):
-
     validate_table_manifest(manifest)    
     tbl = bigquery.Table(
         resource_name=manifest['resource_name'],
