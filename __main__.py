@@ -78,38 +78,35 @@ def table(
     readers = ["users:" + reader for reader in manifest['users']['readers']]
     writers = ["users:" + writer for writer in manifest['users']['writers']]
     
-    try:
-        tbl = bigquery.Table(
-            resource_name=manifest['resource_name'],
-            dataset_id=manifest['dataset_id'],
-            table_id=manifest['table_id'],
-            deletion_protection=False,
-            expiration_time=manifest['expiration_ms'],
-            friendly_name=manifest['friendly_name'],
-            labels={
-                'cost_center': manifest['metadata']['cost_center'],
-                'dep': manifest['metadata']['dep'],
-                'bds': manifest['metadata']['bds'],
-            },
-            schema=manifest['schema']
-        )
-        # readers = bigquery.IamBinding(
-        #     resource_name=manifest['resource_name'],
-        #     dataset_id=manifest['dataset_id'],
-        #     table_id=tbl.id,
-        #     role=role,
-        #     members=readers
-        # )
-        # writers = bigquery.IamBinding(
-        #     resource_name=manifest['resource_name'],
-        #     dataset_id=manifest['dataset_id'],
-        #     table_id=tbl.id,
-        #     role=role,
-        #     members=writers
-        # )
-    except Exception as e:
-        print("##### Table Exception - IAM or Table definition")
-        raise e
+    tbl = bigquery.Table(
+        resource_name=manifest['resource_name'],
+        dataset_id=manifest['dataset_id'],
+        table_id=manifest['table_id'],
+        deletion_protection=False,
+        expiration_time=manifest['expiration_ms'],
+        friendly_name=manifest['friendly_name'],
+        labels={
+            'cost_center': manifest['metadata']['cost_center'],
+            'dep': manifest['metadata']['dep'],
+            'bds': manifest['metadata']['bds'],
+        },
+        schema=manifest['schema']
+    )
+    readers = bigquery.IamBinding(
+        resource_name=manifest['resource_name'],
+        dataset_id=manifest['dataset_id'],
+        table_id=tbl.id,
+        role=role,
+        members=readers
+    )
+    # writers = bigquery.IamBinding(
+    #     resource_name=manifest['resource_name'],
+    #     dataset_id=manifest['dataset_id'],
+    #     table_id=tbl.id,
+    #     role=role,
+    #     members=writers
+    # )
+    
 
 
 def validate_materialized_manifest(manifest: str):
