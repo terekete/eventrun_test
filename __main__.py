@@ -91,7 +91,7 @@ def table(manifest: str):
         schema=manifest['schema']
     )
     readers = table_reader_access(manifest, tbl)
-    writers = table_writer_access(manifest, tbl)
+    #writers = table_writer_access(manifest, tbl)
 
 
 def table_reader_access(
