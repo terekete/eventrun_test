@@ -90,6 +90,15 @@ def table(manifest: str):
         },
         schema=manifest['schema']
     )
+    readers = table_reader_access(manifest, tbl)
+    writers = table_writer_access(manifest, tbl)
+
+
+def table_reader_access(
+    manifest: str,
+    tbl):
+
+    readers = [reader for reader in manifest['users']['readers']]
     readers = bigquery.IamBinding(
         resource_name=manifest['resource_name'],
         dataset_id=manifest['dataset_id'],
@@ -97,13 +106,22 @@ def table(manifest: str):
         role='roles/bigquery.dataViewer',
         members=readers
     )
+    return readers
+
+
+def table_writer_access(
+    manifest: str,
+    tbl):
+
+    writers = [writer for writer in manifest['users']['writers']]
     writers = bigquery.IamBinding(
         resource_name=manifest['resource_name'],
         dataset_id=manifest['dataset_id'],
-        table_id=tbl.id,
+        table_id=tbl.table_id,
         role='roles/bigquery.dataEditor',
         members=writers
     )
+    return writers
     
 
 
