@@ -75,8 +75,8 @@ def table(
     role: str = 'roles/bigquery.dataViewer'):
 
     validate_table_manifest(manifest)
-    readers = ["users:" + reader for reader in manifest['users']['readers']]
-    writers = ["users:" + writer for writer in manifest['users']['writers']]
+    readers = [reader for reader in manifest['users']['readers']]
+    writers = [writer for writer in manifest['users']['writers']]
     
     tbl = bigquery.Table(
         resource_name=manifest['resource_name'],
