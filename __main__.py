@@ -92,20 +92,19 @@ def table(manifest: str):
     )
     readers = bigquery.IamBinding(
         resource_name=manifest['resource_name'] + '_read_iam',
-        dataset_id=manifest['dataset_id'],
+        dataset_id=tbl.dataset_id,
         table_id=tbl.table_id,
         role='roles/bigquery.dataViewer',
         members=readers
     )
     writers = bigquery.IamBinding(
         resource_name=manifest['resource_name'] + '_write_iam',
-        dataset_id=manifest['dataset_id'],
+        dataset_id=tbl.dataset_id,
         table_id=tbl.id,
         role='roles/bigquery.dataEditor',
         members=writers
     )
     
-
 
 def validate_materialized_manifest(manifest: str):
     schema = eval(open('./schemas/materialized.py', 'r').read())
