@@ -44,54 +44,15 @@ def dataset_user_access(
     )
 
 
-def validate_dataset_manifest(manifest: str):
-    schema = eval(open('./schemas/dataset.py', 'r').read())
-    validator = Validator(schema)
-    try:
-        if validator.validate(manifest, schema):
-            return
-    except:
-        print("##### Dataset Exception - " + manifest['dataset_id'])
-        raise auto.InlineSourceRuntimeError(validator.errors)
-
-
-def table(manifest: str):
-    tbl = bigquery.Table(
-        resource_name=manifest['resource_name'],
-        dataset_id=manifest['dataset_id'],
-        table_id=manifest['table_id'],
-        deletion_protection=False,
-        expiration_time=manifest['expiration_ms'],
-        friendly_name=manifest['friendly_name'],
-        labels={
-            'cost_center': manifest['metadata']['cost_center'],
-            'dep': manifest['metadata']['dep'],
-            'bds': manifest['metadata']['bds'],
-        },
-        schema=manifest['schema']
-    )
-
-
-def table_user_access(
-    manifest: str,
-    role: str = 'roles/bigquery.dataViewer'):
-
-    readers = ["users:" + reader for reader in manifest['users']['readers']]
-    writers = ["users:" + writer for writer in manifest['users']['writers']]
-    bigquery.IamBinding(
-        resource_name=manifest['resource_name'],
-        dataset_id=manifest['dataset_id'],
-        table_id=manifest['table_id'],
-        role=role,
-        members=readers
-    )
-    bigquery.IamBinding(
-        resource_name=manifest['resource_name'],
-        dataset_id=manifest['dataset_id'],
-        table_id=manifest['table_id'],
-        role=role,
-        members=writers
-    )
+# def validate_dataset_manifest(manifest: str):
+#     schema = eval(open('./schemas/dataset.py', 'r').read())
+#     validator = Validator(schema)
+#     try:
+#         if validator.validate(manifest, schema):
+#             return
+#     except:
+#         print("##### Dataset Exception - " + manifest['dataset_id'])
+#         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
 def validate_table_manifest(manifest: str):
@@ -103,6 +64,107 @@ def validate_table_manifest(manifest: str):
     except:
         print("##### Table Exception - " + manifest['table_id'])
         raise auto.InlineSourceRuntimeError(validator.errors)
+
+
+def table(
+    manifest: str,
+    role: str = 'roles/bigquery.dataViewer'):
+
+    validate_table_manifest(manifest)
+    readers = ["users:" + reader for reader in manifest['users']['readers']]
+    writers = ["users:" + writer for writer in manifest['users']['writers']]
+    
+    try:
+        tbl = bigquery.Table(
+            resource_name=manifest['resource_name'],
+            dataset_id=manifest['dataset_id'],
+            table_id=manifest['table_id'],
+            deletion_protection=False,
+            expiration_time=manifest['expiration_ms'],
+            friendly_name=manifest['friendly_name'],
+            labels={
+                'cost_center': manifest['metadata']['cost_center'],
+                'dep': manifest['metadata']['dep'],
+                'bds': manifest['metadata']['bds'],
+            },
+            schema=manifest['schema']
+        )
+        readers = bigquery.IamBinding(
+            resource_name=manifest['resource_name'],
+            dataset_id=manifest['dataset_id'],
+            table_id=tbl.id,
+            role=role,
+            members=readers
+        )
+        writers = bigquery.IamBinding(
+            resource_name=manifest['resource_name'],
+            dataset_id=manifest['dataset_id'],
+            table_id=tbl.id,
+            role=role,
+            members=writers
+        )
+    except auto.InlineSourceRuntimeError as e:
+        print("##### Table Exception - IAM or Table definition")
+        raise e
+
+
+def validate_materialized_manifest(manifest: str):
+    schema = eval(open('./schemas/materialized.py', 'r').read())
+    validator = Validator(schema)
+    try:
+        if validator.validate(manifest, schema):
+            return
+    except:
+        print("##### Materialized Exception - " + manifest['table_id'])
+        raise auto.InlineSourceRuntimeError(validator.errors)
+
+
+def materialized(
+    manifest: str,
+    role: str = 'roles/bigquery.dataViewer'):
+
+    validate_scheduled_manifest(manifest)
+    readers = ["users:" + reader for reader in manifest['users']['readers']]
+    writers = ["users:" + writer for writer in manifest['users']['writers']]
+
+    try:
+        mat = bigquery.TableMaterializedViewArgs(
+            query=manifest['params']['query'],
+            enable_refresh=['params']['refresh'],
+            refresh_interval_ms=['params']['refresh_ms']
+        )
+        tbl = bigquery.Table(
+            resource_name=manifest['resource_name'],
+            dataset_id=manifest['dataset_id'],
+            table_id=manifest['table_id'],
+            deletion_protection=False,
+            expiration_time=manifest['expiration_ms'],
+            friendly_name=manifest['friendly_name'],
+            labels={
+                'cost_center': manifest['metadata']['cost_center'],
+                'dep': manifest['metadata']['dep'],
+                'bds': manifest['metadata']['bds'],
+            },
+            schema=manifest['schema'],
+            materialized_view=mat
+        )
+        readers =bigquery.IamBinding(
+            resource_name=manifest['resource_name'],
+            dataset_id=manifest['dataset_id'],
+            table_id=tbl.id,
+            role=role,
+            members=readers
+        )
+        writers = bigquery.IamBinding(
+            resource_name=manifest['resource_name'],
+            dataset_id=manifest['dataset_id'],
+            table_id=tbl.id,
+            role=role,
+            members=writers
+        )
+    except auto.InlineSourceRuntimeError as e:
+        print("##### Materialized Exception - IAM or Materialized View definition")
+        raise e
 
 
 def scheduled(manifest: str, sa=None):
