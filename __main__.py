@@ -90,8 +90,7 @@ def table(manifest: str):
         },
         schema=manifest['schema']
     )
-    table_reader_access(manifest, tbl)
-    #table_writer_access(manifest, tbl)
+    return tbl
 
 
 def table_reader_access(
@@ -329,7 +328,9 @@ def update(path:str, context=None):
             dataset(yml)
         if yml and yml['kind'] == 'table':
             validate_table_manifest(yml)
-            table(yml)
+            tbl = table(yml)
+            table_reader_access(yml, tbl)
+            table_writer_access(yml, tbl)
         if yml and yml['kind'] == 'scheduled':
             validate_scheduled_manifest(yml)
             scheduled(yml)
