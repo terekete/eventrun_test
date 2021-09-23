@@ -42,7 +42,6 @@ def dataset(manifest: str):
     except auto.InlineSourceRuntimeError as e:
         print("##### Dataset Exception - IAM or Dataset definition")
         raise e
-    
 
 
 # def dataset_user_access(
