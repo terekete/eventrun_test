@@ -90,8 +90,8 @@ def table(manifest: str):
         },
         schema=manifest['schema']
     )
-    readers = table_reader_access(manifest, tbl)
-    #writers = table_writer_access(manifest, tbl)
+    table_reader_access(manifest, tbl)
+    #table_writer_access(manifest, tbl)
 
 
 def table_reader_access(
@@ -106,7 +106,6 @@ def table_reader_access(
         role='roles/bigquery.dataViewer',
         members=readers
     )
-    return readers
 
 
 def table_writer_access(
