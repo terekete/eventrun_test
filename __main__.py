@@ -40,7 +40,10 @@ def dataset(manifest: str):
         default_table_expiration_ms=manifest['table_expiration_ms'],
         location='northamerica-northeast1'
     )
-    readers = [reader for reader in manifest['users']['readers']]
+    readers = [
+        reader.replace('user:', '').replace('serviceAccount:', '') 
+        for reader in manifest['users']['readers']
+    ]
     # writers = [writer for writer in manifest['users']['writers']]
     for reader in readers:
         bigquery.DatasetAccess(
