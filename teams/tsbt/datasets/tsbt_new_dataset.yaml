@@ -13,7 +13,7 @@ table_expiration_ms:
 friendly_name: tsbt_new_dataset
 dependencies:
   - tsbt_new_dataset
-access:
+users:
   readers:
     - mark.gates@telus.com
   writers:
