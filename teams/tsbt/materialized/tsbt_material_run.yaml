@@ -14,42 +14,9 @@ friendly_name: tsbt_material_run
 dependencies:
   - tsbt_new_dataset
   - tsbt_audit_run
-schema: >
-  [
-    {
-      "name": "run_id",
-      "type": "STRING",
-      "mode": "REQUIRED",
-      "description": "run_id"
-    },
-    {
-      "name": "run_ts",
-      "type": "DATETIME",
-      "mode": "REQUIRED",
-      "description": "run_ts"
-    },
-    {
-      "name": "run_sa",
-      "type": "STRING",
-      "mode": "REQUIRED",
-      "description": "run_sa"
-    },
-    {
-      "name": "run_status",
-      "type": "STRING",
-      "mode": "REQUIRED",
-      "description": "run_status"
-    },
-    {
-      "name": "run_query",
-      "type": "STRING",
-      "mode": "REQUIRED",
-      "description": "run_query"
-    }
-  ]
 params:
   query: "select * from `eventrun.tsbt_new_dataset.tsbt_audit_run` limit 1"
-  refresh: True
+  refresh: true
   refresh_ms: 12000
 users:
   readers:

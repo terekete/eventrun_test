@@ -70,11 +70,6 @@
         'type': 'list',
         'nullable': True
     },
-    'schema': {
-        'required': True,
-        'type': 'string',
-        'nullable': False
-    },
     'params': {
         'required': True,
         'type': 'dict',
