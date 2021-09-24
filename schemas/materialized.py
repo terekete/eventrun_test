@@ -86,7 +86,7 @@
             },
             'refresh': {
                 'required': False,
-                'type': 'string',
+                'type': 'number',
                 'nullable': True               
             },
             'refresh_ms': {
