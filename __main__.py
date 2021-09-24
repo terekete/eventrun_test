@@ -70,7 +70,11 @@ def validate_table_manifest(manifest: str):
 
 
 def table(manifest: str):
-    validate_table_manifest(manifest)   
+
+    validate_table_manifest(manifest)
+    readers = [reader for reader in manifest['users']['readers']]
+    writers = [writer for writer in manifest['users']['writers']] 
+    
     tbl = bigquery.Table(
         resource_name=manifest['resource_name'] + '_table',
         dataset_id=manifest['dataset_id'],
@@ -85,9 +89,6 @@ def table(manifest: str):
         },
         schema=manifest['schema']
     )
-
-    readers = [reader for reader in manifest['users']['readers']]
-    writers = [writer for writer in manifest['users']['writers']]
     readers = bigquery.IamBinding(
         resource_name=manifest['resource_name'] + '_read_iam',
         dataset_id=tbl.dataset_id,
