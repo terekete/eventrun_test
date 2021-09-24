@@ -15,6 +15,6 @@ dependencies:
   - tsbt_new_dataset
 users:
   readers:
-    - user:gates.mark@gmail.com
+    - gates.mark@gmail.com
   writers:
     - user:mark.gates@telus.com
