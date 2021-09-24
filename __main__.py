@@ -145,7 +145,6 @@ def materialized(manifest: str):
             'dep': manifest['metadata']['dep'],
             'bds': manifest['metadata']['bds'],
         },
-        schema=manifest['schema'],
         materialized_view=mat
     )
     readers = bigquery.IamBinding(
