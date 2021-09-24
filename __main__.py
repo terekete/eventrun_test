@@ -25,37 +25,50 @@ def validate_dataset_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
+def dataset_reader_access(
+    dts: bigquery.Dataset,
+    role: str,
+    user: str):
+
+    bigquery.DatasetAccess(
+        resource_name=dts.id + '_reader_iam',
+        dataset_id=dts.dataset_id,
+        user_by_email=user,
+        role=role
+    )
+
+
+def dataset_writer_access(
+    dts: bigquery.Dataset,
+    role: str,
+    user: str):
+
+    bigquery.DatasetAccess(
+        resource_name=dts.id + '_writer_iam',
+        dataset_id=dts.dataset_id,
+        user_by_email=user,
+        role=role
+    )
+
+
 def dataset(manifest: str):
-    try:
-        dts = bigquery.Dataset(
-            resource_name=manifest['resource_name'] + '_dataset',
-            dataset_id=manifest['dataset_id'],
-            description=manifest['description'],
-            labels={
-                'cost_center': manifest['metadata']['cost_center'],
-                'dep': manifest['metadata']['dep'],
-                'bds': manifest['metadata']['bds'],
-            },
-            default_table_expiration_ms=manifest['table_expiration_ms'],
-            location='northamerica-northeast1'
-        )
-    except auto.InlineSourceRuntimeError as e:
-        print("##### Dataset Exception - IAM or Dataset definition")
-        raise e
 
+    validate_dataset_manifest(manifest)
+    [dataset_reader_access(reader) for reader in manifest['users']['readers']]
+    [dataset_writer_access(writer) for writer in manifest['users']['writers']]
 
-# def dataset_user_access(
-#     manifest: str,
-#     role: str):
-
-#     # readers = ["users:" + reader for reader in manifest['users']['readers']]
-#     # writers = ["users:" + writer for writer in manifest['users']['writers']]
-#     bigquery.DatasetAccess(
-#         resource_name=manifest['resource_name'],
-#         dataset_id=manifest['dataset_id'],
-#         user_by_email=user,
-#         role=role
-#     )
+    dts = bigquery.Dataset(
+        resource_name=manifest['resource_name'] + '_dataset',
+        dataset_id=manifest['dataset_id'],
+        description=manifest['description'],
+        labels={
+            'cost_center': manifest['metadata']['cost_center'],
+            'dep': manifest['metadata']['dep'],
+            'bds': manifest['metadata']['bds'],
+        },
+        default_table_expiration_ms=manifest['table_expiration_ms'],
+        location='northamerica-northeast1'
+    )
 
 
 def validate_table_manifest(manifest: str):
@@ -73,7 +86,7 @@ def table(manifest: str):
 
     validate_table_manifest(manifest)
     readers = [reader for reader in manifest['users']['readers']]
-    writers = [writer for writer in manifest['users']['writers']] 
+    writers = [writer for writer in manifest['users']['writers']]
 
     tbl = bigquery.Table(
         resource_name=manifest['resource_name'] + '_table',
