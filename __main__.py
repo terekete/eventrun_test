@@ -74,7 +74,7 @@ def table(manifest: str):
     validate_table_manifest(manifest)
     readers = [reader for reader in manifest['users']['readers']]
     writers = [writer for writer in manifest['users']['writers']] 
-    
+
     tbl = bigquery.Table(
         resource_name=manifest['resource_name'] + '_table',
         dataset_id=manifest['dataset_id'],
@@ -105,63 +105,57 @@ def table(manifest: str):
     )
 
 
-# def validate_materialized_manifest(manifest: str):
-#     schema = eval(open('./schemas/materialized.py', 'r').read())
-#     validator = Validator(schema)
-#     try:
-#         if validator.validate(manifest, schema):
-#             return
-#     except:
-#         print("##### Materialized Exception - " + manifest['table_id'])
-#         raise auto.InlineSourceRuntimeError(validator.errors)
+def validate_materialized_manifest(manifest: str):
+    schema = eval(open('./schemas/materialized.py', 'r').read())
+    validator = Validator(schema)
+    try:
+        if validator.validate(manifest, schema):
+            return
+    except:
+        print("##### Materialized Exception - " + manifest['table_id'])
+        raise auto.InlineSourceRuntimeError(validator.errors)
 
 
-# def materialized(
-#     manifest: str,
-#     role: str = 'roles/bigquery.dataViewer'):
+def materialized(manifest: str):
 
-#     validate_scheduled_manifest(manifest)
-#     readers = ["users:" + reader for reader in manifest['users']['readers']]
-#     writers = ["users:" + writer for writer in manifest['users']['writers']]
+    validate_scheduled_manifest(manifest)
+    readers = [reader for reader in manifest['users']['readers']]
+    writers = [writer for writer in manifest['users']['writers']]
 
-#     try:
-#         mat = bigquery.TableMaterializedViewArgs(
-#             query=manifest['params']['query'],
-#             enable_refresh=['params']['refresh'],
-#             refresh_interval_ms=['params']['refresh_ms']
-#         )
-#         tbl = bigquery.Table(
-#             resource_name=manifest['resource_name'],
-#             dataset_id=manifest['dataset_id'],
-#             table_id=manifest['table_id'],
-#             deletion_protection=False,
-#             expiration_time=manifest['expiration_ms'],
-#             friendly_name=manifest['friendly_name'],
-#             labels={
-#                 'cost_center': manifest['metadata']['cost_center'],
-#                 'dep': manifest['metadata']['dep'],
-#                 'bds': manifest['metadata']['bds'],
-#             },
-#             schema=manifest['schema'],
-#             materialized_view=mat
-#         )
-#         readers =bigquery.IamBinding(
-#             resource_name=manifest['resource_name'],
-#             dataset_id=manifest['dataset_id'],
-#             table_id=tbl.id,
-#             role=role,
-#             members=readers
-#         )
-#         writers = bigquery.IamBinding(
-#             resource_name=manifest['resource_name'],
-#             dataset_id=manifest['dataset_id'],
-#             table_id=tbl.id,
-#             role=role,
-#             members=writers
-#         )
-#     except auto.InlineSourceRuntimeError as e:
-#         print("##### Materialized Exception - IAM or Materialized View definition")
-#         raise e
+    mat = bigquery.TableMaterializedViewArgs(
+        query=manifest['params']['query'],
+        enable_refresh=['params']['refresh'],
+        refresh_interval_ms=['params']['refresh_ms']
+    )
+    tbl = bigquery.Table(
+        resource_name=manifest['resource_name'],
+        dataset_id=manifest['dataset_id'],
+        table_id=manifest['table_id'],
+        deletion_protection=False,
+        expiration_time=manifest['expiration_ms'],
+        friendly_name=manifest['friendly_name'],
+        labels={
+            'cost_center': manifest['metadata']['cost_center'],
+            'dep': manifest['metadata']['dep'],
+            'bds': manifest['metadata']['bds'],
+        },
+        schema=manifest['schema'],
+        materialized_view=mat
+    )
+    readers = bigquery.IamBinding(
+        resource_name=manifest['resource_name'] + '_read_iam',
+        dataset_id=tbl.dataset_id,
+        table_id=tbl.table_id,
+        role='roles/bigquery.dataViewer',
+        members=readers
+    )
+    writers = bigquery.IamBinding(
+        resource_name=manifest['resource_name'] + '_write_iam',
+        dataset_id=tbl.dataset_id,
+        table_id=tbl.table_id,
+        role='roles/bigquery.dataEditor',
+        members=writers
+    )
 
 
 def scheduled(manifest: str, sa=None):
