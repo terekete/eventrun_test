@@ -28,7 +28,7 @@ def validate_dataset_manifest(manifest: str):
 def dataset(manifest: str):
     try:
         dts = bigquery.Dataset(
-            resource_name=manifest['resource_name'],
+            resource_name=manifest['resource_name'] + '_dataset',
             dataset_id=manifest['dataset_id'],
             description=manifest['description'],
             labels={
@@ -72,7 +72,7 @@ def validate_table_manifest(manifest: str):
 def table(manifest: str):
     validate_table_manifest(manifest)    
     tbl = bigquery.Table(
-        resource_name=manifest['resource_name'],
+        resource_name=manifest['resource_name'] + '_table',
         dataset_id=manifest['dataset_id'],
         table_id=manifest['table_id'],
         deletion_protection=False,

@@ -6,12 +6,12 @@ metadata:
   bds: "test_user"
 team: tsbt
 display_name: "tsbt - audit table"
-resource_name: tsbt_audit_run
+resource_name: tsbt_scheduled_run
 default_refresh_window_days: 1
 destination_dataset_id: tsbt_new_dataset
 schedule: "every 15 minutes"
 params:
-  destination_table_name: tsbt_audit_run
+  destination_table_name: tsbt_scheduled_run
   write_disposition: "WRITE_TRUNCATE"
   query: >
     select * from `eventrun.tsbt_new_dataset.tsbt_audit_run` limit 1
