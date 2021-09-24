@@ -130,8 +130,8 @@ def materialized(manifest: str):
 
     mat = bigquery.TableMaterializedViewArgs(
         query=manifest['params']['query'],
-        enable_refresh=['params']['refresh'],
-        refresh_interval_ms=['params']['refresh_ms']
+        enable_refresh=manifest['params']['refresh'],
+        refresh_interval_ms=manifest['params']['refresh_ms']
     )
     tbl = bigquery.Table(
         resource_name=manifest['resource_name'],
