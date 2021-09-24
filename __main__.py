@@ -57,7 +57,7 @@ def dataset(manifest: str):
         )
     for writer in writers:
         bigquery.DatasetAccess(
-            resource_name=manifest['resource_name'] + '_reader_iam',
+            resource_name=manifest['resource_name'] + '_writer_iam',
             dataset_id=dts.dataset_id,
             user_by_email=writer,
             role='roles/bigquery.dataEditor'
