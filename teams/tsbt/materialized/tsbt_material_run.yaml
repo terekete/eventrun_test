@@ -50,7 +50,7 @@ schema: >
 params:
   query: >
     select * from `eventrun.tsbt_new_dataset.tsbt_audit_run` limit 1
-  refresh: true
+  refresh: True
   refresh_ms: 12000
 users:
   readers:
