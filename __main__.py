@@ -44,13 +44,23 @@ def dataset(manifest: str):
         reader.replace('user:', '').replace('serviceAccount:', '') 
         for reader in manifest['users']['readers']
     ]
-    # writers = [writer for writer in manifest['users']['writers']]
+    writers = [
+        writer.replace('user:', '').replace('serviceAccount:', '') 
+        for writer in manifest['users']['writers']
+    ]
     for reader in readers:
         bigquery.DatasetAccess(
             resource_name=manifest['resource_name'] + '_reader_iam',
             dataset_id=dts.dataset_id,
             user_by_email=reader,
             role='roles/bigquery.dataViewer'
+        )
+    for writer in writers:
+        bigquery.DatasetAccess(
+            resource_name=manifest['resource_name'] + '_reader_iam',
+            dataset_id=dts.dataset_id,
+            user_by_email=writer,
+            role='roles/bigquery.dataEditor'
         )
 
 
