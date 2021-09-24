@@ -85,10 +85,6 @@ def table(manifest: str):
         },
         schema=manifest['schema']
     )
-    table_access(tbl)
-    
-
-def table_access(tbl):
     readers = [reader for reader in manifest['users']['readers']]
     writers = [writer for writer in manifest['users']['writers']]
 
