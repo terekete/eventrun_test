@@ -75,7 +75,7 @@
         'type': 'string',
         'nullable': False
     },
-    'access': {
+    'users': {
         'required': True,
         'type': 'dict',
         'schema': {

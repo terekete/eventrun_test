@@ -85,9 +85,9 @@
                 'nullable': False
             },
             'refresh': {
-                'required': False,
+                'required': True,
                 'type': 'boolean',
-                'nullable': True               
+                'nullable': False             
             },
             'refresh_ms': {
                 'required': True,
@@ -96,7 +96,7 @@
             }
         }
     },
-    'access': {
+    'users': {
         'required': True,
         'type': 'dict',
         'schema': {
