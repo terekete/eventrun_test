@@ -17,7 +17,7 @@ dependencies:
 params:
   query: "select * from `eventrun.tsbt_new_dataset.tsbt_audit_run` limit 1"
   refresh: true
-  refresh_ms: 12000
+  refresh_ms: 60000
 users:
   readers:
     - mark.gates@telus.com
