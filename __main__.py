@@ -25,33 +25,6 @@ def validate_dataset_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
-def dataset_reader_access(
-    dataset: bigquery.Dataset,
-    user: str,
-    role: str = 'roles/bigquery.dataViewer'):
-
-    print(dataset.id.apply(lambda d: d))
-    bigquery.DatasetAccess(
-        resource_name=dataset.id.apply(lambda d: str(d) + '_reader_iam'),
-        dataset_id=dataset.dataset_id,
-        user_by_email=user,
-        role=role
-    )
-
-
-def dataset_writer_access(
-    dataset: bigquery.Dataset,
-    user: str,
-    role: str = 'roles/bigquery.dataEditor'):
-
-    bigquery.DatasetAccess(
-        resource_name=dataset.id.apply(lambda d: str(d) + '_writer_iam'),
-        dataset_id=dataset.dataset_id,
-        user_by_email=user,
-        role=role
-    )
-
-
 def dataset(manifest: str):
     validate_dataset_manifest(manifest)
 
@@ -67,8 +40,15 @@ def dataset(manifest: str):
         default_table_expiration_ms=manifest['table_expiration_ms'],
         location='northamerica-northeast1'
     )
-    [dataset_reader_access(dataset=dts, user=reader) for reader in manifest['users']['readers']]
-    [dataset_writer_access(dataset=dts, user=writer) for writer in manifest['users']['writers']]
+    readers = [reader for reader in manifest['users']['readers']]
+    # writers = [writer for writer in manifest['users']['writers']]
+    for reader in readers:
+        bigquery.DatasetAccess(
+            resource_name=manifest['resource_name'] + '_reader_iam',
+            dataset_id=dts.dataset_id,
+            user_by_email=reader,
+            role='roles/bigquery.dataViewer'
+        )
 
 
 def validate_table_manifest(manifest: str):
