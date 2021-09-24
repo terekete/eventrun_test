@@ -31,7 +31,7 @@ def dataset_reader_access(
     role: str = 'roles/bigquery.dataViewer'):
 
     bigquery.DatasetAccess(
-        resource_name=dataset.id + '_reader_iam',
+        resource_name=dataset.id.apply(lambda d: str(d) + '_reader_iam'),
         dataset_id=dataset.dataset_id,
         user_by_email=user,
         role=role
@@ -44,7 +44,7 @@ def dataset_writer_access(
     role: str = 'roles/bigquery.dataEditor'):
 
     bigquery.DatasetAccess(
-        resource_name=dataset.id + '_writer_iam',
+        resource_name=dataset.id.apply(lambda d: str(d) + '_writer_iam'),
         dataset_id=dataset.dataset_id,
         user_by_email=user,
         role=role
