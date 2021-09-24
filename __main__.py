@@ -85,6 +85,7 @@ def table(manifest: str):
         },
         schema=manifest['schema']
     )
+    table_access(tbl)
     
 
 def table_access(tbl):
