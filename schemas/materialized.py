@@ -85,9 +85,9 @@
                 'nullable': False
             },
             'refresh': {
-                'required': True,
+                'required': False,
                 'type': 'string',
-                'nullable': False                
+                'nullable': True               
             },
             'refresh_ms': {
                 'required': True,
