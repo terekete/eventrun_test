@@ -296,6 +296,9 @@ def pulumi_program():
     for table_path in tables_list:
         if re.search('/workspace/teams/(.+?)/+', table_path).group(1) == context['team_stack']:
             update(table_path, context)
+    for query_path in materialized_list:
+        if re.search('/workspace/teams/(.+?)/+', query_path).group(1) == context['team_stack']:
+            update(query_path, context)
     for query_path in scheduled_list:
         if re.search('/workspace/teams/(.+?)/+', query_path).group(1) == context['team_stack']:
             update(query_path, context)
@@ -311,6 +314,9 @@ def update(path:str, context=None):
         if yml and yml['kind'] == 'table':
             validate_table_manifest(yml)
             table(yml)
+        if yml and yml['kind'] == 'materialized':
+            validate_table_manifest(yml)
+            materialized(yml)
         if yml and yml['kind'] == 'scheduled':
             validate_scheduled_manifest(yml)
             scheduled(yml)
@@ -335,6 +341,7 @@ manifests_set = list_manifests(teams_root)
 datasets_list = []
 tables_list = []
 scheduled_list = []
+materialized_list = []
 
 
 for manifest in manifests_set:
@@ -342,6 +349,8 @@ for manifest in manifests_set:
         datasets_list.append(manifest)
     elif get_kind(manifest, 'table'):
         tables_list.append(manifest)
+    elif get_kind(manifest, 'materialized'):
+        materialized_list.append(manifest)
     elif get_kind(manifest, 'scheduled'):
         scheduled_list.append(manifest)
 

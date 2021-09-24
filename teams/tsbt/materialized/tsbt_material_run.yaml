@@ -13,6 +13,7 @@ expiration_ms:
 friendly_name: tsbt_material_run
 dependencies:
   - tsbt_new_dataset
+  - tsbt_audit_run
 schema: >
   [
     {
