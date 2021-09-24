@@ -30,6 +30,7 @@ def dataset_reader_access(
     user: str,
     role: str = 'roles/bigquery.dataViewer'):
 
+    print(dataset.id.apply(lambda d: d))
     bigquery.DatasetAccess(
         resource_name=dataset.id.apply(lambda d: str(d) + '_reader_iam'),
         dataset_id=dataset.dataset_id,
