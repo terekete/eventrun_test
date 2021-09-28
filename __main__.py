@@ -400,7 +400,8 @@ print('########### MANIFEST_SET')
 print(manifests_set)
 manifest_graph=[]
 for manifest in manifests_set:
-    print(manifest['dependencies'])
+    if get_kind(manifest, 'scheduled'):
+        print(manifest['dependencies'])
     
 
 
