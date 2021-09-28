@@ -321,6 +321,8 @@ def read_yml(path: str):
 
 def read_diff(path: str = '/workspace/DIFF_TEAM.txt'):
     with open(path, 'r') as file:
+        print('############### DIFF:')
+        print([item.strip() for item in file.readlines()])
         return [item.strip() for item in file.readlines()]
 
 
