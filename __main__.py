@@ -207,7 +207,6 @@ def bucket(manifest: str):
     )
     storage.Bucket(
         resource_name=manifest['bucket_name'],
-        id=manifest['bucket_name'],
         retention_policy=retention,
         location='northamerica-northeast1',
         labels={
