@@ -47,6 +47,7 @@ git status
 #! /bin/bash
 DIFF=$(git diff --name-only origin/"${BASE_BRANCH}"...HEAD)
 DIFF_TEAM=""
+DIFF_PATHS=""
 
 
 for file in $DIFF
@@ -55,10 +56,21 @@ do
   then
     DIFF_TEAM+="${BASH_REMATCH[1]}\n"
   fi
+  if [[ "$file" =~ ^teams/([^/]*)/([^/]*)/ ]]
+  then
+    DIFF_PATHS+="${BASH_REMATCH[0]}\n"
+  fi
 done
 
+
 printf "${DIFF_TEAM}" | sort | uniq > DIFF_TEAM.txt
+printf "${DIFF_PATHS}" | sort | uniq > DIFF_PATHS.txt
+
 
 printf "\nDIFF_TEAM:\n"
 cat DIFF_TEAM.txt
+ls -la
+
+printf "\nDIFF_PATHS:\n"
+cat DIFF_PATHS.txt
 ls -la
