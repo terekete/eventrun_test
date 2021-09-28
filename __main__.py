@@ -214,7 +214,7 @@ def bucket(manifest: str):
             'dep': manifest['metadata']['dep'],
             'bds': manifest['metadata']['bds'],
         },
-        lifecycle_rules=lifecycle
+        lifecycle_rules=[lifecycle]
     )
 
 
