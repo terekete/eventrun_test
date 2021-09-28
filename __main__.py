@@ -199,8 +199,8 @@ def bucket(manifest: str):
         age=manifest['lifecycle_age_days']
     )
     lifecycle = storage.BucketLifecycleRuleArgs(
-        lifecycle_action,
-        lifecycle_condition
+        action=lifecycle_action,
+        condition=lifecycle_condition
     )
     retention = storage.BucketRetentionPolicyArgs(
         retention_period=manifest['retention_seconds']
