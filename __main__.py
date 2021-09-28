@@ -398,6 +398,10 @@ teams_root = '/workspace/teams/'
 manifests_set = list_manifests(teams_root)
 print('########### MANIFEST_SET')
 print(manifests_set)
+manifest_graph=[]
+for manifest in manifests_set:
+    print(manifest['dependencies'])
+    
 
 
 
