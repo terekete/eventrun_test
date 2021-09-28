@@ -6,12 +6,39 @@ import glob
 import uuid
 import datetime
 
+from collections import defaultdict, namedtuple
 from pulumi import resource
 from pulumi.automation import errors
 from pulumi.metadata import get_stack
 from pulumi_gcp import storage, bigquery, serviceaccount, projects, organizations
 from pulumi import automation as auto
 from cerberus import Validator
+
+
+results = namedtuple('results', ['sorted', 'cyclic'])
+def graph_sort(l: str):
+    n_heads = defaultdict(int)
+    tails = defaultdict(list)
+    heads = []
+    for h, t in l:
+        n_heads[t]+=1
+        print(n_heads)
+        if h in tails:
+            tails[h].append(t)
+            print(tails)
+        else:
+            tails[h] = [t]
+            heads.append(h)
+            print(heads)
+    ordered = [h for h in heads if h not in n_heads]
+    print(ordered)
+    for h in ordered:
+        for t in tails[h]:
+            n_heads[t]-=1
+            if not n_heads[t]:
+                ordered.append(t)
+    cyclic = [n for n, heads in n_heads.items() if heads]
+    return results(ordered, cyclic)
 
 
 def validate_dataset_manifest(manifest: str):
@@ -190,43 +217,43 @@ def validate_scheduled_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
-def bucket(manifest: str):
-    lifecycle_action = storage.BucketLifecycleRuleActionArgs(
-        type=manifest['lifecycle_type'],
-        storage_class=manifest['lifecycle_storage_class']
-    )
-    lifecycle_condition = storage.BucketLifecycleRuleConditionArgs(
-        age=manifest['lifecycle_age_days']
-    )
-    lifecycle = storage.BucketLifecycleRuleArgs(
-        action=lifecycle_action,
-        condition=lifecycle_condition
-    )
-    retention = storage.BucketRetentionPolicyArgs(
-        retention_period=manifest['retention_seconds']
-    )
-    storage.Bucket(
-        resource_name=manifest['bucket_name'],
-        retention_policy=retention,
-        location='northamerica-northeast1',
-        labels={
-            'cost_center': manifest['metadata']['cost_center'],
-            'dep': manifest['metadata']['dep'],
-            'bds': manifest['metadata']['bds'],
-        },
-        lifecycle_rules=[lifecycle]
-    )
+# def bucket(manifest: str):
+#     lifecycle_action = storage.BucketLifecycleRuleActionArgs(
+#         type=manifest['lifecycle_type'],
+#         storage_class=manifest['lifecycle_storage_class']
+#     )
+#     lifecycle_condition = storage.BucketLifecycleRuleConditionArgs(
+#         age=manifest['lifecycle_age_days']
+#     )
+#     lifecycle = storage.BucketLifecycleRuleArgs(
+#         action=lifecycle_action,
+#         condition=lifecycle_condition
+#     )
+#     retention = storage.BucketRetentionPolicyArgs(
+#         retention_period=manifest['retention_seconds']
+#     )
+#     storage.Bucket(
+#         resource_name=manifest['bucket_name'],
+#         retention_policy=retention,
+#         location='northamerica-northeast1',
+#         labels={
+#             'cost_center': manifest['metadata']['cost_center'],
+#             'dep': manifest['metadata']['dep'],
+#             'bds': manifest['metadata']['bds'],
+#         },
+#         lifecycle_rules=[lifecycle]
+#     )
 
 
-def validate_bucket_manifest(manifest: str):
-    schema = eval(open('./schemas/bucket.py').read())
-    validator = Validator(schema)
-    try:
-        if validator.validate(manifest, schema):
-            return
-    except:
-        print("##### Bucket Exception - " + manifest['bucket_name'])
-        raise auto.InlineSourceRuntimeError(validator.errors)
+# def validate_bucket_manifest(manifest: str):
+#     schema = eval(open('./schemas/bucket.py').read())
+#     validator = Validator(schema)
+#     try:
+#         if validator.validate(manifest, schema):
+#             return
+#     except:
+#         print("##### Bucket Exception - " + manifest['bucket_name'])
+#         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
 def create_sa(team: str):
@@ -270,6 +297,8 @@ def read_yml(path: str):
 
 def read_diff(path: str = '/workspace/DIFF_TEAM.txt'):
     with open(path, 'r') as file:
+        print('DIFF:')
+        print([item.strip() for item in file.readlines()])
         return [item.strip() for item in file.readlines()]
 
 
@@ -323,9 +352,9 @@ def pulumi_program():
     for query_path in scheduled_list:
         if re.search('/workspace/teams/(.+?)/+', query_path).group(1) == context['team_stack']:
             update(query_path, context)
-    for query_path in bucket_list:
-        if re.search('/workspace/teams/(.+?)/+', query_path).group(1) == context['team_stack']:
-            update(query_path, context)
+    # for query_path in bucket_list:
+    #     if re.search('/workspace/teams/(.+?)/+', query_path).group(1) == context['team_stack']:
+    #         update(query_path, context)
 
 
 def update(path:str, context=None):
@@ -344,9 +373,9 @@ def update(path:str, context=None):
         if yml and yml['kind'] == 'scheduled':
             validate_scheduled_manifest(yml)
             scheduled(yml)
-        if yml and yml['kind'] == 'bucket':
-            validate_bucket_manifest(yml)
-            bucket(yml)
+        # if yml and yml['kind'] == 'bucket':
+        #     validate_bucket_manifest(yml)
+        #     bucket(yml)
     except auto.errors.CommandError as e:
         raise e
 
@@ -381,8 +410,8 @@ for manifest in manifests_set:
         materialized_list.append(manifest)
     elif get_kind(manifest, 'scheduled'):
         scheduled_list.append(manifest)
-    elif get_kind(manifest, 'bucket'):
-        bucket_list.append(manifest)
+    # elif get_kind(manifest, 'bucket'):
+    #     bucket_list.append(manifest)
 
 
 teams_set = set([
