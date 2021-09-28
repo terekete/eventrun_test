@@ -191,6 +191,17 @@ def validate_scheduled_manifest(manifest: str):
 
 
 def bucket(manifest: str):
+    lifecycle_action = storage.BucketLifecycleRuleActionArgs(
+        type=manifest['lifecycle_type'],
+        storage_class=manifest['lifecycle_storage_class']
+    )
+    lifecycle_condition = storage.BucketLifecycleRuleConditionArgs(
+        age=manifest['lifecycle_age_days']
+    )
+    lifecycle = storage.BucketLifecycleRuleArgs(
+        lifecycle_action,
+        lifecycle_condition
+    )
     retention = storage.BucketRetentionPolicyArgs(
         retention_period=manifest['retention_seconds']
     )
@@ -203,8 +214,20 @@ def bucket(manifest: str):
             'cost_center': manifest['metadata']['cost_center'],
             'dep': manifest['metadata']['dep'],
             'bds': manifest['metadata']['bds'],
-        }
+        },
+        lifecycle_rules=lifecycle
     )
+
+
+def validate_bucket_manifest(manifest: str):
+    schema = eval(open('./schemas/bucket.py').read())
+    validator = Validator(schema)
+    try:
+        if validator.validate(manifest, schema):
+            return
+    except:
+        print("##### Bucket Exception - " + manifest['bucket_name'])
+        raise auto.InlineSourceRuntimeError(validator.errors)
 
 
 def create_sa(team: str):
@@ -301,6 +324,9 @@ def pulumi_program():
     for query_path in scheduled_list:
         if re.search('/workspace/teams/(.+?)/+', query_path).group(1) == context['team_stack']:
             update(query_path, context)
+    for query_path in bucket_list:
+        if re.search('/workspace/teams/(.+?)/+', query_path).group(1) == context['team_stack']:
+            update(query_path, context)
 
 
 def update(path:str, context=None):
@@ -319,6 +345,9 @@ def update(path:str, context=None):
         if yml and yml['kind'] == 'scheduled':
             validate_scheduled_manifest(yml)
             scheduled(yml)
+        if yml and yml['kind'] == 'bucket':
+            validate_bucket_manifest(yml)
+            bucket(yml)
     except auto.errors.CommandError as e:
         raise e
 
@@ -341,6 +370,7 @@ datasets_list = []
 tables_list = []
 scheduled_list = []
 materialized_list = []
+bucket_list = []
 
 
 for manifest in manifests_set:
@@ -352,6 +382,8 @@ for manifest in manifests_set:
         materialized_list.append(manifest)
     elif get_kind(manifest, 'scheduled'):
         scheduled_list.append(manifest)
+    elif get_kind(manifest, 'bucket'):
+        bucket_list.append(manifest)
 
 
 teams_set = set([
