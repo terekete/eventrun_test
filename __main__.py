@@ -400,10 +400,11 @@ print('########### MANIFEST_SET')
 print(manifests_set)
 manifest_graph=[]
 for manifest in manifests_set:
-    print('########### MANIFEST:')
-    print(manifest)
-    yml = read_yml(manifest)
-    print(yml['dependencies'])
+    if get_kind(manifest, 'table'):
+        print('########### MANIFEST:')
+        print(manifest)
+        yml = read_yml(manifest)
+        print(yml['dependencies'])
     
   
 
