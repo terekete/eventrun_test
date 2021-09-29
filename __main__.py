@@ -403,7 +403,8 @@ for manifest in manifests_set:
     if get_kind(manifest, 'dataset'):
         print('########### MANIFEST:')
         print(manifest)
-        print(manifest['dependencies'])
+        yml = read_yml(manifest)
+        print(yml['dependencies'])
     
   
 
