@@ -406,7 +406,7 @@ for manifest in manifests_set:
         yml = read_yml(manifest)
         depenedencies = [dep for dep in yml['dependencies']]
         for dependency in depenedencies:
-            print(dependency)
+            print(next(x for x in depenedencies if dependency in manifests_set))
     
   
 
