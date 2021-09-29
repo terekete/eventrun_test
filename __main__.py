@@ -401,7 +401,7 @@ print(manifests_set)
 manifest_graph=[]
 for manifest in manifests_set:
     if get_kind(manifest, 'scheduled'):
-        manifest_graph.append((manifest, manifest['dependencies']))
+        print((manifest, manifest['dependencies']))
 print(manifest_graph)
     
   
