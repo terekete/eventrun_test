@@ -414,7 +414,7 @@ print('########### MANIFEST_SET')
 print(manifests_set)
 dependent_map = [(dep_manifest, root_manifest)
     for dep_manifest in manifests_set
-    for root_manifest in manifest_set
+    for root_manifest in manifests_set
     if get_dependencies() and get_resource_name(root_manifest) == get_dependencies(dep_manifest)
 ]
 print(dependent_map)
