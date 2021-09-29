@@ -403,7 +403,8 @@ for manifest in manifests_set:
     if get_kind(manifest, 'scheduled'):
         print('########### MANIFEST:')
         print(manifest)
-        print(manifest['dependencies'])
+        dep = [dep for dep in manifest['dependencies']]
+        print(dep)
     
   
 
