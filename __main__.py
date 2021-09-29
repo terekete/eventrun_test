@@ -392,15 +392,32 @@ def get_kind(
             return manifest
 
 
+def get_resource_name(manifest: str):
+
+    with open(manifest) as file:
+        yml = yaml.safe_load(file)
+        if yml:
+            return yml['resource_name']
+
+
+def get_dependencies(manifest: str):
+
+    with open(manifest) as file:
+        yml = yaml.safe_load(file)
+        if yml:
+            return yml['dependencies']
 
 
 teams_root = '/workspace/teams/'
 manifests_set = list_manifests(teams_root)
 print('########### MANIFEST_SET')
 print(manifests_set)
-manifest_graph=[]
-tables = [(manifest, read_yml(manifest)['dependencies'][0]) for manifest in manifests_set if get_kind(manifest, 'table')]
-print(tables)
+dependent_map = [(dep_manifest, root_manifest)
+    for dep_manifest in manifests_set
+    for root_manifest in manifest_set
+    if get_dependencies() and get_resource_name(root_manifest) == get_dependencies(dep_manifest)
+]
+print(dependent_map)
     # if get_kind(manifest, 'table'):
     #     print('########### MANIFEST:')
     #     print(manifest)
