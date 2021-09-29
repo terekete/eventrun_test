@@ -382,7 +382,7 @@ def update(path:str, context=None):
         raise e
 
 
-def get_kind(
+def get_manifast_kind(
     manifest: str,
     kind: str):
 
@@ -392,20 +392,14 @@ def get_kind(
             return manifest
 
 
-def get_resource_name(manifest: str):
+def get_value(
+    manifest: str,
+    key: str):
 
     with open(manifest) as file:
         yml = yaml.safe_load(file)
         if yml:
-            return yml['resource_name']
-
-
-def get_dependencies(manifest: str):
-
-    with open(manifest) as file:
-        yml = yaml.safe_load(file)
-        if yml:
-            return yml['dependencies']
+            return yml[key]
 
 
 teams_root = '/workspace/teams/'
@@ -415,10 +409,10 @@ print(manifests_set)
 dependent_map = [(dep_manifest, root_manifest)
     for dep_manifest in manifests_set
     for root_manifest in manifests_set
-    if get_dependencies() and get_resource_name(root_manifest) == get_dependencies(dep_manifest)
+    if get_value(dep_manifest, 'dependencies') and get_value(root_manifest, 'resource_name') == get_value(dep_manifest, 'dependencies')
 ]
 print(dependent_map)
-    # if get_kind(manifest, 'table'):
+    # if get_manifast_kind(manifest, 'table'):
     #     print('########### MANIFEST:')
     #     print(manifest)
     #     yml = read_yml(manifest)
@@ -437,15 +431,15 @@ bucket_list = []
 
 
 for manifest in manifests_set:
-    if get_kind(manifest, 'dataset'):
+    if get_manifast_kind(manifest, 'dataset'):
         datasets_list.append(manifest)
-    elif get_kind(manifest, 'table'):
+    elif get_manifast_kind(manifest, 'table'):
         tables_list.append(manifest)
-    elif get_kind(manifest, 'materialized'):
+    elif get_manifast_kind(manifest, 'materialized'):
         materialized_list.append(manifest)
-    elif get_kind(manifest, 'scheduled'):
+    elif get_manifast_kind(manifest, 'scheduled'):
         scheduled_list.append(manifest)
-    # elif get_kind(manifest, 'bucket'):
+    # elif get_manifast_kind(manifest, 'bucket'):
     #     bucket_list.append(manifest)
 
 
