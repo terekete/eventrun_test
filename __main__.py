@@ -401,11 +401,10 @@ print(manifests_set)
 manifest_graph=[]
 for manifest in manifests_set:
     if get_kind(manifest, 'scheduled'):
-        print(manifest['dependencies'])
+        manifest_graph.append((manifest, manifest['dependencies']))
+print(manifest_graph)
     
-
-
-
+  
 
 datasets_list = []
 tables_list = []
