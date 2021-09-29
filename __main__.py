@@ -400,7 +400,7 @@ print('########### MANIFEST_SET')
 print(manifests_set)
 manifest_graph=[]
 for manifest in manifests_set:
-    if get_kind(manifest, 'scheduled'):
+    if get_kind(manifest, 'dataset'):
         print('########### MANIFEST:')
         print(manifest)
         # dep = [dep for dep in manifest['dependencies']]
