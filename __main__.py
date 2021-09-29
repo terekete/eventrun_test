@@ -406,12 +406,12 @@ teams_root = '/workspace/teams/'
 manifests_set = list_manifests(teams_root)
 print('########### MANIFEST_SET')
 print(manifests_set)
-for dep_manifest in manifests_set:
-    for root_manifest in manifests_set:
-        print(dep_manifest)
-        print(root_manifest)
-        print(get_value(dep_manifest, 'dependencies'))
-        print(get_value(root_manifest, 'resource_name'))
+# for dep_manifest in manifests_set:
+#     for root_manifest in manifests_set:
+#         print(dep_manifest)
+#         print(root_manifest)
+#         print(get_value(dep_manifest, 'dependencies'))
+#         print(get_value(root_manifest, 'resource_name'))
 
 dependent_map = [(dep_manifest, root_manifest)
     for dep_manifest in manifests_set
@@ -419,6 +419,7 @@ dependent_map = [(dep_manifest, root_manifest)
     if get_value(dep_manifest, 'dependencies') and get_value(root_manifest, 'resource_name') == get_value(dep_manifest, 'dependencies')
 ]
 print(dependent_map)
+
     # if get_manifast_kind(manifest, 'table'):
     #     print('########### MANIFEST:')
     #     print(manifest)
