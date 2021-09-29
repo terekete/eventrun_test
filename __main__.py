@@ -403,8 +403,7 @@ for manifest in manifests_set:
     if get_kind(manifest, 'dataset'):
         print('########### MANIFEST:')
         print(manifest)
-        # dep = [dep for dep in manifest['dependencies']]
-        # print(dep)
+        print(manifest['dependencies'])
     
   
 
