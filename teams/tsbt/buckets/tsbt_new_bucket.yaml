@@ -1,16 +1,16 @@
-version: v1
-kind: bucket
-metadata:
-  cost_center: "12"
-  dep: "12"
-  bds: "test_user"
-team: tsbt
-bucket_name: "tsbt-new-bucket"
-retention_seconds: 12000
-storage_class: 'STANDARD'
-lifecycle_type: 'Delete'
-lifecycle_storage_class:
-lifecycle_age_days:
+# version: v1
+# kind: bucket
+# metadata:
+#   cost_center: "12"
+#   dep: "12"
+#   bds: "test_user"
+# team: tsbt
+# bucket_name: "tsbt-new-bucket"
+# retention_seconds: 12000
+# storage_class: 'STANDARD'
+# lifecycle_type: 'Delete'
+# lifecycle_storage_class:
+# lifecycle_age_days:
 
 
 
