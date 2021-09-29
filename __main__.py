@@ -404,7 +404,9 @@ for manifest in manifests_set:
         print('########### MANIFEST:')
         print(manifest)
         yml = read_yml(manifest)
-        print(yml['dependencies'])
+        depenedencies = [dep for dep in manifest['dependencies']]
+        for dependency in depenedencies:
+            print(dependency)
     
   
 
