@@ -16,5 +16,5 @@ params:
   query: >
     select * from `eventrun.tsbt_new_dataset.tsbt_audit_run` limit 1
 dependencies:
-  - tsbt_new_dataseta
-  - tsbt_new_table
+  - tsbt_new_dataset
+  - tsbt_audit_run

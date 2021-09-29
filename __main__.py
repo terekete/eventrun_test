@@ -370,7 +370,7 @@ def update(path:str, context=None):
             validate_table_manifest(yml)
             table(yml)
         if yml and yml['kind'] == 'materialized':
-            validate_table_manifest(yml)
+            validate_materialized_manifest(yml)
             materialized(yml)
         if yml and yml['kind'] == 'scheduled':
             validate_scheduled_manifest(yml)
@@ -403,8 +403,8 @@ for manifest in manifests_set:
     if get_kind(manifest, 'scheduled'):
         print('########### MANIFEST:')
         print(manifest)
-        dep = [dep for dep in manifest['dependencies']]
-        print(dep)
+        # dep = [dep for dep in manifest['dependencies']]
+        # print(dep)
     
   
 
