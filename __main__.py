@@ -399,15 +399,17 @@ manifests_set = list_manifests(teams_root)
 print('########### MANIFEST_SET')
 print(manifests_set)
 manifest_graph=[]
-for manifest in manifests_set:
-    if get_kind(manifest, 'table'):
-        print('########### MANIFEST:')
-        print(manifest)
-        yml = read_yml(manifest)
-        depenedencies = [dep for dep in yml['dependencies']]
-        for dependency in depenedencies:
-            print(next(x for x in depenedencies if dependency in manifests_set))
-    
+tables = [read_yml(manifest) for manifest in manifests_set if get_kind(manifest, 'table')]
+print(tables)
+    # if get_kind(manifest, 'table'):
+    #     print('########### MANIFEST:')
+    #     print(manifest)
+    #     yml = read_yml(manifest)
+    #     depenedencies = [dep for dep in yml['dependencies']]
+    #     for dependency in depenedencies:
+    #         if 
+
+
   
 
 datasets_list = []
