@@ -408,10 +408,12 @@ print('########### MANIFEST_SET')
 print(manifests_set)
 for dep_manifest in manifests_set:
     for root_manifest in manifests_set:
-        print(dep_manifest)
-        print(root_manifest)
-        print('DEP: ' + get_value(dep_manifest, 'dependencies'))
-        print('RESOURCE: ' + get_value(root_manifest, 'resource_name'))
+        print('DEP PATH: ' + dep_manifest)
+        print('ROOT PATH: ' + root_manifest)
+        print('DEP: ')
+        print(get_value(dep_manifest, 'dependencies'))
+        print('RESOURCE: ')
+        print(get_value(root_manifest, 'resource_name'))
 
 # dependent_map = [(dep_manifest, root_manifest)
 #     for dep_manifest in manifests_set
