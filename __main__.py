@@ -338,18 +338,21 @@ def pulumi_program():
         'project': pulumi.get_project()
     }
 
-    for dataset_path in datasets_list:
-        if re.search('/workspace/teams/(.+?)/+', dataset_path).group(1) == context['team_stack']:
-            update(dataset_path, context)
-    for table_path in tables_list:
-        if re.search('/workspace/teams/(.+?)/+', table_path).group(1) == context['team_stack']:
-            update(table_path, context)
-    for query_path in materialized_list:
-        if re.search('/workspace/teams/(.+?)/+', query_path).group(1) == context['team_stack']:
-            update(query_path, context)
-    for query_path in scheduled_list:
-        if re.search('/workspace/teams/(.+?)/+', query_path).group(1) == context['team_stack']:
-            update(query_path, context)
+    for path in sorted_path:
+        update(path, context)
+
+    # for dataset_path in datasets_list:
+    #     if re.search('/workspace/teams/(.+?)/+', dataset_path).group(1) == context['team_stack']:
+    #         update(dataset_path, context)
+    # for table_path in tables_list:
+    #     if re.search('/workspace/teams/(.+?)/+', table_path).group(1) == context['team_stack']:
+    #         update(table_path, context)
+    # for query_path in materialized_list:
+    #     if re.search('/workspace/teams/(.+?)/+', query_path).group(1) == context['team_stack']:
+    #         update(query_path, context)
+    # for query_path in scheduled_list:
+    #     if re.search('/workspace/teams/(.+?)/+', query_path).group(1) == context['team_stack']:
+    #         update(query_path, context)
     # for query_path in bucket_list:
     #     if re.search('/workspace/teams/(.+?)/+', query_path).group(1) == context['team_stack']:
     #         update(query_path, context)
@@ -398,6 +401,7 @@ def get_value(
             return yml[key]
 
 
+
 teams_root = '/workspace/teams/'
 manifests_set = list_manifests(teams_root)
 dependent_map = list(set( [(root_manifest, dep_manifest)
@@ -410,27 +414,27 @@ dependent_map = list(set( [(root_manifest, dep_manifest)
 ]))
 
 
-sorted_yml = graph_sort(dependent_map).sorted
-sorted_yml.extend(list(set(manifests_set) - set(graph_sort(dependent_map).sorted)))
-print(sorted_yml)
+sorted_path = graph_sort(dependent_map).sorted
+sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependent_map).sorted)))
+print(sorted_path)
 
 
-datasets_list = []
-tables_list = []
-scheduled_list = []
-materialized_list = []
-bucket_list = []
+# datasets_list = []
+# tables_list = []
+# scheduled_list = []
+# materialized_list = []
+# bucket_list = []
 
 
-for manifest in sorted_yml:
-    if get_manifast_kind(manifest, 'dataset'):
-        datasets_list.append(manifest)
-    elif get_manifast_kind(manifest, 'table'):
-        tables_list.append(manifest)
-    elif get_manifast_kind(manifest, 'materialized'):
-        materialized_list.append(manifest)
-    elif get_manifast_kind(manifest, 'scheduled'):
-        scheduled_list.append(manifest)
+# for manifest in sorted_yml:
+#     if get_manifast_kind(manifest, 'dataset'):
+#         datasets_list.append(manifest)
+#     elif get_manifast_kind(manifest, 'table'):
+#         tables_list.append(manifest)
+#     elif get_manifast_kind(manifest, 'materialized'):
+#         materialized_list.append(manifest)
+#     elif get_manifast_kind(manifest, 'scheduled'):
+#         scheduled_list.append(manifest)
     # elif get_manifast_kind(manifest, 'bucket'):
     #     bucket_list.append(manifest)
 
