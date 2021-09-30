@@ -417,13 +417,13 @@ print(manifests_set)
 #         if get_value(dep_manifest, 'dependencies') and get_value(root_manifest, 'resource_name') and get_value(root_manifest, 'resource_name') in get_value(dep_manifest, 'dependencies'):
 #             print('MATCHED: %s' % ((root_manifest, dep_manifest),))
 
-dependent_map = [(root_manifest, dep_manifest)
+dependent_map =set( [(root_manifest, dep_manifest)
     for dep_manifest in manifests_set
     for root_manifest in manifests_set
     if get_value(dep_manifest, 'dependencies')
     and get_value(root_manifest, 'resource_name')
     and get_value(root_manifest, 'resource_name') in get_value(dep_manifest, 'dependencies')
-]
+])
 print(graph_sort(dependent_map))
 
     # if get_manifast_kind(manifest, 'table'):
