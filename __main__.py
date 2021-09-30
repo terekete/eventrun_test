@@ -423,6 +423,7 @@ dependent_map = list(set( [(root_manifest, dep_manifest)
     if get_value(dep_manifest, 'dependencies')
     and get_value(root_manifest, 'resource_name')
     and get_value(root_manifest, 'resource_name') in get_value(dep_manifest, 'dependencies')
+    and get_value(root_manifest, 'resource_name') != get_value(dep_manifest, 'dependencies')
 ]))
 print(dependent_map)
 
