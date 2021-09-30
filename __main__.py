@@ -424,7 +424,7 @@ dependent_map =set( [(root_manifest, dep_manifest)
     and get_value(root_manifest, 'resource_name')
     and get_value(root_manifest, 'resource_name') in get_value(dep_manifest, 'dependencies')
 ])
-print(graph_sort(dependent_map))
+print(dependent_map)
 
     # if get_manifast_kind(manifest, 'table'):
     #     print('########### MANIFEST:')
