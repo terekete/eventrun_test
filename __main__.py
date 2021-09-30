@@ -407,7 +407,8 @@ def get_value(
 
 teams_root = '/workspace/teams/'
 manifests_set = list_manifests(teams_root)
-dependent_map = list(set( [(root_manifest, dep_manifest)
+dependency_map = list(set([
+    (root_manifest, dep_manifest)
     for dep_manifest in manifests_set
     for root_manifest in manifests_set
     if get_value(dep_manifest, 'dependencies')
@@ -417,8 +418,8 @@ dependent_map = list(set( [(root_manifest, dep_manifest)
 ]))
 
 
-sorted_path = graph_sort(dependent_map).sorted
-sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependent_map).sorted)))
+sorted_path = graph_sort(dependency_map).sorted
+sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
 print(sorted_path)
 
 
