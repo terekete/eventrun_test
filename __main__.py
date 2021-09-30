@@ -337,9 +337,10 @@ def pulumi_program():
         #'sa': get_sa(pulumi.get_stack()),
         'project': pulumi.get_project()
     }
-
+    print('SORTED PATH: ')
+    print(sorted_path)
     for path in sorted_path:
-        print('PATH: ')
+        print('########## PATH: ')
         print(path)
         if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
             update(path, context)
