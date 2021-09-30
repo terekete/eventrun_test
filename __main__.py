@@ -22,16 +22,12 @@ def graph_sort(l: str):
     heads = []
     for h, t in l:
         n_heads[t]+=1
-        print(n_heads)
         if h in tails:
             tails[h].append(t)
-            print(tails)
         else:
             tails[h] = [t]
             heads.append(h)
-            print(heads)
     ordered = [h for h in heads if h not in n_heads]
-    print(ordered)
     for h in ordered:
         for t in tails[h]:
             n_heads[t]-=1
