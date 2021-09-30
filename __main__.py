@@ -430,6 +430,7 @@ sorted_yml = graph_sort(dependent_map).sorted
 delta_yml = list(set(manifests_set) - set(graph_sort(dependent_map).sorted))
 print(type(delta_yml))
 print(type(sorted_yml))
+print(sorted_yml.extend(delta_yml))
 
 
     # if get_manifast_kind(manifest, 'table'):
