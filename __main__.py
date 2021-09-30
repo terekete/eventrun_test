@@ -422,7 +422,7 @@ materialized_list = []
 bucket_list = []
 
 
-for manifest in manifests_set:
+for manifest in sorted_yml:
     if get_manifast_kind(manifest, 'dataset'):
         datasets_list.append(manifest)
     elif get_manifast_kind(manifest, 'table'):
