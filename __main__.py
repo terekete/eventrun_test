@@ -425,7 +425,8 @@ dependent_map = list(set( [(root_manifest, dep_manifest)
     and get_value(root_manifest, 'resource_name') in get_value(dep_manifest, 'dependencies')
     and root_manifest != dep_manifest
 ]))
-# print list(set(manifests_set) - set())
+
+print(list(set(manifests_set) - set(graph_sort(dependent_map).sorted)))
 print(graph_sort(dependent_map).sorted)
 
     # if get_manifast_kind(manifest, 'table'):
