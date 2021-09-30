@@ -400,19 +400,6 @@ def get_value(
 
 teams_root = '/workspace/teams/'
 manifests_set = list_manifests(teams_root)
-print('########### MANIFEST_SET')
-print(manifests_set)
-# for dep_manifest in manifests_set:
-#     for root_manifest in manifests_set:
-#         print('DEP PATH: ' + dep_manifest)
-#         print('ROOT PATH: ' + root_manifest)
-#         print('DEP: ')
-#         print(get_value(dep_manifest, 'dependencies'))
-#         print('RESOURCE: ')
-#         print(get_value(root_manifest, 'resource_name'))
-#         if get_value(dep_manifest, 'dependencies') and get_value(root_manifest, 'resource_name') and get_value(root_manifest, 'resource_name') in get_value(dep_manifest, 'dependencies'):
-#             print('MATCHED: %s' % ((root_manifest, dep_manifest),))
-
 dependent_map = list(set( [(root_manifest, dep_manifest)
     for dep_manifest in manifests_set
     for root_manifest in manifests_set
@@ -422,21 +409,11 @@ dependent_map = list(set( [(root_manifest, dep_manifest)
     and root_manifest != dep_manifest
 ]))
 
+
 sorted_yml = graph_sort(dependent_map).sorted
 sorted_yml.extend(list(set(manifests_set) - set(graph_sort(dependent_map).sorted)))
 print(sorted_yml)
 
-
-    # if get_manifast_kind(manifest, 'table'):
-    #     print('########### MANIFEST:')
-    #     print(manifest)
-    #     yml = read_yml(manifest)
-    #     depenedencies = [dep for dep in yml['dependencies']]
-    #     for dependency in depenedencies:
-    #         if 
-
-
-  
 
 datasets_list = []
 tables_list = []
