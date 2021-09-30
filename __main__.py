@@ -339,7 +339,8 @@ def pulumi_program():
     }
 
     for path in sorted_path:
-        update(path, context)
+        if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
+            update(path, context)
 
     # for dataset_path in datasets_list:
     #     if re.search('/workspace/teams/(.+?)/+', dataset_path).group(1) == context['team_stack']:
@@ -417,26 +418,6 @@ dependent_map = list(set( [(root_manifest, dep_manifest)
 sorted_path = graph_sort(dependent_map).sorted
 sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependent_map).sorted)))
 print(sorted_path)
-
-
-# datasets_list = []
-# tables_list = []
-# scheduled_list = []
-# materialized_list = []
-# bucket_list = []
-
-
-# for manifest in sorted_yml:
-#     if get_manifast_kind(manifest, 'dataset'):
-#         datasets_list.append(manifest)
-#     elif get_manifast_kind(manifest, 'table'):
-#         tables_list.append(manifest)
-#     elif get_manifast_kind(manifest, 'materialized'):
-#         materialized_list.append(manifest)
-#     elif get_manifast_kind(manifest, 'scheduled'):
-#         scheduled_list.append(manifest)
-    # elif get_manifast_kind(manifest, 'bucket'):
-    #     bucket_list.append(manifest)
 
 
 teams_set = set([
