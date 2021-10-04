@@ -248,7 +248,7 @@ def bucket(manifest: str):
     force_destroy=True,
     lifecycle_rules=[storage.BucketLifecycleRuleArgs(
         action=storage.BucketLifecycleRuleActionArgs(
-            type=manifest['lifecycle_type'],
+            type="Delete"
         ),
         condition=storage.BucketLifecycleRuleConditionArgs(
             age=manifest['lifecycle_age_days']
