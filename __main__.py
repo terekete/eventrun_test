@@ -332,6 +332,8 @@ def list_manifests(root: str):
 
 
 def pulumi_program():
+    sorted_path = graph_sort(dependency_map).sorted
+    sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     context = {
         'team_stack': pulumi.get_stack(),
         #'sa': get_sa(pulumi.get_stack()),
@@ -341,11 +343,11 @@ def pulumi_program():
     print('team_stack')
     print('SORTED PATH: ')
     print(sorted_path)
-    for path in sorted_path:
-        print('########## PATH: ')
-        print(path)
-        if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
-            update(path, context)
+    # for path in sorted_path:
+    #     print('########## PATH: ')
+    #     print(path)
+    #     if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
+    #         update(path, context)
 
 
     # for dataset_path in datasets_list:
@@ -420,11 +422,6 @@ dependency_map = list(set([
     and get_value(root_manifest, 'resource_name') in get_value(dep_manifest, 'dependencies')
     and root_manifest != dep_manifest
 ]))
-
-
-sorted_path = graph_sort(dependency_map).sorted
-sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
-print(sorted_path)
 
 
 teams_set = set([
