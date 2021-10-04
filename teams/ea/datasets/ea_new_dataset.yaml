@@ -1,0 +1,20 @@
+version: v1
+kind: dataset
+metadata:
+  cost_center: "1"
+  dep: "12"
+  bds: "test_user"
+team: ea
+description: "EA Test Dataset"
+resource_name: ea_new_dataset
+dataset_id: ea_new_dataset
+partition_expiration_ms:
+table_expiration_ms:
+friendly_name: ea_new_dataset
+dependencies:
+  - ea_new_dataset
+users:
+  readers:
+    - user:gates.mark@gmail.com
+  writers:
+    - user:gates.mark@gmail.com
