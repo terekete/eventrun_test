@@ -213,43 +213,43 @@ def validate_scheduled_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
-# def bucket(manifest: str):
-#     lifecycle_action = storage.BucketLifecycleRuleActionArgs(
-#         type=manifest['lifecycle_type'],
-#         storage_class=manifest['lifecycle_storage_class']
-#     )
-#     lifecycle_condition = storage.BucketLifecycleRuleConditionArgs(
-#         age=manifest['lifecycle_age_days']
-#     )
-#     lifecycle = storage.BucketLifecycleRuleArgs(
-#         action=lifecycle_action,
-#         condition=lifecycle_condition
-#     )
-#     retention = storage.BucketRetentionPolicyArgs(
-#         retention_period=manifest['retention_seconds']
-#     )
-#     storage.Bucket(
-#         resource_name=manifest['bucket_name'],
-#         retention_policy=retention,
-#         location='northamerica-northeast1',
-#         labels={
-#             'cost_center': manifest['metadata']['cost_center'],
-#             'dep': manifest['metadata']['dep'],
-#             'bds': manifest['metadata']['bds'],
-#         },
-#         lifecycle_rules=[lifecycle]
-#     )
+def bucket(manifest: str):
+    lifecycle_action = storage.BucketLifecycleRuleActionArgs(
+        type=manifest['lifecycle_type'],
+        storage_class=manifest['lifecycle_storage_class']
+    )
+    lifecycle_condition = storage.BucketLifecycleRuleConditionArgs(
+        age=manifest['lifecycle_age_days']
+    )
+    lifecycle = storage.BucketLifecycleRuleArgs(
+        action=lifecycle_action,
+        condition=lifecycle_condition
+    )
+    retention = storage.BucketRetentionPolicyArgs(
+        retention_period=manifest['retention_seconds']
+    )
+    storage.Bucket(
+        resource_name=manifest['bucket_name'],
+        retention_policy=retention,
+        location='northamerica-northeast1',
+        labels={
+            'cost_center': manifest['metadata']['cost_center'],
+            'dep': manifest['metadata']['dep'],
+            'bds': manifest['metadata']['bds'],
+        },
+        lifecycle_rules=[lifecycle]
+    )
 
 
-# def validate_bucket_manifest(manifest: str):
-#     schema = eval(open('./schemas/bucket.py').read())
-#     validator = Validator(schema)
-#     try:
-#         if validator.validate(manifest, schema):
-#             return
-#     except:
-#         print("##### Bucket Exception - " + manifest['bucket_name'])
-#         raise auto.InlineSourceRuntimeError(validator.errors)
+def validate_bucket_manifest(manifest: str):
+    schema = eval(open('./schemas/bucket.py').read())
+    validator = Validator(schema)
+    try:
+        if validator.validate(manifest, schema):
+            return
+    except:
+        print("##### Bucket Exception - " + manifest['bucket_name'])
+        raise auto.InlineSourceRuntimeError(validator.errors)
 
 
 def create_sa(team: str):
@@ -401,7 +401,6 @@ teams_set = set([
 
 teams_diff = read_diff()
 for team in teams_diff:
-    print('##################### TEAM: ' + team + ' ##################### ')
     stack = auto.create_or_select_stack(
         stack_name=team,
         project_name='eventrun',
@@ -409,6 +408,9 @@ for team in teams_diff:
         work_dir='/workspace')
     stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
     stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
+    print('##################### Refreshing State for Team: ' + team + ' #####################')
     stack.refresh(on_output=print)
+    print('##################### Preview Changes for Team: ' + team + ' #####################')
     stack.preview(on_output=print)
+    print('##################### Upsert Changes for Team: ' + team + ' #####################')
     stack.up(on_output=print)
