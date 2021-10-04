@@ -433,7 +433,7 @@ teams_set = set([
 
 teams_diff = read_diff()
 for team in teams_diff:
-    print('#####################')
+    print('##################### TEAM: ' + team)
     stack = auto.create_or_select_stack(
         stack_name=team,
         project_name='eventrun',
