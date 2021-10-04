@@ -407,11 +407,11 @@ def pulumi_program():
     print('team_stack')
     print('SORTED PATH: ')
     print(sorted_path)
-    # for path in sorted_path:
-    #     print('########## PATH: ')
-    #     print(path)
-    #     if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
-    #         update(path, context)
+    for path in sorted_path:
+        print('########## PATH: ')
+        print(path)
+        if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
+            update(path, context)
 
 
 
