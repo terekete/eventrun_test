@@ -331,25 +331,6 @@ def list_manifests(root: str):
     return yml_list
 
 
-def pulumi_program():
-    sorted_path = graph_sort(dependency_map).sorted
-    sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
-    context = {
-        'team_stack': pulumi.get_stack(),
-        #'sa': get_sa(pulumi.get_stack()),
-        'project': pulumi.get_project()
-    }
-    print('PROJECT: ' + context['project'])
-    print('team_stack')
-    print('SORTED PATH: ')
-    print(sorted_path)
-    # for path in sorted_path:
-    #     print('########## PATH: ')
-    #     print(path)
-    #     if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
-    #         update(path, context)
-
-
     # for dataset_path in datasets_list:
     #     if re.search('/workspace/teams/(.+?)/+', dataset_path).group(1) == context['team_stack']:
     #         update(dataset_path, context)
@@ -410,7 +391,6 @@ def get_value(
             return yml[key]
 
 
-
 teams_root = '/workspace/teams/'
 manifests_set = list_manifests(teams_root)
 dependency_map = list(set([
@@ -422,6 +402,26 @@ dependency_map = list(set([
     and get_value(root_manifest, 'resource_name') in get_value(dep_manifest, 'dependencies')
     and root_manifest != dep_manifest
 ]))
+
+
+def pulumi_program():
+    sorted_path = graph_sort(dependency_map).sorted
+    sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
+    context = {
+        'team_stack': pulumi.get_stack(),
+        #'sa': get_sa(pulumi.get_stack()),
+        'project': pulumi.get_project()
+    }
+    print('PROJECT: ' + context['project'])
+    print('team_stack')
+    print('SORTED PATH: ')
+    print(sorted_path)
+    # for path in sorted_path:
+    #     print('########## PATH: ')
+    #     print(path)
+    #     if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
+    #         update(path, context)
+
 
 
 teams_set = set([
