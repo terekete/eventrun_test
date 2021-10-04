@@ -10,7 +10,7 @@ retention_seconds: 12000
 storage_class: 'STANDARD'
 lifecycle_type: 'Delete'
 lifecycle_storage_class:
-lifecycle_age_days:
+lifecycle_age_days: 90
 dependencies:
 
 
