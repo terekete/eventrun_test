@@ -5,7 +5,7 @@ metadata:
   dep: "12"
   bds: "test_user"
 team: tsbt
-bucket_name: "tsbt-new-bucket"
+resource_name: "tsbt-new-bucket"
 retention_seconds: 12000
 storage_class: 'STANDARD'
 lifecycle_type: 'Delete'

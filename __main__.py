@@ -229,7 +229,8 @@ def bucket(manifest: str):
         retention_period=manifest['retention_seconds']
     )
     storage.Bucket(
-        resource_name=manifest['bucket_name'],
+        resource_name=manifest['resource_name'],
+        name=manifest['resource_name'],
         retention_policy=retention,
         location='northamerica-northeast1',
         labels={
