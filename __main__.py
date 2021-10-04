@@ -387,8 +387,6 @@ def pulumi_program():
         'project': pulumi.get_project()
     }
     for path in sorted_path:
-        print('########## PATH: ')
-        print(path)
         if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
             update(path, context)
 
@@ -402,10 +400,8 @@ teams_set = set([
 
 
 teams_diff = read_diff()
-print('################### TEAM DIFF: ')
-print(teams_diff)
 for team in teams_diff:
-    print('##################### TEAM: ' + team)
+    print('##################### TEAM: ' + team + ' ##################### ')
     stack = auto.create_or_select_stack(
         stack_name=team,
         project_name='eventrun',
