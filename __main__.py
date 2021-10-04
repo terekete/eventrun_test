@@ -322,23 +322,6 @@ def list_manifests(root: str):
     return yml_list
 
 
-    # for dataset_path in datasets_list:
-    #     if re.search('/workspace/teams/(.+?)/+', dataset_path).group(1) == context['team_stack']:
-    #         update(dataset_path, context)
-    # for table_path in tables_list:
-    #     if re.search('/workspace/teams/(.+?)/+', table_path).group(1) == context['team_stack']:
-    #         update(table_path, context)
-    # for query_path in materialized_list:
-    #     if re.search('/workspace/teams/(.+?)/+', query_path).group(1) == context['team_stack']:
-    #         update(query_path, context)
-    # for query_path in scheduled_list:
-    #     if re.search('/workspace/teams/(.+?)/+', query_path).group(1) == context['team_stack']:
-    #         update(query_path, context)
-    # for query_path in bucket_list:
-    #     if re.search('/workspace/teams/(.+?)/+', query_path).group(1) == context['team_stack']:
-    #         update(query_path, context)
-
-
 def update(path:str, context=None):
     yml = read_yml(path)
 
@@ -403,10 +386,6 @@ def pulumi_program():
         #'sa': get_sa(pulumi.get_stack()),
         'project': pulumi.get_project()
     }
-    print('PROJECT: ' + context['project'])
-    print('team_stack')
-    print('SORTED PATH: ')
-    print(sorted_path)
     for path in sorted_path:
         print('########## PATH: ')
         print(path)
@@ -434,6 +413,6 @@ for team in teams_diff:
         work_dir='/workspace')
     stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
     stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
-    # stack.refresh(on_output=print)
-    # stack.preview(on_output=print)
+    stack.refresh(on_output=print)
+    stack.preview(on_output=print)
     stack.up(on_output=print)
