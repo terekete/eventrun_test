@@ -243,14 +243,15 @@ def validate_scheduled_manifest(manifest: str):
 
 
 def bucket(manifest: str):
-    auto_expire = storage.Bucket("auto-expire",
+    storage.Bucket(
+    manifest['resource_name'],
     force_destroy=True,
     lifecycle_rules=[storage.BucketLifecycleRuleArgs(
         action=storage.BucketLifecycleRuleActionArgs(
-            type="Delete",
+            type=manifest['lifecycle_type'],
         ),
         condition=storage.BucketLifecycleRuleConditionArgs(
-            age=3,
+            age=manifest['lifecycle_age_days']
         ),
     )],
     location="northamerica-northeast1")
