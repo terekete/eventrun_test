@@ -337,6 +337,8 @@ def pulumi_program():
         #'sa': get_sa(pulumi.get_stack()),
         'project': pulumi.get_project()
     }
+    print('PROJECT: ' + context['project'])
+    print('team_stack')
     print('SORTED PATH: ')
     print(sorted_path)
     for path in sorted_path:
@@ -442,6 +444,6 @@ for team in teams_diff:
         work_dir='/workspace')
     stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
     stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
-    stack.refresh(on_output=print)
-    stack.preview(on_output=print)
+    # stack.refresh(on_output=print)
+    # stack.preview(on_output=print)
     stack.up(on_output=print)
