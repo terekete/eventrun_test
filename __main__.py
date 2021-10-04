@@ -213,33 +213,47 @@ def validate_scheduled_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
+# def bucket(manifest: str):
+#     lifecycle_action = storage.BucketLifecycleRuleActionArgs(
+#         type=manifest['lifecycle_type'],
+#         storage_class=manifest['lifecycle_storage_class']
+#     )
+#     lifecycle_condition = storage.BucketLifecycleRuleConditionArgs(
+#         age=manifest['lifecycle_age_days']
+#     )
+#     lifecycle = storage.BucketLifecycleRuleArgs(
+#         action=lifecycle_action,
+#         condition=lifecycle_condition
+#     )
+#     retention = storage.BucketRetentionPolicyArgs(
+#         retention_period=manifest['retention_seconds']
+#     )
+#     storage.Bucket(
+#         resource_name=manifest['resource_name'],
+#         name=manifest['resource_name'],
+#         retention_policy=retention,
+#         location='northamerica-northeast1',
+#         labels={
+#             'cost_center': manifest['metadata']['cost_center'],
+#             'dep': manifest['metadata']['dep'],
+#             'bds': manifest['metadata']['bds'],
+#         },
+#         lifecycle_rules=[lifecycle]
+#     )
+
+
 def bucket(manifest: str):
-    lifecycle_action = storage.BucketLifecycleRuleActionArgs(
-        type=manifest['lifecycle_type'],
-        storage_class=manifest['lifecycle_storage_class']
-    )
-    lifecycle_condition = storage.BucketLifecycleRuleConditionArgs(
-        age=manifest['lifecycle_age_days']
-    )
-    lifecycle = storage.BucketLifecycleRuleArgs(
-        action=lifecycle_action,
-        condition=lifecycle_condition
-    )
-    retention = storage.BucketRetentionPolicyArgs(
-        retention_period=manifest['retention_seconds']
-    )
-    storage.Bucket(
-        resource_name=manifest['resource_name'],
-        name=manifest['resource_name'],
-        retention_policy=retention,
-        location='northamerica-northeast1',
-        labels={
-            'cost_center': manifest['metadata']['cost_center'],
-            'dep': manifest['metadata']['dep'],
-            'bds': manifest['metadata']['bds'],
-        },
-        lifecycle_rules=[lifecycle]
-    )
+    auto_expire = storage.Bucket("auto-expire",
+    force_destroy=True,
+    lifecycle_rules=[storage.BucketLifecycleRuleArgs(
+        action=storage.BucketLifecycleRuleActionArgs(
+            type="Delete",
+        ),
+        condition=storage.BucketLifecycleRuleConditionArgs(
+            age=3,
+        ),
+    )],
+    location="northamerica-northeast1")
 
 
 def validate_bucket_manifest(manifest: str):
