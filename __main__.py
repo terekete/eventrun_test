@@ -291,13 +291,6 @@ def read_yml(path: str):
         raise e
 
 
-def read_diff(path: str = '/workspace/DIFF_TEAM.txt'):
-    with open(path, 'r') as file:
-        print('DIFF:')
-        print([item.strip() for item in file.readlines()])
-        return [item.strip() for item in file.readlines()]
-
-
 def list_manifest(root: str):
     yml_list = []
     for path, subdirs, files in os.walk(root):
@@ -317,8 +310,6 @@ def read_yml(path: str):
 
 def read_diff(path: str = '/workspace/DIFF_TEAM.txt'):
     with open(path, 'r') as file:
-        print('############### DIFF:')
-        print([item.strip() for item in file.readlines()])
         return [item.strip() for item in file.readlines()]
 
 
@@ -432,6 +423,8 @@ teams_set = set([
 
 
 teams_diff = read_diff()
+print('################### TEAM DIFF: ')
+print(teams_diff)
 for team in teams_diff:
     print('##################### TEAM: ' + team)
     stack = auto.create_or_select_stack(
