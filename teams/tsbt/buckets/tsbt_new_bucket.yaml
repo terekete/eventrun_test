@@ -11,6 +11,7 @@ storage_class: 'STANDARD'
 lifecycle_type: 'Delete'
 lifecycle_storage_class:
 lifecycle_age_days:
+dependencies:
 
 
 
