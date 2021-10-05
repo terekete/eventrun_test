@@ -245,6 +245,7 @@ def validate_scheduled_manifest(manifest: str):
 def bucket(manifest: str):
     storage.Bucket(
     manifest['resource_name'],
+    name=manifest['resource_name'],
     force_destroy=True,
     lifecycle_rules=[storage.BucketLifecycleRuleArgs(
         action=storage.BucketLifecycleRuleActionArgs(
