@@ -416,3 +416,9 @@ for team in teams_diff:
     stack.preview(on_output=print)
     print('##################### Upsert Changes for Team: ' + team + ' #####################')
     stack.up(on_output=print)
+
+
+import google.auth
+from google.cloud.devtools import cloudbuild_v1
+credentials, project_id = google.auth.default()
+client = cloudbuild_v1.services.cloud_build.CloudBuildClient()
