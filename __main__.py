@@ -382,6 +382,7 @@ def create_trigger(team: str):
 
 
 def pulumi_program():
+    create_trigger(team)
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     context = {
@@ -403,7 +404,6 @@ teams_set = set([
 
 teams_diff = read_diff()
 for team in teams_diff:
-    create_trigger(team)
     stack = auto.create_or_select_stack(
         stack_name=team,
         project_name='eventrun',
