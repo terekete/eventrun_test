@@ -372,15 +372,11 @@ dependency_map = list(set([
 
 def create_trigger(team: str):
     cloudbuild.Trigger(
-        "filename-trigger",
-        filename="cloudbuild.yaml",
-        substitutions={
-            "_BAZ": "qux",
-            "_FOO": "bar",
-        },
+        team + '-trigger',
+        filename='cloudbuild.yaml',
         trigger_template=cloudbuild.TriggerTriggerTemplateArgs(
-            branch_name="master",
-            repo_name="my-repo"
+            branch_name='master',
+            repo_name='my-repo'
         )
     )
 
