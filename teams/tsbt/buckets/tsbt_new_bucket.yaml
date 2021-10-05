@@ -9,51 +9,11 @@ resource_name: "tsbt-new-bucket"
 retention_seconds: 12000
 storage_class: 'STANDARD'
 lifecycle_type: 'Delete'
-lifecycle_storage_class:
 lifecycle_age_days: 90
 dependencies:
-
-
-
-
-
-# static_site = gcp.storage.Bucket("static-site",
-#     cors=[gcp.storage.BucketCorArgs(
-#         max_age_seconds=3600,
-#         methods=[
-#             "GET",
-#             "HEAD",
-#             "PUT",
-#             "POST",
-#             "DELETE",
-#         ],
-#         origins=["http://image-store.com"],
-#         response_headers=["*"],
-#     )],
-#     force_destroy=True,
-#     location="EU",
-#     uniform_bucket_level_access=True,
-#     website=gcp.storage.BucketWebsiteArgs(
-#         main_page_suffix="index.html",
-#         not_found_page="404.html",
-#     ))
-
-# def Bucket(resource_name: str,
-#            opts: Optional[ResourceOptions] = None,
-#            bucket_policy_only: Optional[bool] = None,
-#            cors: Optional[Sequence[BucketCorArgs]] = None,
-#            default_event_based_hold: Optional[bool] = None,
-#            encryption: Optional[BucketEncryptionArgs] = None,
-#            force_destroy: Optional[bool] = None,
-#            labels: Optional[Mapping[str, str]] = None,
-#            lifecycle_rules: Optional[Sequence[BucketLifecycleRuleArgs]] = None,
-#            location: Optional[str] = None,
-#            logging: Optional[BucketLoggingArgs] = None,
-#            name: Optional[str] = None,
-#            project: Optional[str] = None,
-#            requester_pays: Optional[bool] = None,
-#            retention_policy: Optional[BucketRetentionPolicyArgs] = None,
-#            storage_class: Optional[str] = None,
-#            uniform_bucket_level_access: Optional[bool] = None,
-#            versioning: Optional[BucketVersioningArgs] = None,
-#            website: Optional[BucketWebsiteArgs] = None)
+users:
+  readers:
+    - user:mark.gates@telus.com
+  writers:
+    - user:mark.gates@telus.com
+    - user:tereketeketitaka@gmail.com

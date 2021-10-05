@@ -64,5 +64,26 @@
         'required': False,
         'type': 'string',
         'nullable': True
+    },
+    'dependencies': {
+        'required': False,
+        'type': 'list',
+        'nullable': True
+    },
+    'users': {
+        'required': True,
+        'type': 'dict',
+        'schema': {
+            'readers': {
+                'required': True,
+                'type': 'list',
+                'nullable': True
+            },
+            'writers': {
+                'required': True,
+                'type': 'list',
+                'nullable': True
+            }
+        }
     }
 }
