@@ -7,6 +7,7 @@ RUN curl -L https://get.pulumi.com/ | bash
 RUN pip3 install --upgrade pulumi
 RUN pip3 install --upgrade pulumi-gcp
 RUN pip3 install --upgrade Cerberus
+RUN pip3 install --upgrade google-cloud-build
 
 ENV PULUMI_SKIP_UPDATE_CHECK=false
 ENV PATH=$PATH:/root/.pulumi/bin
