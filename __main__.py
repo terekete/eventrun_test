@@ -248,13 +248,19 @@ def bucket(manifest: str):
     force_destroy=True,
     lifecycle_rules=[storage.BucketLifecycleRuleArgs(
         action=storage.BucketLifecycleRuleActionArgs(
-            type="Delete"
+            type=manifest['lifecycle_type'],
+            storage_class=manifest['lifecycle_storage_class']
         ),
         condition=storage.BucketLifecycleRuleConditionArgs(
             age=manifest['lifecycle_age_days']
         ),
     )],
-    location="northamerica-northeast1")
+    location="northamerica-northeast1",
+    labels={
+        'cost_center': manifest['metadata']['cost_center'],
+        'dep': manifest['metadata']['dep'],
+        'bds': manifest['metadata']['bds'],
+    })
 
 
 def validate_bucket_manifest(manifest: str):
