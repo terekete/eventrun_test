@@ -10,7 +10,7 @@ from collections import defaultdict, namedtuple
 from pulumi import resource
 from pulumi.automation import errors
 from pulumi.metadata import get_stack
-from pulumi_gcp import storage, bigquery, serviceaccount, projects, organizations
+from pulumi_gcp import storage, bigquery, serviceaccount, projects, organizations, cloudbuild
 from pulumi import automation as auto
 from cerberus import Validator
 
@@ -187,7 +187,7 @@ def materialized(manifest: str):
 
 
 def scheduled(manifest: str, sa=None):
-    bigquery.DataTransferConfig(
+    scheduled = bigquery.DataTransferConfig(
         resource_name=manifest['resource_name'],
         display_name=manifest['display_name'],
         data_source_id='scheduled_query',
@@ -273,10 +273,6 @@ def scheduled_sa(team: str):
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
         role='roles/resourcemanager.projectIamAdmin')
     return sa
-
-
-def get_sa(team):
-    return set_iam_sa(create_sa(team))
 
 
 def read_yml(path: str):
@@ -374,6 +370,21 @@ dependency_map = list(set([
 ]))
 
 
+def create_trigger(team: str):
+    cloudbuild.Trigger(
+        "filename-trigger",
+        filename="cloudbuild.yaml",
+        substitutions={
+            "_BAZ": "qux",
+            "_FOO": "bar",
+        },
+        trigger_template=cloudbuild.TriggerTriggerTemplateArgs(
+            branch_name="master",
+            repo_name="my-repo"
+        )
+    )
+
+
 def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
@@ -387,7 +398,6 @@ def pulumi_program():
             update(path, context)
 
 
-
 teams_set = set([
     re.search('teams/(.+?)/+', team).group(1)
     for team in manifests_set
@@ -397,6 +407,7 @@ teams_set = set([
 
 teams_diff = read_diff()
 for team in teams_diff:
+    create_trigger(team)
     stack = auto.create_or_select_stack(
         stack_name=team,
         project_name='eventrun',
