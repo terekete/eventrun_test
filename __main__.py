@@ -213,37 +213,12 @@ def validate_scheduled_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
-# def bucket(manifest: str):
-#     lifecycle_action = storage.BucketLifecycleRuleActionArgs(
-#         type=manifest['lifecycle_type'],
-#         storage_class=manifest['lifecycle_storage_class']
-#     )
-#     lifecycle_condition = storage.BucketLifecycleRuleConditionArgs(
-#         age=manifest['lifecycle_age_days']
-#     )
-#     lifecycle = storage.BucketLifecycleRuleArgs(
-#         action=lifecycle_action,
-#         condition=lifecycle_condition
-#     )
-#     retention = storage.BucketRetentionPolicyArgs(
-#         retention_period=manifest['retention_seconds']
-#     )
-#     storage.Bucket(
-#         resource_name=manifest['resource_name'],
-#         name=manifest['resource_name'],
-#         retention_policy=retention,
-#         location='northamerica-northeast1',
-#         labels={
-#             'cost_center': manifest['metadata']['cost_center'],
-#             'dep': manifest['metadata']['dep'],
-#             'bds': manifest['metadata']['bds'],
-#         },
-#         lifecycle_rules=[lifecycle]
-#     )
-
-
 def bucket(manifest: str):
-    storage.Bucket(
+    validate_bucket_manifest(manifest)
+    readers = [reader for reader in manifest['users']['readers']]
+    writers = [writer for writer in manifest['users']['writers']]
+
+    bucket = storage.Bucket(
     manifest['resource_name'],
     name=manifest['resource_name'],
     force_destroy=True,
@@ -262,6 +237,16 @@ def bucket(manifest: str):
         'dep': manifest['metadata']['dep'],
         'bds': manifest['metadata']['bds'],
     })
+    readers = storage.BucketIAMBinding(
+        resource_name=manifest['resource_name'] + 'read_iam',
+        bucket=bucket.id,
+        role="roles/storage.objectViewer",
+        members=readers)
+    writers = storage.BucketIAMBinding(
+        resource_name=manifest['resource_name'] + 'write_iam',
+        bucket=bucket.id,
+        role="roles/storage.objectAdmin",
+        members=writers)
 
 
 def validate_bucket_manifest(manifest: str):
