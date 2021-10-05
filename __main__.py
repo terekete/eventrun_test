@@ -422,3 +422,4 @@ import google.auth
 from google.cloud.devtools import cloudbuild_v1
 credentials, project_id = google.auth.default()
 client = cloudbuild_v1.services.cloud_build.CloudBuildClient()
+build = cloudbuild_v1.Build()
