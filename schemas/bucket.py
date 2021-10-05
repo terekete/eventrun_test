@@ -55,11 +55,6 @@
         'type': 'string',
         'nullable': True
     },
-    'lifecycle_storage_class': {
-        'required': False,
-        'type': 'number',
-        'nullable': True
-    },
     'lifecycle_age_days': {
         'required': False,
         'type': 'string',
