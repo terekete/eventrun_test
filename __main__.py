@@ -425,3 +425,16 @@ client = cloudbuild_v1.services.cloud_build.CloudBuildClient()
 build = cloudbuild_v1.Build()
 print('BUILD')
 print(dir(build))
+build.steps = [
+    {
+        "name": "ubuntu",
+        "entrypoint": "bash",
+        "args": ["-c", "echo hello world"]
+    }
+]
+operation = client.create_build(project_id=project_id, build=build)
+print("IN PROGRESS:")
+print(operation.metadata)
+result = operation.result()
+print("RESULT:", result.status)
+
