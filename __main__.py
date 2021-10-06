@@ -380,22 +380,6 @@ def create_trigger(team: str):
 
 def pulumi_program():
     # create_trigger(team)
-    sa = service_account(team)
-    key = serviceaccount.Key(
-        team + '-key',
-        service_account_id=sa.name,
-        public_key_type="TYPE_X509_PEM_FILE")
-    key = key.private_key.apply(lambda x: base64.b64decode(x))
-    bucket = storage.Bucket(
-    team + '_auth',
-    name=team + '_auth',
-    force_destroy=True,
-    location="northamerica-northeast1")
-    obj = storage.BucketObject(
-        team + "-key",
-        name='/auth/key.json',
-        bucket=bucket.id,
-        content=key.apply(lambda x: str(x))
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     context = {
@@ -403,6 +387,22 @@ def pulumi_program():
         #'sa': get_sa(pulumi.get_stack()),
         'project': pulumi.get_project()
     }
+    sa = service_account(context['team_stack'])
+    key = serviceaccount.Key(
+        context['team_stack'] + '-key',
+        service_account_id=sa.name,
+        public_key_type="TYPE_X509_PEM_FILE")
+    key = key.private_key.apply(lambda x: base64.b64decode(x))
+    bucket = storage.Bucket(
+        context['team_stack'] + '_auth',
+        name=context['team_stack'] + '_auth',
+        force_destroy=True,
+        location="northamerica-northeast1")
+    obj = storage.BucketObject(
+        context['team_stack'] + "-key",
+        name='/auth/key.json',
+        bucket=bucket.id,
+        content=key.apply(lambda x: str(x))
     for path in sorted_path:
         if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
             update(path, context)
