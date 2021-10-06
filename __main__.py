@@ -391,11 +391,11 @@ def pulumi_program():
     name=team + '_auth',
     force_destroy=True,
     location="northamerica-northeast1")
-    # key = storage.BucketObject(
-    #     team + "-key",
-    #     name='/auth/key.json',
-    #     bucket=bucket.id,
-    #     content=base64.b64encode(mykey.private_key))
+    obj = storage.BucketObject(
+        team + "-key",
+        name='/auth/key.json',
+        bucket=bucket.id,
+        content=key.private_key.apply(lambda x: base64.b64encode(x)))
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     context = {
