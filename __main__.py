@@ -216,8 +216,8 @@ def validate_scheduled_manifest(manifest: str):
 
 def bucket(manifest: str):
     validate_bucket_manifest(manifest)
-    readers = [reader for reader in manifest['users']['readers'] if reader]
-    writers = [writer for writer in manifest['users']['writers'] if writer]
+    readers = [reader for reader in manifest['users']['readers'] or []]
+    writers = [writer for writer in manifest['users']['writers'] or []]
 
     bucket = storage.Bucket(
     manifest['resource_name'],
