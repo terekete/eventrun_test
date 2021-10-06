@@ -381,21 +381,21 @@ def create_trigger(team: str):
 def pulumi_program():
     # create_trigger(team)
     sa = service_account(team)
-    mykey = serviceaccount.Key(
+    key = serviceaccount.Key(
         team + '-key',
         service_account_id=sa.name,
         public_key_type="TYPE_X509_PEM_FILE")
-    print(dir(mykey))
+    print(key.private_key)
     bucket = storage.Bucket(
     team + '_auth',
     name=team + '_auth',
     force_destroy=True,
     location="northamerica-northeast1")
-    key = storage.BucketObject(
-        team + "-key",
-        name='/auth/key.json',
-        bucket=bucket.id,
-        content=base64.b64encode(mykey.private_key))
+    # key = storage.BucketObject(
+    #     team + "-key",
+    #     name='/auth/key.json',
+    #     bucket=bucket.id,
+    #     content=base64.b64encode(mykey.private_key))
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     context = {
