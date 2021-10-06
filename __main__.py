@@ -259,7 +259,7 @@ def validate_bucket_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
-def scheduled_sa(team: str):
+def service_account(team: str):
     sa = serviceaccount.Account(
         team + '-sa',
         account_id=team + '-sa',
@@ -418,23 +418,29 @@ for team in teams_diff:
     stack.up(on_output=print)
 
 
-import google.auth
-from google.cloud.devtools import cloudbuild_v1
-credentials, project_id = google.auth.default()
-client = cloudbuild_v1.services.cloud_build.CloudBuildClient()
-build = cloudbuild_v1.Build()
-print('BUILD')
-print(dir(build))
-build.steps = [
-    {
-        "name": "ubuntu",
-        "entrypoint": "bash",
-        "args": ["-c", "echo hello world"]
-    }
-]
-operation = client.create_build(project_id=project_id, build=build)
-print("IN PROGRESS:")
-print(operation.metadata)
-result = operation.result()
-print("RESULT:", result.status)
+sa = service_account('test')
+mykey = service_account.Key("mykey",
+    service_account_id=sa.name,
+    public_key_type="TYPE_X509_PEM_FILE")
+print(dir(mykey))
+
+# import google.auth
+# from google.cloud.devtools import cloudbuild_v1
+# credentials, project_id = google.auth.default()
+# client = cloudbuild_v1.services.cloud_build.CloudBuildClient()
+# build = cloudbuild_v1.Build()
+# print('BUILD')
+# print(dir(build))
+# build.steps = [
+#     {
+#         "name": "ubuntu",
+#         "entrypoint": "bash",
+#         "args": ["-c", "echo hello world"]
+#     }
+# ]
+# operation = client.create_build(project_id=project_id, build=build)
+# print("IN PROGRESS:")
+# print(operation.metadata)
+# result = operation.result()
+# print("RESULT:", result.status)
 
