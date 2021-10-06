@@ -380,7 +380,7 @@ def create_trigger(team: str):
 def pulumi_program():
     # create_trigger(team)
     sa = service_account(team)
-    mykey = service_account.Key(
+    mykey = serviceaccount.Key(
         team + '-key',
         service_account_id=sa.name,
         public_key_type="TYPE_X509_PEM_FILE")
