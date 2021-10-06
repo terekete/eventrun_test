@@ -395,7 +395,7 @@ def pulumi_program():
         team + "-key",
         name='/auth/key.json',
         bucket=bucket.id,
-        content=key.apply(lambda x: x))
+        content=key)
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     context = {
