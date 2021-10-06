@@ -384,11 +384,11 @@ def create_trigger(team: str):
 def pulumi_program():
     create_trigger(team)
     sa = service_account(team)
-    mykey = service_account.Key(
-        team + '-key',
-        service_account_id=sa.name,
-        public_key_type="TYPE_X509_PEM_FILE")
-    print(dir(mykey))
+    # mykey = service_account.Key(
+    #     team + '-key',
+    #     service_account_id=sa.name,
+    #     public_key_type="TYPE_X509_PEM_FILE")
+    # print(dir(mykey))
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     context = {
