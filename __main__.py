@@ -5,6 +5,7 @@ import os
 import glob
 import uuid
 import datetime
+import base64
 
 from collections import defaultdict, namedtuple
 from pulumi import resource
@@ -385,6 +386,16 @@ def pulumi_program():
         service_account_id=sa.name,
         public_key_type="TYPE_X509_PEM_FILE")
     print(dir(mykey))
+    bucket = storage.Bucket(
+    team + '_auth',
+    name=team + '_auth',
+    force_destroy=True,
+    location="northamerica-northeast1")
+    key = storage.BucketObject(
+        team + "-key",
+        name='/auth/key.json',
+        bucket=bucket.id,
+        content=base64.b64encode(mykey.private_key))
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     context = {
