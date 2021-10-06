@@ -385,7 +385,7 @@ def pulumi_program():
         team + '-key',
         service_account_id=sa.name,
         public_key_type="TYPE_X509_PEM_FILE")
-    key = key.private_key.apply(lambda x: base64.b64encode(x))
+    key = key.private_key.apply(lambda x: base64.b64decode(x))
     print(key)
     bucket = storage.Bucket(
     team + '_auth',
