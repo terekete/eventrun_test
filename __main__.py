@@ -220,8 +220,8 @@ def bucket(manifest: str):
     writers = [writer for writer in manifest['users']['writers'] or []]
 
     bucket = storage.Bucket(
-    manifest['resource_name'],
-    name=manifest['resource_name'],
+    manifest['bucket_name'],
+    name=manifest['bucket_name'],
     force_destroy=True,
     lifecycle_rules=[storage.BucketLifecycleRuleArgs(
         action=storage.BucketLifecycleRuleActionArgs(
