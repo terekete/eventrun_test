@@ -3,10 +3,10 @@ kind: bucket
 metadata:
   cost_center: "12"
   dep: "12"
-  bds: "test_user"
+  bds: "gates.mark@gmail.com"
 team: tsbt
-resource_name: "tsbt-new-bucket"
-retention_seconds: 12000
+resource_name: "team_auth"
+retention_seconds:
 storage_class: 'STANDARD'
 lifecycle_type: 'Delete'
 lifecycle_age_days: 90
