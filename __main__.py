@@ -102,8 +102,8 @@ def validate_table_manifest(manifest: str):
 def table(manifest: str):
 
     validate_table_manifest(manifest)
-    readers = [reader for reader in manifest['users']['readers']]
-    writers = [writer for writer in manifest['users']['writers']]
+    readers = [reader for reader in manifest['users']['readers'] or []]
+    writers = [writer for writer in manifest['users']['writers'] or []]
 
     tbl = bigquery.Table(
         resource_name=manifest['resource_name'] + '_table',
@@ -149,8 +149,8 @@ def validate_materialized_manifest(manifest: str):
 def materialized(manifest: str):
 
     validate_materialized_manifest(manifest)
-    readers = [reader for reader in manifest['users']['readers']]
-    writers = [writer for writer in manifest['users']['writers']]
+    readers = [reader for reader in manifest['users']['readers'] or []]
+    writers = [writer for writer in manifest['users']['writers'] or []]
 
     mat = bigquery.TableMaterializedViewArgs(
         query=manifest['params']['query'],
