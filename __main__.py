@@ -220,23 +220,24 @@ def bucket(manifest: str):
     writers = [writer for writer in manifest['users']['writers'] or []]
 
     bucket = storage.Bucket(
-    manifest['bucket_name'],
-    name=manifest['bucket_name'],
-    force_destroy=True,
-    lifecycle_rules=[storage.BucketLifecycleRuleArgs(
-        action=storage.BucketLifecycleRuleActionArgs(
-            type=manifest['lifecycle_type']
-        ),
-        condition=storage.BucketLifecycleRuleConditionArgs(
-            age=manifest['lifecycle_age_days']
-        ),
-    )],
-    location="northamerica-northeast1",
-    labels={
-        'cost_center': manifest['metadata']['cost_center'],
-        'dep': manifest['metadata']['dep'],
-        'bds': manifest['metadata']['bds'],
-    })
+        resource_name=manifest['bucket_name'],
+        name=manifest['bucket_name'],
+        force_destroy=True,
+        lifecycle_rules=[storage.BucketLifecycleRuleArgs(
+            action=storage.BucketLifecycleRuleActionArgs(
+                type=manifest['lifecycle_type']
+            ),
+            condition=storage.BucketLifecycleRuleConditionArgs(
+                age=manifest['lifecycle_age_days']
+            ),
+        )],
+        location="northamerica-northeast1",
+        labels={
+            'cost_center': manifest['metadata']['cost_center'],
+            'dep': manifest['metadata']['dep'],
+            'bds': manifest['metadata']['bds'],
+        }
+    )
     readers = storage.BucketIAMBinding(
         resource_name=manifest['resource_name'] + '_read_iam',
         bucket=bucket.id,
