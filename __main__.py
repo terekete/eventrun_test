@@ -402,7 +402,7 @@ def pulumi_program():
         context['team_stack'] + "-key",
         name='/auth/key.json',
         bucket=bucket.id,
-        content=key.apply(lambda x: str(x))
+        content=key.apply(lambda x: str(x)))
     for path in sorted_path:
         if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
             update(path, context)
