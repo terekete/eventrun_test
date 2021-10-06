@@ -382,8 +382,8 @@ def create_trigger(team: str):
 
 
 def pulumi_program():
-    create_trigger(team)
-    sa = service_account(team)
+    # create_trigger(team)
+    # sa = service_account(team)
     # mykey = service_account.Key(
     #     team + '-key',
     #     service_account_id=sa.name,
