@@ -216,8 +216,8 @@ def validate_scheduled_manifest(manifest: str):
 
 def bucket(manifest: str):
     validate_bucket_manifest(manifest)
-    readers = [reader for reader in manifest['users']['readers']]
-    writers = [writer for writer in manifest['users']['writers']]
+    readers = [reader for reader in manifest['users']['readers'] if reader]
+    writers = [writer for writer in manifest['users']['writers'] if writer]
 
     bucket = storage.Bucket(
     manifest['resource_name'],
@@ -392,13 +392,13 @@ def pulumi_program():
         service_account_id=sa.name,
         public_key_type="TYPE_X509_PEM_FILE")
     bucket = storage.Bucket(
-        context['team_stack'] + '_auth',
-        name=context['team_stack'] + '_auth',
+        context['team_stack'] + '_keys',
+        name=context['team_stack'] + '-keys',
         force_destroy=True,
         location="northamerica-northeast1")
     obj = storage.BucketObject(
         context['team_stack'] + '_key',
-        name='auth/key.json',
+        name='cb/key.json',
         bucket=bucket.id,
         content=key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
     for path in sorted_path:
