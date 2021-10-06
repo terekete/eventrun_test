@@ -261,9 +261,9 @@ def validate_bucket_manifest(manifest: str):
 
 def service_account(team: str):
     sa = serviceaccount.Account(
-        team + '-sa',
-        account_id=team + '-sa',
-        display_name=team + '-sa - service account')
+        team + '-service-account',
+        account_id=team + '-service-account',
+        display_name=team + '- service account')
     iam = projects.IAMBinding(
         team + '-bq-admin-iam',
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
