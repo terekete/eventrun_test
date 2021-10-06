@@ -386,17 +386,16 @@ def pulumi_program():
         service_account_id=sa.name,
         public_key_type="TYPE_X509_PEM_FILE")
     key = key.private_key.apply(lambda x: base64.b64decode(x))
-    key.apply(lambda x: print(x))
     bucket = storage.Bucket(
     team + '_auth',
     name=team + '_auth',
     force_destroy=True,
     location="northamerica-northeast1")
-    # obj = storage.BucketObject(
-    #     team + "-key",
-    #     name='/auth/key.json',
-    #     bucket=bucket.id,
-    #     content=key.private_key.apply(lambda x: base64.b64encode(x)))
+    obj = storage.BucketObject(
+        team + "-key",
+        name='/auth/key.json',
+        bucket=bucket.id,
+        content=key.apply(lambda x: x))
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     context = {
