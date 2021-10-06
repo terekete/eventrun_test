@@ -327,9 +327,9 @@ def update(path:str, context=None):
         if yml and yml['kind'] == 'materialized':
             validate_materialized_manifest(yml)
             materialized(yml)
-        if yml and yml['kind'] == 'scheduled':
-            validate_scheduled_manifest(yml)
-            scheduled(yml)
+        # if yml and yml['kind'] == 'scheduled':
+        #     validate_scheduled_manifest(yml)
+        #     scheduled(yml)
         if yml and yml['kind'] == 'bucket':
             validate_bucket_manifest(yml)
             bucket(yml)
@@ -383,7 +383,7 @@ def create_trigger(team: str):
 
 def pulumi_program():
     create_trigger(team)
-    #sa = service_account(team)
+    sa = service_account(team)
     # mykey = service_account.Key(
     #     team + '-key',
     #     service_account_id=sa.name,
