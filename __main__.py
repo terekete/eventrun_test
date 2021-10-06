@@ -264,10 +264,10 @@ def service_account(team: str):
         team + '-service-account',
         account_id=team + '-service-account',
         display_name=team + ' - service account')
-    iam = projects.IAMBinding(
-        team + '-bq-admin-iam',
-        members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
-        role='roles/bigquery.admin')
+    # iam = projects.IAMBinding(
+    #     team + '-bq-admin-iam',
+    #     members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
+    #     role='roles/bigquery.admin')
     # iam = projects.IAMBinding(
     #     team + '-project-admin-iam',
     #     members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
