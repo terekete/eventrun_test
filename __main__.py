@@ -6,7 +6,9 @@ import glob
 import uuid
 import datetime
 import base64
+import google.auth
 
+from google.cloud.devtools import cloudbuild_v1
 from collections import defaultdict, namedtuple
 from pulumi import resource
 from pulumi.automation import errors
@@ -357,6 +359,18 @@ def get_value(
             return yml[key]
 
 
+def create_trigger(team: str, sa=None):
+    cloudbuild.Trigger(
+        team + '-trigger',
+        filename='team-build.yaml',
+        trigger_template=cloudbuild.TriggerTriggerTemplateArgs(
+            branch_name='master',
+            repo_name='github.com/terekete/eventrun_test',
+            service_account=sa.email
+        )
+    )
+
+
 teams_root = '/workspace/teams/'
 manifests_set = list_manifests(teams_root)
 dependency_map = list(set([
@@ -385,15 +399,16 @@ def team_auth(team: str, path: str = 'team_auth'):
 
 
 def pulumi_program():
-    # create_trigger(team)
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     sa = team_auth(team)
+    create_trigger(team, sa)
     context = {
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project(),
         'sa': sa
     }
+    
     for path in sorted_path:
         if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
             update(path, context)
@@ -422,26 +437,26 @@ for team in teams_diff:
     stack.up(on_output=print)
 
 
+# import google.auth
+# from google.cloud.devtools import cloudbuild_v1
+# credentials, project_id = google.auth.default()
+# client = cloudbuild_v1.services.cloud_build.CloudBuildClient()
+# build = cloudbuild_v1.Build()
+# print('BUILD')
+# print(dir(build))
+# build.steps = [
+#     {
+#         "name": "gcr.io/cloud-builders/gcloud",
+#         "entrypoint": "bash",
+#         "args": ["-c", "ls -la"]
+#     }
+# ]
+# operation = client.create_build(project_id=project_id, build=build)
+# print("IN PROGRESS:")
+# print(operation.metadata)
+# result = operation.result()
+# print("RESULT:", result.status)
 
-import google.auth
-from google.cloud.devtools import cloudbuild_v1
-credentials, project_id = google.auth.default()
-client = cloudbuild_v1.services.cloud_build.CloudBuildClient()
-build = cloudbuild_v1.Build()
-print('BUILD')
-print(dir(build))
-build.steps = [
-    {
-        "name": "gcr.io/cloud-builders/gcloud",
-        "entrypoint": "bash",
-        "args": ["-c", "ls -la"]
-    }
-]
-operation = client.create_build(project_id=project_id, build=build)
-print("IN PROGRESS:")
-print(operation.metadata)
-result = operation.result()
-print("RESULT:", result.status)
 
 # - name: 'gcr.io/cloud-builders/gcloud'
 #     id: 'get-key'
