@@ -327,9 +327,9 @@ def update(path:str, context=None):
         if yml and yml['kind'] == 'materialized':
             validate_materialized_manifest(yml)
             materialized(yml)
-        if yml and yml['kind'] == 'scheduled':
-            validate_scheduled_manifest(yml)
-            scheduled(yml, context['sa'])
+        # if yml and yml['kind'] == 'scheduled':
+        #     validate_scheduled_manifest(yml)
+        #     scheduled(yml, context['sa'])
         if yml and yml['kind'] == 'bucket':
             validate_bucket_manifest(yml)
             bucket(yml)
