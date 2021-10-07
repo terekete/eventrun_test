@@ -390,21 +390,21 @@ def pulumi_program():
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project()
     }
-    # sa = service_account(context['team_stack'])
-    # key = serviceaccount.Key(
-    #     context['team_stack'] + '_key',
-    #     service_account_id=sa.name,
-    #     public_key_type="TYPE_X509_PEM_FILE")
+    sa = service_account(context['team_stack'])
+    key = serviceaccount.Key(
+        context['team_stack'] + '_key',
+        service_account_id=sa.name,
+        public_key_type="TYPE_X509_PEM_FILE")
     # bucket = storage.Bucket(
     #     context['team_stack'] + '_keys',
     #     name=context['team_stack'] + '-keys',
     #     force_destroy=True,
     #     location="northamerica-northeast1")
-    # obj = storage.BucketObject(
-    #     context['team_stack'] + '_key',
-    #     name='cb/key.json',
-    #     bucket=bucket.id,
-    #     content=key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
+    obj = storage.BucketObject(
+        context['team_stack'] + '_key',
+        name=context['team_stack'] + '/key.json',
+        bucket='team_auth',
+        content=key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
     for path in sorted_path:
         if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
             update(path, context)
