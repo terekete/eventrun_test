@@ -366,7 +366,7 @@ def create_trigger(team: str, sa=None):
         trigger_template=cloudbuild.TriggerTriggerTemplateArgs(
             branch_name='master',
             repo_name='github.com/terekete/eventrun_test',
-            service_account=sa.email
+            service_account=sa.id
         )
     )
 
@@ -408,7 +408,6 @@ def pulumi_program():
         'project': pulumi.get_project(),
         'sa': sa
     }
-    
     for path in sorted_path:
         if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
             update(path, context)
