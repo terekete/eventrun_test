@@ -220,33 +220,30 @@ def bucket(manifest: str):
     writers = [writer for writer in manifest['users']['writers'] or []]
 
     bucket = storage.Bucket(
-        manifest['bucket_name'],
-        name=manifest['bucket_name'],
-        force_destroy=True,
-        lifecycle_rules=[
-            storage.BucketLifecycleRuleArgs(
-                action=storage.BucketLifecycleRuleActionArgs(
-                    type=manifest['lifecycle_type']
-                ),
-                condition=storage.BucketLifecycleRuleConditionArgs(
-                    age=manifest['lifecycle_age_days']
-                ),
-            )
-        ],
-        location="northamerica-northeast1",
-        labels={
-            'cost_center': manifest['metadata']['cost_center'],
-            'dep': manifest['metadata']['dep'],
-            'bds': manifest['metadata']['bds'],
-        }
-    )
+    manifest['resource_name'],
+    name=manifest['resource_name'],
+    force_destroy=True,
+    lifecycle_rules=[storage.BucketLifecycleRuleArgs(
+        action=storage.BucketLifecycleRuleActionArgs(
+            type=manifest['lifecycle_type']
+        ),
+        condition=storage.BucketLifecycleRuleConditionArgs(
+            age=manifest['lifecycle_age_days']
+        ),
+    )],
+    location="northamerica-northeast1",
+    labels={
+        'cost_center': manifest['metadata']['cost_center'],
+        'dep': manifest['metadata']['dep'],
+        'bds': manifest['metadata']['bds'],
+    })
     readers = storage.BucketIAMBinding(
-        resource_name=manifest['bucket_name'] + '_read_iam',
+        resource_name=manifest['resource_name'] + '_read_iam',
         bucket=bucket.id,
         role="roles/storage.objectViewer",
         members=readers)
     writers = storage.BucketIAMBinding(
-        resource_name=manifest['bucket_name'] + '_write_iam',
+        resource_name=manifest['resource_name'] + '_write_iam',
         bucket=bucket.id,
         role="roles/storage.objectAdmin",
         members=writers)
@@ -330,9 +327,9 @@ def update(path:str, context=None):
         # if yml and yml['kind'] == 'scheduled':
         #     validate_scheduled_manifest(yml)
         #     scheduled(yml)
-        # if yml and yml['kind'] == 'bucket':
-        #     validate_bucket_manifest(yml)
-        #     bucket(yml)
+        if yml and yml['kind'] == 'bucket':
+            validate_bucket_manifest(yml)
+            bucket(yml)
     except auto.errors.CommandError as e:
         raise e
 
