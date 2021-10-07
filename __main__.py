@@ -272,7 +272,6 @@ def service_account(team: str):
         team + '-bq-admin-iam',
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
         role='roles/bigquery.admin')
-    sa.email.apply(lambda email: print(f"serviceAccount:{email}"))
     return sa
 
 
@@ -328,9 +327,9 @@ def update(path:str, context=None):
         if yml and yml['kind'] == 'materialized':
             validate_materialized_manifest(yml)
             materialized(yml)
-        # if yml and yml['kind'] == 'scheduled':
-        #     validate_scheduled_manifest(yml)
-        #     scheduled(yml, context['sa'])
+        if yml and yml['kind'] == 'scheduled':
+            validate_scheduled_manifest(yml)
+            scheduled(yml, sa=context['sa'])
         if yml and yml['kind'] == 'bucket':
             validate_bucket_manifest(yml)
             bucket(yml)
@@ -435,23 +434,23 @@ for team in teams_diff:
 
 
 
-# import google.auth
-# from google.cloud.devtools import cloudbuild_v1
-# credentials, project_id = google.auth.default()
-# client = cloudbuild_v1.services.cloud_build.CloudBuildClient()
-# build = cloudbuild_v1.Build()
-# print('BUILD')
-# print(dir(build))
-# build.steps = [
-#     {
-#         "name": "ubuntu",
-#         "entrypoint": "bash",
-#         "args": ["-c", "echo hello world"]
-#     }
-# ]
-# operation = client.create_build(project_id=project_id, build=build)
-# print("IN PROGRESS:")
-# print(operation.metadata)
-# result = operation.result()
-# print("RESULT:", result.status)
+import google.auth
+from google.cloud.devtools import cloudbuild_v1
+credentials, project_id = google.auth.default()
+client = cloudbuild_v1.services.cloud_build.CloudBuildClient()
+build = cloudbuild_v1.Build()
+print('BUILD')
+print(dir(build))
+build.steps = [
+    {
+        "name": "ubuntu",
+        "entrypoint": "bash",
+        "args": ["-c", "echo hello world"]
+    }
+]
+operation = client.create_build(project_id=project_id, build=build)
+print("IN PROGRESS:")
+print(operation.metadata)
+result = operation.result()
+print("RESULT:", result.status)
 
