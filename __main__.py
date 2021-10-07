@@ -399,12 +399,12 @@ def pulumi_program():
     # create_trigger(team)
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
-
+    sa = team_auth(team)
     context = {
         'team_stack': pulumi.get_stack(),
-        'project': pulumi.get_project()
+        'project': pulumi.get_project(),
+        'sa': sa
     }
-    sa = team_auth(team)
     for path in sorted_path:
         if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
             update(path, context)
