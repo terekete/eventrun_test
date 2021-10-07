@@ -203,8 +203,8 @@ def scheduled(manifest: str, sa=None):
             'destination_table_name_template': manifest['params']['destination_table_name'],
             'write_disposition': manifest['params']['write_disposition'],
             'query': manifest['params']['query']
-        },
-        service_account_name=sa.email)
+        })
+        # service_account_name=sa.email)
 
 
 def validate_scheduled_manifest(manifest: str):
@@ -276,11 +276,6 @@ def service_account(team: str):
         team + '-bq-admin-iam',
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
         role='roles/bigquery.admin')
-    # iam = projects.IAMBinding(
-    #     team + '-bq-job-user-iam',
-    #     members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
-    #     role='roles/bigquery.jobUser')
-    print(sa.email.apply(lambda email: f"serviceAccount:{email}"))
     return sa
 
 
