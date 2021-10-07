@@ -102,8 +102,8 @@ def validate_table_manifest(manifest: str):
 def table(manifest: str):
 
     validate_table_manifest(manifest)
-    readers = [reader for reader in manifest['users']['readers']]
-    writers = [writer for writer in manifest['users']['writers']]
+    readers = [reader for reader in manifest['users']['readers'] or []]
+    writers = [writer for writer in manifest['users']['writers'] or []]
 
     tbl = bigquery.Table(
         resource_name=manifest['resource_name'] + '_table',
@@ -119,20 +119,22 @@ def table(manifest: str):
         },
         schema=manifest['schema']
     )
-    readers = bigquery.IamBinding(
-        resource_name=manifest['resource_name'] + '_read_iam',
-        dataset_id=tbl.dataset_id,
-        table_id=tbl.table_id,
-        role='roles/bigquery.dataViewer',
-        members=readers
-    )
-    writers = bigquery.IamBinding(
-        resource_name=manifest['resource_name'] + '_write_iam',
-        dataset_id=tbl.dataset_id,
-        table_id=tbl.table_id,
-        role='roles/bigquery.dataEditor',
-        members=writers
-    )
+    if readers:
+        bigquery.IamBinding(
+            resource_name=manifest['resource_name'] + '_read_iam',
+            dataset_id=tbl.dataset_id,
+            table_id=tbl.table_id,
+            role='roles/bigquery.dataViewer',
+            members=readers
+        )
+    if writers:
+        bigquery.IamBinding(
+            resource_name=manifest['resource_name'] + '_write_iam',
+            dataset_id=tbl.dataset_id,
+            table_id=tbl.table_id,
+            role='roles/bigquery.dataEditor',
+            members=writers
+        )
 
 
 def validate_materialized_manifest(manifest: str):
@@ -149,8 +151,8 @@ def validate_materialized_manifest(manifest: str):
 def materialized(manifest: str):
 
     validate_materialized_manifest(manifest)
-    readers = [reader for reader in manifest['users']['readers']]
-    writers = [writer for writer in manifest['users']['writers']]
+    readers = [reader for reader in manifest['users']['readers'] or []]
+    writers = [writer for writer in manifest['users']['writers'] or []]
 
     mat = bigquery.TableMaterializedViewArgs(
         query=manifest['params']['query'],
@@ -171,20 +173,22 @@ def materialized(manifest: str):
         },
         materialized_view=mat
     )
-    readers = bigquery.IamBinding(
-        resource_name=manifest['resource_name'] + '_read_iam',
-        dataset_id=tbl.dataset_id,
-        table_id=tbl.table_id,
-        role='roles/bigquery.dataViewer',
-        members=readers
-    )
-    writers = bigquery.IamBinding(
-        resource_name=manifest['resource_name'] + '_write_iam',
-        dataset_id=tbl.dataset_id,
-        table_id=tbl.table_id,
-        role='roles/bigquery.dataEditor',
-        members=writers
-    )
+    if readers:
+        bigquery.IamBinding(
+            resource_name=manifest['resource_name'] + '_read_iam',
+            dataset_id=tbl.dataset_id,
+            table_id=tbl.table_id,
+            role='roles/bigquery.dataViewer',
+            members=readers
+        )
+    if writers:
+        bigquery.IamBinding(
+            resource_name=manifest['resource_name'] + '_write_iam',
+            dataset_id=tbl.dataset_id,
+            table_id=tbl.table_id,
+            role='roles/bigquery.dataEditor',
+            members=writers
+        )
 
 
 def scheduled(manifest: str, sa=None):
@@ -327,9 +331,9 @@ def update(path:str, context=None):
         if yml and yml['kind'] == 'materialized':
             validate_materialized_manifest(yml)
             materialized(yml)
-        # if yml and yml['kind'] == 'scheduled':
-        #     validate_scheduled_manifest(yml)
-        #     scheduled(yml, context['sa'])
+        if yml and yml['kind'] == 'scheduled':
+            validate_scheduled_manifest(yml)
+            scheduled(yml, context['sa'])
         if yml and yml['kind'] == 'bucket':
             validate_bucket_manifest(yml)
             bucket(yml)
