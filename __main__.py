@@ -220,8 +220,8 @@ def bucket(manifest: str):
     writers = [writer for writer in manifest['users']['writers'] or []]
 
     bucket = storage.Bucket(
-        resource_name=manifest['bucket_name'] + '_bucket',
-        name=manifest['bucket_name'],
+        resource_name=manifest['resource_name'] + '_bucket',
+        name=manifest['resource_name'],
         force_destroy=True,
         lifecycle_rules=[storage.BucketLifecycleRuleArgs(
             action=storage.BucketLifecycleRuleActionArgs(
@@ -239,12 +239,12 @@ def bucket(manifest: str):
         }
     )
     readers = storage.BucketIAMBinding(
-        resource_name=manifest['bucket_name'] + '_read_iam',
+        resource_name=manifest['resource_name'] + '_read_iam',
         bucket=bucket.id,
         role="roles/storage.objectViewer",
         members=readers)
     writers = storage.BucketIAMBinding(
-        resource_name=manifest['bucket_name'] + '_write_iam',
+        resource_name=manifest['resource_name'] + '_write_iam',
         bucket=bucket.id,
         role="roles/storage.objectAdmin",
         members=writers)

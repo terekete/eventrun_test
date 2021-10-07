@@ -5,7 +5,7 @@ metadata:
   dep: '12'
   bds: 'gates.mark@gmail.com'
 team: tsbt
-bucket_name: 'team-auth'
+resource_name: 'team-auth'
 retention_seconds: 120000
 storage_class: 'STANDARD'
 lifecycle_type: 'Delete'
