@@ -220,30 +220,31 @@ def bucket(manifest: str):
     writers = [writer for writer in manifest['users']['writers'] or []]
 
     bucket = storage.Bucket(
-    resource_name=manifest['resource_name'] + '_bucket',
-    name=manifest['resource_name'],
-    force_destroy=True,
-    lifecycle_rules=[storage.BucketLifecycleRuleArgs(
-        action=storage.BucketLifecycleRuleActionArgs(
-            type=manifest['lifecycle_type']
-        ),
-        condition=storage.BucketLifecycleRuleConditionArgs(
-            age=manifest['lifecycle_age_days']
-        ),
-    )],
-    location="northamerica-northeast1",
-    labels={
-        'cost_center': manifest['metadata']['cost_center'],
-        'dep': manifest['metadata']['dep'],
-        'bds': manifest['metadata']['bds'],
-    })
+        resource_name=manifest['bucket_name'] + '_bucket',
+        name=manifest['bucket_name'],
+        force_destroy=True,
+        lifecycle_rules=[storage.BucketLifecycleRuleArgs(
+            action=storage.BucketLifecycleRuleActionArgs(
+                type=manifest['lifecycle_type']
+            ),
+            condition=storage.BucketLifecycleRuleConditionArgs(
+                age=manifest['lifecycle_age_days']
+            ),
+        )],
+        location="northamerica-northeast1",
+        labels={
+            'cost_center': manifest['metadata']['cost_center'],
+            'dep': manifest['metadata']['dep'],
+            'bds': manifest['metadata']['bds'],
+        }
+    )
     readers = storage.BucketIAMBinding(
-        resource_name=manifest['resource_name'] + '_read_iam',
+        resource_name=manifest['bucket_name'] + '_read_iam',
         bucket=bucket.id,
         role="roles/storage.objectViewer",
         members=readers)
     writers = storage.BucketIAMBinding(
-        resource_name=manifest['resource_name'] + '_write_iam',
+        resource_name=manifest['bucket_name'] + '_write_iam',
         bucket=bucket.id,
         role="roles/storage.objectAdmin",
         members=writers)
