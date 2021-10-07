@@ -272,7 +272,7 @@ def service_account(team: str):
         team + '-bq-admin-iam',
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
         role='roles/bigquery.admin')
-    print(sa.email.apply(lambda email: f"serviceAccount:{email}"))
+    sa.email.apply(lambda email: print(f"serviceAccount:{email}"))
     return sa
 
 
