@@ -400,14 +400,14 @@ def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     sa = team_auth(team)
-    context = {
-        'team_stack': pulumi.get_stack(),
-        'project': pulumi.get_project(),
-        'sa': sa
-    }
-    for path in sorted_path:
-        if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
-            update(path, context)
+    # context = {
+    #     'team_stack': pulumi.get_stack(),
+    #     'project': pulumi.get_project(),
+    #     'sa': sa
+    # }
+    # for path in sorted_path:
+    #     if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
+    #         update(path, context)
 
 
 teams_set = set([
@@ -434,9 +434,13 @@ for team in teams_diff:
 
 
 
-import google.auth
 from google.cloud.devtools import cloudbuild_v1
-credentials, project_id = google.auth.default()
+# credentials, project_id = google.auth.default()
+from google.oauth2 import service_account
+credentials = service_account.Credentials.from_service_account_file('gs/path/to/key.json')
+
+scoped_credentials = credentials.with_scopes(
+    ['https://www.googleapis.com/auth/cloud-platform'])
 client = cloudbuild_v1.services.cloud_build.CloudBuildClient()
 build = cloudbuild_v1.Build()
 print('BUILD')
