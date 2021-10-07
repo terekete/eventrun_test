@@ -363,7 +363,7 @@ def create_trigger(team: str, sa=None):
     cloudbuild.Trigger(
         team + '-trigger',
         filename='team-build.yaml',
-        # service_account=sa.id,
+        service_account=sa.id,
         trigger_template=cloudbuild.TriggerTriggerTemplateArgs(
             branch_name='master',
             repo_name='github.com/terekete/eventrun_test'
