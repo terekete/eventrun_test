@@ -276,6 +276,10 @@ def service_account(team: str):
         team + '-bq-admin-iam',
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
         role='roles/bigquery.admin')
+    iam = projects.IAMBinding(
+        team + '-bq-job-user-iam',
+        members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
+        role='roles/bigquery.jobUser')
     return sa
 
 
@@ -333,7 +337,7 @@ def update(path:str, context=None):
             materialized(yml)
         if yml and yml['kind'] == 'scheduled':
             validate_scheduled_manifest(yml)
-            scheduled(yml, context['sa'])
+            scheduled(yml, sa=context['sa'])
         if yml and yml['kind'] == 'bucket':
             validate_bucket_manifest(yml)
             bucket(yml)
@@ -403,11 +407,10 @@ def pulumi_program():
     # create_trigger(team)
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
-    sa = team_auth(team)
     context = {
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project(),
-        'sa': sa
+        'sa': team_auth(team)
     }
     for path in sorted_path:
         if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
