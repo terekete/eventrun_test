@@ -239,13 +239,13 @@ def bucket(manifest: str):
         }
     )
     if readers:
-        readers = storage.BucketIAMBinding(
+        storage.BucketIAMBinding(
             resource_name=manifest['resource_name'] + '_read_iam',
             bucket=bucket.id,
             role="roles/storage.objectViewer",
             members=readers)
     if writers:
-        writers = storage.BucketIAMBinding(
+        storage.BucketIAMBinding(
             resource_name=manifest['resource_name'] + '_write_iam',
             bucket=bucket.id,
             role="roles/storage.objectAdmin",
