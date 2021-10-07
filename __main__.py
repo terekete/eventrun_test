@@ -454,3 +454,14 @@ print(operation.metadata)
 result = operation.result()
 print("RESULT:", result.status)
 
+# - name: 'gcr.io/cloud-builders/gcloud'
+#     id: 'get-key'
+#     entrypoint: 'bash'
+#     dir: .
+#     args:
+#     - '-c'
+#     - |
+#       gcloud secrets versions access latest --secret="github" --project="eventrun" > /root/.ssh/id_rsa
+#     volumes:
+#     - name: 'ssh'
+#       path: /root/.ssh
