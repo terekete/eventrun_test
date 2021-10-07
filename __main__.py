@@ -370,17 +370,6 @@ dependency_map = list(set([
 ]))
 
 
-def create_trigger(team: str):
-    cloudbuild.Trigger(
-        team + '-trigger',
-        filename='team-build.yaml',
-        trigger_template=cloudbuild.TriggerTriggerTemplateArgs(
-            branch_name='master',
-            repo_name='my-repo'
-        )
-    )
-
-
 def team_auth(team: str, path: str = 'team_auth'):
     sa = service_account(team)
     key = serviceaccount.Key(
@@ -443,7 +432,7 @@ print('BUILD')
 print(dir(build))
 build.steps = [
     {
-        "name": "ubuntu",
+        "name": "gcr.io/cloud-builders/gcloud",
         "entrypoint": "bash",
         "args": ["-c", "echo hello world"]
     }
