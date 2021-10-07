@@ -1,9 +1,9 @@
 version: v1
 kind: bucket
 metadata:
-  cost_center: '12'
-  dep: '12'
-  bds: 'gates.mark@gmail.com'
+  cost_center: "1"
+  dep: "12"
+  bds: "test_user"
 team: tsbt
 resource_name: 'team_auth'
 retention_seconds: 120000
