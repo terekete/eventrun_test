@@ -440,7 +440,6 @@ for team in teams_diff:
     stack.up(on_output=print)
 
 
-
 # import google.auth
 # from google.cloud.devtools import cloudbuild_v1
 # credentials, project_id = google.auth.default()
