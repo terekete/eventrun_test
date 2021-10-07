@@ -238,16 +238,18 @@ def bucket(manifest: str):
             'bds': manifest['metadata']['bds'],
         }
     )
-    readers = storage.BucketIAMBinding(
-        resource_name=manifest['resource_name'] + '_read_iam',
-        bucket=bucket.id,
-        role="roles/storage.objectViewer",
-        members=readers)
-    writers = storage.BucketIAMBinding(
-        resource_name=manifest['resource_name'] + '_write_iam',
-        bucket=bucket.id,
-        role="roles/storage.objectAdmin",
-        members=writers)
+    if readers:
+        readers = storage.BucketIAMBinding(
+            resource_name=manifest['resource_name'] + '_read_iam',
+            bucket=bucket.id,
+            role="roles/storage.objectViewer",
+            members=readers)
+    if writers:
+        writers = storage.BucketIAMBinding(
+            resource_name=manifest['resource_name'] + '_write_iam',
+            bucket=bucket.id,
+            role="roles/storage.objectAdmin",
+            members=writers)
 
 
 def validate_bucket_manifest(manifest: str):
