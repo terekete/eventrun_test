@@ -396,14 +396,8 @@ def team_key(team: str, path: str = 'team_auth'):
         name=team + '/key.json',
         bucket=path,
         content=key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
-    #key = key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8'))
+    pulumi.export('team_key', key)
     return obj
-
-
-def write_to_file(arn):
-    f = open("arn.txt", "a")
-    f.write(arn)
-    f.close()
 
 
 def pulumi_program():
@@ -415,8 +409,7 @@ def pulumi_program():
     from google.oauth2 import service_account
     print(type(obj.content))
     print(dir(obj.content))
-    json = obj.content.apply(lambda x: write_to_file(arn=x))
-    print(json)
+    print(team_key)
     # credentials, project_id = service_account.Credentials.from_service_account_info(json_key)
     # scope = credentials.with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
     # client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
