@@ -395,14 +395,15 @@ def team_auth(team: str, path: str = 'team_auth'):
         name=team + '/key.json',
         bucket=path,
         content=key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
-    return sa
+    return key
 
 
 def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
-    sa = team_auth(team)
-    
+    key = team_auth(team)
+    from google.oauth2 import service_account as sa
+    credentials = sa.Credentials.from_service_account_info(key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
     # context = {
     #     'team_stack': pulumi.get_stack(),
     #     'project': pulumi.get_project(),
