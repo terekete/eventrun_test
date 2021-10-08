@@ -409,22 +409,23 @@ def pulumi_program():
     import json
     from google.oauth2 import service_account
     json_key = key.private_key.apply(lambda x: base64.b64decode(x))
-    credentials, project_id = service_account.Credentials.from_service_account_info(json_key)
-    scope = credentials.with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
-    client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
-    build = cloudbuild_v1.Build()
-    build.steps = [
-    {
-        "name": "gcr.io/cloud-builders/gcloud",
-        "entrypoint": "bash",
-        "args": ["-c", "ls -la"]
-    }]
-    operation = client.create_build(project_id=project_id, build=build)
-    result = operation.result()
-    context = {
-        'team_stack': pulumi.get_stack(),
-        'project': pulumi.get_project()
-    }
+    print(json_key)
+    # credentials, project_id = service_account.Credentials.from_service_account_info(json_key)
+    # scope = credentials.with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
+    # client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
+    # build = cloudbuild_v1.Build()
+    # build.steps = [
+    # {
+    #     "name": "gcr.io/cloud-builders/gcloud",
+    #     "entrypoint": "bash",
+    #     "args": ["-c", "ls -la"]
+    # }]
+    # operation = client.create_build(project_id=project_id, build=build)
+    # result = operation.result()
+    # context = {
+    #     'team_stack': pulumi.get_stack(),
+    #     'project': pulumi.get_project()
+    # }
     for path in sorted_path:
         if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
             update(path, context)
