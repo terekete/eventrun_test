@@ -409,9 +409,9 @@ def pulumi_program():
     from google.oauth2 import service_account
     # json_key = key.private_key.apply(lambda x: print(f"{base64.b64decode(x)}"))
     json_key = key.apply(lambda x: f"{x}")
-    print(type(json_key))
-    print(dir(json_key))
-    print(json_key)
+    print(type(json_key.future))
+    print(dir(json_key.future))
+    print(json_key.future)
     credentials, project_id = service_account.Credentials.from_service_account_info(json_key)
     # scope = credentials.with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
     # client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
