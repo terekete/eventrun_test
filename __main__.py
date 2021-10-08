@@ -406,14 +406,12 @@ def pulumi_program():
     key = team_key(team)
     import google.auth
     from google.auth import impersonated_credentials
-    source_credentials, project_id = google.auth.default()
-    target_scopes = ['https://www.googleapis.com/auth/cloud-platform']
-    target_credentials = impersonated_credentials.Credentials(
-        source_credentials=source_credentials,
-        target_principal='tsbt-service-account@eventrun.iam.gserviceaccount.com',
-        target_scopes=target_scopes,
-        lifetime=500)
-    client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=target_credentials)
+    import json
+    from google.oauth2 import service_account
+    json_key = json.loads(key.private_key)
+    credentials, project_id = service_account.Credentials.from_service_account_info(json_key)
+    scope = credentials.with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
+    client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
     build = cloudbuild_v1.Build()
     build.steps = [
     {
