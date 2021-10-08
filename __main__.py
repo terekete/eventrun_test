@@ -403,7 +403,16 @@ def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     key = team_key(team)
-    credentials = osa.Credentials.from_service_account_info(key.private_key.apply(lambda x: json.loads(base64.b64decode(x).decode('utf-8'))))
+    import google.auth
+    from google.auth import impersonated_credentials
+    source_credentials, project = google.auth.default()
+    target_scopes = ['https://www.googleapis.com/auth/devstorage.read_only']
+    target_credentials = impersonated_credentials.Credentials(
+        source_credentials=source_credentials,
+        target_principal='tsbt-service-account@eventrun.iam.gserviceaccount.com',
+        target_scopes=target_scopes,
+        lifetime=500)
+    # credentials = osa.Credentials.from_service_account_info(key.private_key.apply(lambda x: json.loads(base64.b64decode(x))))
     context = {
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project()
