@@ -422,10 +422,10 @@ def pulumi_program():
     # }]
     # operation = client.create_build(project_id=project_id, build=build)
     # result = operation.result()
-    # context = {
-    #     'team_stack': pulumi.get_stack(),
-    #     'project': pulumi.get_project()
-    # }
+    context = {
+        'team_stack': pulumi.get_stack(),
+        'project': pulumi.get_project()
+    }
     for path in sorted_path:
         if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
             update(path, context)
