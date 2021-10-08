@@ -406,7 +406,7 @@ def pulumi_program():
     import google.auth
     from google.auth import impersonated_credentials
     source_credentials, project = google.auth.default()
-    target_scopes = ['https://www.googleapis.com/auth/devstorage.read_only']
+    target_scopes = ['https://www.googleapis.com/auth/cloud-platform']
     target_credentials = impersonated_credentials.Credentials(
         source_credentials=source_credentials,
         target_principal='tsbt-service-account@eventrun.iam.gserviceaccount.com',
