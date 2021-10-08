@@ -6,9 +6,9 @@ import glob
 import uuid
 import datetime
 import base64
-import google.oauth2 import service_account as osa
 import json
 
+from google.oauth2 import service_account as osa
 from collections import defaultdict, namedtuple
 from pulumi import resource
 from pulumi.automation import errors
