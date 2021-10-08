@@ -5,7 +5,10 @@ import os
 import glob
 import uuid
 import datetime
+import base64
+import json
 
+from google.oauth2 import service_account as osa
 from collections import defaultdict, namedtuple
 from pulumi import resource
 from pulumi.automation import errors
@@ -199,7 +202,7 @@ def scheduled(manifest: str, sa=None):
             'write_disposition': manifest['params']['write_disposition'],
             'query': manifest['params']['query']
         })
-    # service_account_name=sa.email)
+        # service_account_name=sa.email)
 
 
 def validate_scheduled_manifest(manifest: str):
@@ -215,37 +218,40 @@ def validate_scheduled_manifest(manifest: str):
 
 def bucket(manifest: str):
     validate_bucket_manifest(manifest)
-    readers = [reader for reader in manifest['users']['readers']]
-    writers = [writer for writer in manifest['users']['writers']]
+    readers = [reader for reader in manifest['users']['readers'] or []]
+    writers = [writer for writer in manifest['users']['writers'] or []]
 
     bucket = storage.Bucket(
-    manifest['resource_name'],
-    name=manifest['resource_name'],
-    force_destroy=True,
-    lifecycle_rules=[storage.BucketLifecycleRuleArgs(
-        action=storage.BucketLifecycleRuleActionArgs(
-            type=manifest['lifecycle_type']
-        ),
-        condition=storage.BucketLifecycleRuleConditionArgs(
-            age=manifest['lifecycle_age_days']
-        ),
-    )],
-    location="northamerica-northeast1",
-    labels={
-        'cost_center': manifest['metadata']['cost_center'],
-        'dep': manifest['metadata']['dep'],
-        'bds': manifest['metadata']['bds'],
-    })
-    readers = storage.BucketIAMBinding(
-        resource_name=manifest['resource_name'] + '_read_iam',
-        bucket=bucket.id,
-        role="roles/storage.objectViewer",
-        members=readers)
-    writers = storage.BucketIAMBinding(
-        resource_name=manifest['resource_name'] + '_write_iam',
-        bucket=bucket.id,
-        role="roles/storage.objectAdmin",
-        members=writers)
+        manifest['resource_name'],
+        name=manifest['resource_name'],
+        force_destroy=True,
+        lifecycle_rules=[storage.BucketLifecycleRuleArgs(
+            action=storage.BucketLifecycleRuleActionArgs(
+                type=manifest['lifecycle_type']
+            ),
+            condition=storage.BucketLifecycleRuleConditionArgs(
+                age=manifest['lifecycle_age_days']
+            ),
+        )],
+        location="northamerica-northeast1",
+        labels={
+            'cost_center': manifest['metadata']['cost_center'],
+            'dep': manifest['metadata']['dep'],
+            'bds': manifest['metadata']['bds'],
+        }
+    )
+    if readers:
+        storage.BucketIAMBinding(
+            resource_name=manifest['resource_name'] + '_read_iam',
+            bucket=bucket.id,
+            role="roles/storage.objectViewer",
+            members=readers)
+    if writers:
+        storage.BucketIAMBinding(
+            resource_name=manifest['resource_name'] + '_write_iam',
+            bucket=bucket.id,
+            role="roles/storage.objectAdmin",
+            members=writers)
 
 
 def validate_bucket_manifest(manifest: str):
@@ -264,14 +270,10 @@ def service_account(team: str):
         team + '-service-account',
         account_id=team + '-service-account',
         display_name=team + ' - service account')
-    # iam = projects.IAMBinding(
-    #     team + '-bq-admin-iam',
-    #     members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
-    #     role='roles/bigquery.admin')
-    # iam = projects.IAMBinding(
-    #     team + '-project-admin-iam',
-    #     members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
-    #     role='roles/resourcemanager.projectIamAdmin')
+    iam = projects.IAMBinding(
+        team + '-bq-admin-iam',
+        members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
+        role='roles/bigquery.admin')
     return sa
 
 
@@ -329,7 +331,7 @@ def update(path:str, context=None):
             materialized(yml)
         # if yml and yml['kind'] == 'scheduled':
         #     validate_scheduled_manifest(yml)
-        #     scheduled(yml)
+        #     scheduled(yml, sa=context['sa'])
         if yml and yml['kind'] == 'bucket':
             validate_bucket_manifest(yml)
             bucket(yml)
@@ -357,6 +359,18 @@ def get_value(
             return yml[key]
 
 
+# def create_trigger(team: str, sa=None):
+#     cloudbuild.Trigger(
+#         team + '-trigger',
+#         filename='team-build.yaml',
+#         service_account=sa.id,
+#         trigger_template=cloudbuild.TriggerTriggerTemplateArgs(
+#             branch_name='master',
+#             repo_name='terekete/eventrun_test'
+#         )
+#     )
+
+
 teams_root = '/workspace/teams/'
 manifests_set = list_manifests(teams_root)
 dependency_map = list(set([
@@ -370,35 +384,43 @@ dependency_map = list(set([
 ]))
 
 
-def create_trigger(team: str):
-    cloudbuild.Trigger(
-        team + '-trigger',
-        filename='cloudbuild.yaml',
-        trigger_template=cloudbuild.TriggerTriggerTemplateArgs(
-            branch_name='master',
-            repo_name='my-repo'
-        )
-    )
+def team_key(team: str, path: str = 'team_auth'):
+    sa = service_account(team)
+    key = serviceaccount.Key(
+        team + '_key',
+        service_account_id=sa.name,
+        public_key_type="TYPE_X509_PEM_FILE")
+    storage.BucketObject(
+        team + '_key',
+        name=team + '/key.json',
+        bucket=path,
+        content=key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
+    #key = key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8'))
+    return key
 
 
 def pulumi_program():
-    create_trigger(team)
-    sa = service_account(team)
-    # mykey = service_account.Key(
-    #     team + '-key',
-    #     service_account_id=sa.name,
-    #     public_key_type="TYPE_X509_PEM_FILE")
-    # print(dir(mykey))
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
+    key = team_key(team)
+    import google.auth
+    from google.auth import impersonated_credentials
+    source_credentials, project = google.auth.default()
+    target_scopes = ['https://www.googleapis.com/auth/devstorage.read_only']
+    target_credentials = impersonated_credentials.Credentials(
+        source_credentials=source_credentials,
+        target_principal='tsbt-service-account@eventrun.iam.gserviceaccount.com',
+        target_scopes=target_scopes,
+        lifetime=500)
+    # credentials = osa.Credentials.from_service_account_info(key.private_key.apply(lambda x: json.loads(base64.b64decode(x))))
     context = {
         'team_stack': pulumi.get_stack(),
-        #'sa': get_sa(pulumi.get_stack()),
         'project': pulumi.get_project()
     }
     for path in sorted_path:
         if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
             update(path, context)
+
 
 
 teams_set = set([
@@ -424,7 +446,6 @@ for team in teams_diff:
     stack.up(on_output=print)
 
 
-
 # import google.auth
 # from google.cloud.devtools import cloudbuild_v1
 # credentials, project_id = google.auth.default()
@@ -434,9 +455,9 @@ for team in teams_diff:
 # print(dir(build))
 # build.steps = [
 #     {
-#         "name": "ubuntu",
+#         "name": "gcr.io/cloud-builders/gcloud",
 #         "entrypoint": "bash",
-#         "args": ["-c", "echo hello world"]
+#         "args": ["-c", "ls -la"]
 #     }
 # ]
 # operation = client.create_build(project_id=project_id, build=build)
@@ -445,3 +466,15 @@ for team in teams_diff:
 # result = operation.result()
 # print("RESULT:", result.status)
 
+
+# - name: 'gcr.io/cloud-builders/gcloud'
+#     id: 'get-key'
+#     entrypoint: 'bash'
+#     dir: .
+#     args:
+#     - '-c'
+#     - |
+#       gcloud secrets versions access latest --secret="github" --project="eventrun" > /root/.ssh/id_rsa
+#     volumes:
+#     - name: 'ssh'
+#       path: /root/.ssh
