@@ -406,7 +406,7 @@ def pulumi_program():
     key = team_key(team)
     import google.auth
     from google.auth import impersonated_credentials
-    source_credentials, project = google.auth.default()
+    source_credentials, project_id = google.auth.default()
     target_scopes = ['https://www.googleapis.com/auth/cloud-platform']
     target_credentials = impersonated_credentials.Credentials(
         source_credentials=source_credentials,
@@ -414,8 +414,15 @@ def pulumi_program():
         target_scopes=target_scopes,
         lifetime=500)
     client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=target_credentials)
-    # build = cloudbuild_v1.Build()
-    # credentials = osa.Credentials.from_service_account_info(key.private_key.apply(lambda x: json.loads(base64.b64decode(x))))
+    build = cloudbuild_v1.Build()
+    build.steps = [
+    {
+        "name": "gcr.io/cloud-builders/gcloud",
+        "entrypoint": "bash",
+        "args": ["-c", "ls -la"]
+    }]
+    operation = client.create_build(project_id=project_id, build=build)
+    result = operation.result()
     context = {
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project()
@@ -455,13 +462,13 @@ for team in teams_diff:
 # build = cloudbuild_v1.Build()
 # print('BUILD')
 # print(dir(build))
-# build.steps = [
-#     {
-#         "name": "gcr.io/cloud-builders/gcloud",
-#         "entrypoint": "bash",
-#         "args": ["-c", "ls -la"]
-#     }
-# ]
+build.steps = [
+    {
+        "name": "gcr.io/cloud-builders/gcloud",
+        "entrypoint": "bash",
+        "args": ["-c", "ls -la"]
+    }
+]
 # operation = client.create_build(project_id=project_id, build=build)
 # print("IN PROGRESS:")
 # print(operation.metadata)
