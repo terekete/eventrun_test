@@ -363,6 +363,7 @@ def get_value(
 #     cloudbuild.Trigger(
 #         team + '-trigger',
 #         filename='team-build.yaml',
+#         service_account=sa.id,
 #         trigger_template=cloudbuild.TriggerTriggerTemplateArgs(
 #             branch_name='master',
 #             repo_name='terekete/eventrun_test'
@@ -398,10 +399,10 @@ def team_auth(team: str, path: str = 'team_auth'):
 
 
 def pulumi_program():
-    # sorted_path = graph_sort(dependency_map).sorted
-    # sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
+    sorted_path = graph_sort(dependency_map).sorted
+    sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     sa = team_auth(team)
-    # create_trigger(team, sa)
+    
     # context = {
     #     'team_stack': pulumi.get_stack(),
     #     'project': pulumi.get_project(),
@@ -410,7 +411,6 @@ def pulumi_program():
     # for path in sorted_path:
     #     if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
     #         update(path, context)
-
 
 
 teams_set = set([
