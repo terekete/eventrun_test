@@ -405,14 +405,14 @@ def pulumi_program():
     key = team_key(team)
     from google.oauth2 import service_account as sa
     # print(key)
-    # context = {
-    #     'team_stack': pulumi.get_stack(),
-    #     'project': pulumi.get_project(),
-    #     'sa': sa
-    # }
-    # for path in sorted_path:
-    #     if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
-    #         update(path, context)
+    context = {
+        'team_stack': pulumi.get_stack(),
+        'project': pulumi.get_project(),
+        'sa': sa
+    }
+    for path in sorted_path:
+        if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
+            update(path, context)
 
 
 teams_set = set([
