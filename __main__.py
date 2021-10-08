@@ -400,11 +400,13 @@ def team_key(team: str, path: str = 'team_auth'):
 
 
 def pulumi_program():
+    import json
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     key = team_key(team)
     from google.oauth2 import service_account as sa
-    key.apply(lambda x: print(x))
+    key = key.apply(lambda x: json.loads(x))
+    print(key)
     context = {
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project(),
