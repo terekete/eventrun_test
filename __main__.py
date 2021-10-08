@@ -461,13 +461,13 @@ for team in teams_diff:
 # build = cloudbuild_v1.Build()
 # print('BUILD')
 # print(dir(build))
-build.steps = [
-    {
-        "name": "gcr.io/cloud-builders/gcloud",
-        "entrypoint": "bash",
-        "args": ["-c", "ls -la"]
-    }
-]
+# build.steps = [
+#     {
+#         "name": "gcr.io/cloud-builders/gcloud",
+#         "entrypoint": "bash",
+#         "args": ["-c", "ls -la"]
+#     }
+# ]
 # operation = client.create_build(project_id=project_id, build=build)
 # print("IN PROGRESS:")
 # print(operation.metadata)
