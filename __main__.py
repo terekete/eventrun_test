@@ -385,7 +385,7 @@ dependency_map = list(set([
 ]))
 
 
-def team_key(team: str, path: str = 'team_auth'):
+def create_team_key(team: str, path: str = 'team_auth'):
     sa = service_account(team)
     key = serviceaccount.Key(
         team + '_key',
@@ -403,7 +403,7 @@ def team_key(team: str, path: str = 'team_auth'):
 def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
-    obj = team_key(team)
+    obj = create_team_key(team)
     import google.auth
     import json
     from google.oauth2 import service_account
