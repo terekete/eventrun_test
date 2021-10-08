@@ -11,7 +11,7 @@ import json
 from google.oauth2 import service_account as osa
 from google.cloud.devtools import cloudbuild_v1
 from collections import defaultdict, namedtuple
-from pulumi import resource
+from pulumi import resource, Output
 from pulumi.automation import errors
 from pulumi.metadata import get_stack
 from pulumi_gcp import storage, bigquery, serviceaccount, projects, organizations, cloudbuild
@@ -407,9 +407,11 @@ def pulumi_program():
     import google.auth
     import json
     from google.oauth2 import service_account
-    json_key = key.private_key.apply(lambda x: print(f"{base64.b64decode(x)}"))
+    # json_key = key.private_key.apply(lambda x: print(f"{base64.b64decode(x)}"))
+    json_key = Output.all(key).apply(lambda x: f"{x}")
     print(type(json_key))
     print(dir(json_key))
+    print(json_key)
     credentials, project_id = service_account.Credentials.from_service_account_info(json_key)
     # scope = credentials.with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
     # client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
