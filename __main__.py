@@ -422,7 +422,6 @@ def pulumi_program():
             update(path, context)
 
 
-
 teams_set = set([
     re.search('teams/(.+?)/+', team).group(1)
     for team in manifests_set
