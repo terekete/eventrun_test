@@ -403,8 +403,7 @@ def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     key = team_key(team)
-    key = key.apply(lambda x: print(json.loads(x)))
-    credentials = osa.Credentials.from_service_account_info(key)
+    credentials = osa.Credentials.from_service_account_info(key.apply(lambda x: json.loads(x)))
     context = {
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project(),
