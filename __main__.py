@@ -403,10 +403,10 @@ def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     obj = create_team_key(team)
-    import google.auth
-    import json
-    from google.oauth2 import service_account
-    print(obj.get(id=obj.id, resource_name=obj.name))
+    # import google.auth
+    # import json
+    # from google.oauth2 import service_account
+    obj.content.apply(lambda x: print(x))
     # credentials, project_id = service_account.Credentials.from_service_account_info(json_key)
     # scope = credentials.with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
     # client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
