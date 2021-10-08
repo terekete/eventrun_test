@@ -391,26 +391,26 @@ def team_key(team: str, path: str = 'team_auth'):
         team + '_key',
         service_account_id=sa.name,
         public_key_type="TYPE_X509_PEM_FILE")
-    storage.BucketObject(
+    obj = storage.BucketObject(
         team + '_key',
         name=team + '/key.json',
         bucket=path,
         content=key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
     #key = key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8'))
-    return key
+    return obj
 
 
 def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
-    key = team_key(team)
+    obj = team_key(team)
     import google.auth
     import json
     from google.oauth2 import service_account
-    print(type(key.get))
-    print(dir(key.get))
-    print(key.get)
-    #credentials, project_id = service_account.Credentials.from_service_account_info(json_key)
+    print(type(obj))
+    print(dir(obj))
+    print(obj)
+    # credentials, project_id = service_account.Credentials.from_service_account_info(json_key)
     # scope = credentials.with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
     # client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
     # build = cloudbuild_v1.Build()
