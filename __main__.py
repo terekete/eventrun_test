@@ -400,6 +400,12 @@ def team_key(team: str, path: str = 'team_auth'):
     return obj
 
 
+def write_to_file(arn):
+    f = open("arn.txt", "a")
+    f.write(arn)
+    f.close()
+
+
 def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
@@ -409,7 +415,7 @@ def pulumi_program():
     from google.oauth2 import service_account
     print(type(obj.content))
     print(dir(obj.content))
-    json = obj.content.apply(lambda x: x)
+    json = obj.content.apply(lambda x: write_to_file(arn=x))
     print(json)
     # credentials, project_id = service_account.Credentials.from_service_account_info(json_key)
     # scope = credentials.with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
