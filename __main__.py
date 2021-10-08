@@ -9,6 +9,7 @@ import base64
 import json
 
 from google.oauth2 import service_account as osa
+from google.cloud.devtools import cloudbuild_v1
 from collections import defaultdict, namedtuple
 from pulumi import resource
 from pulumi.automation import errors
@@ -412,6 +413,8 @@ def pulumi_program():
         target_principal='tsbt-service-account@eventrun.iam.gserviceaccount.com',
         target_scopes=target_scopes,
         lifetime=500)
+    client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=target_credentials)
+    # build = cloudbuild_v1.Build()
     # credentials = osa.Credentials.from_service_account_info(key.private_key.apply(lambda x: json.loads(base64.b64decode(x))))
     context = {
         'team_stack': pulumi.get_stack(),
