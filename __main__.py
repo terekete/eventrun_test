@@ -403,11 +403,10 @@ def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     key = team_key(team)
-    credentials = osa.Credentials.from_service_account_info(key.private_key.apply(lambda x: json.loads(x)))
+    credentials = osa.Credentials.from_service_account_info(key.private_key.apply(lambda x: json.loads(base64.b64decode(x).decode('utf-8'))))
     context = {
         'team_stack': pulumi.get_stack(),
-        'project': pulumi.get_project(),
-        'sa': sa
+        'project': pulumi.get_project()
     }
     for path in sorted_path:
         if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
