@@ -359,15 +359,15 @@ def get_value(
             return yml[key]
 
 
-def create_trigger(team: str, sa=None):
-    cloudbuild.Trigger(
-        team + '-trigger',
-        filename='team-build.yaml',
-        trigger_template=cloudbuild.TriggerTriggerTemplateArgs(
-            branch_name='master',
-            repo_name='terekete/eventrun_test'
-        )
-    )
+# def create_trigger(team: str, sa=None):
+#     cloudbuild.Trigger(
+#         team + '-trigger',
+#         filename='team-build.yaml',
+#         trigger_template=cloudbuild.TriggerTriggerTemplateArgs(
+#             branch_name='master',
+#             repo_name='terekete/eventrun_test'
+#         )
+#     )
 
 
 teams_root = '/workspace/teams/'
@@ -401,7 +401,7 @@ def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     sa = team_auth(team)
-    create_trigger(team, sa)
+    # create_trigger(team, sa)
     context = {
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project(),
