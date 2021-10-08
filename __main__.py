@@ -408,7 +408,7 @@ def pulumi_program():
     import json
     from google.oauth2 import service_account
     # json_key = key.private_key.apply(lambda x: print(f"{base64.b64decode(x)}"))
-    json_key = Output.all(key).apply(lambda x: f"{x}")
+    json_key = key.apply(lambda x: f"{x}")
     print(type(json_key))
     print(dir(json_key))
     print(json_key)
