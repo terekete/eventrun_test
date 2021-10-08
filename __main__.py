@@ -6,9 +6,9 @@ import glob
 import uuid
 import datetime
 import base64
-import google.auth
+import google.oauth2 import service_account as osa
+import json
 
-from google.cloud.devtools import cloudbuild_v1
 from collections import defaultdict, namedtuple
 from pulumi import resource
 from pulumi.automation import errors
@@ -400,12 +400,11 @@ def team_key(team: str, path: str = 'team_auth'):
 
 
 def pulumi_program():
-    import json
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     key = team_key(team)
-    from google.oauth2 import service_account as sa
     key = key.apply(lambda x: print(json.loads(x)))
+    credentials = osa.Credentials.from_service_account_info(key)
     context = {
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project(),
