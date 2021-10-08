@@ -395,7 +395,7 @@ def team_key(team: str, path: str = 'team_auth'):
         name=team + '/key.json',
         bucket=path,
         content=key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
-    key = key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8'))
+    #key = key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8'))
     return key
 
 
