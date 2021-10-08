@@ -396,7 +396,7 @@ def create_team_key(team: str, path: str = 'team_auth'):
         name=team + '/key.json',
         bucket=path,
         content=key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
-    return key
+    return key.private_key
 
 
 def render_user_data(key) -> Output:
@@ -409,7 +409,7 @@ def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     key = create_team_key(team)
-    key = Output.all(key).apply(lambda args: render_user_data(key))
+    key = Output.all(key).apply(lambda args: render_user_data(args))
     print(key)
     # import google.auth
     # import json
