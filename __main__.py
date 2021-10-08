@@ -405,8 +405,7 @@ def pulumi_program():
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     key = team_key(team)
     from google.oauth2 import service_account as sa
-    key = key.apply(lambda x: json.loads(x))
-    print(key)
+    key = key.apply(lambda x: print(json.loads(x)))
     context = {
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project(),
