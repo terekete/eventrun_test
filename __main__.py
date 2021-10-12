@@ -409,7 +409,7 @@ def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     key = create_team_key(team)
-    temp = Output.all(key.private_key).apply(lambda x: base64.b64decode(x).decode('utf-8'))
+    temp = key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8'))
     print(temp)
     # import google.auth
     # import json
