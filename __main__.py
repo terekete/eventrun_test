@@ -191,6 +191,8 @@ def materialized(manifest: str):
 
 
 def scheduled(manifest: str, sa=None):
+    validate_scheduled_manifest(manifest)
+
     scheduled = bigquery.DataTransferConfig(
         resource_name=manifest['resource_name'],
         display_name=manifest['display_name'],
