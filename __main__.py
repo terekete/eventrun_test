@@ -463,7 +463,7 @@ for team in teams_diff:
 
 
 client = gcs.Client()
-with open('.') as file_obj:
+with open('/staging') as file_obj:
     storage.client.download_blob_to_file('gs://team_auth/tsbt/key.json', file_obj)
 
 # import google.auth
