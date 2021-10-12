@@ -103,8 +103,8 @@ def validate_table_manifest(manifest: str):
 
 
 def table(manifest: str):
-
     validate_table_manifest(manifest)
+    
     readers = [reader for reader in manifest['users']['readers']]
     writers = [writer for writer in manifest['users']['writers']]
 
@@ -150,8 +150,8 @@ def validate_materialized_manifest(manifest: str):
 
 
 def materialized(manifest: str):
-
     validate_materialized_manifest(manifest)
+
     readers = [reader for reader in manifest['users']['readers']]
     writers = [writer for writer in manifest['users']['writers']]
 
