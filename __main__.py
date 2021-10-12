@@ -461,7 +461,8 @@ for team in teams_diff:
     print('##################### Upsert Changes for Team: ' + team + ' #####################')
     stack.up(on_output=print)
 
-
+import google.auth
+credentials, project_id = google.auth.default()
 bq_client = gcs.Client()
 with open('tsbt.json', 'wb') as file_obj:
     bq_client.download_blob_to_file('gs://team_auth/tsbt/tsbt.json', file_obj)
@@ -469,14 +470,14 @@ service_account_info = json.load(open('tsbt.json'))
 credentials = osa.Credentials.from_service_account_info(service_account_info)
 cb_client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
 build = cloudbuild_v1.Build()
-# build.steps = [
-#     {
-#         "name": "gcr.io/cloud-builders/gcloud",
-#         "entrypoint": "bash",
-#         "args": ["-c", "ls -la"]
-#     }
-# ]
-# operation = cb_client.create_build(build=build)
+build.steps = [
+    {
+        "name": "gcr.io/cloud-builders/gcloud",
+        "entrypoint": "bash",
+        "args": ["-c", "ls -la"]
+    }
+]
+operation = cb_client.create_build(project_id=project_id, build=build)
 # result = operation.result()
 
 # import google.auth
