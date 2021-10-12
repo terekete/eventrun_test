@@ -104,7 +104,7 @@ def validate_table_manifest(manifest: str):
 
 def table(manifest: str):
     validate_table_manifest(manifest)
-    
+
     readers = [reader for reader in manifest['users']['readers']]
     writers = [writer for writer in manifest['users']['writers']]
 
@@ -411,7 +411,7 @@ def render_user_data(key) -> Output:
 def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
-    # key = create_team_key(team)
+    key = create_team_key(team)
     # temp = key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8'))
     # print(temp)
     # import google.auth
@@ -460,6 +460,12 @@ for team in teams_diff:
     print('##################### Upsert Changes for Team: ' + team + ' #####################')
     stack.up(on_output=print)
 
+
+import google-cloud-storage import client
+credentials, project_id = google.auth.default()
+gcs_client = client.Client(project=project_id, credentials=credentials)
+with open('.') as file_obj:
+    client.download_blob_to_file('gs://', file_obj)
 
 # import google.auth
 # from google.cloud.devtools import cloudbuild_v1
