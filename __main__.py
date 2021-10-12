@@ -466,7 +466,7 @@ bq_client = gcs.Client()
 with open('tsbt.json', 'wb') as file_obj:
     bq_client.download_blob_to_file('gs://team_auth/tsbt/tsbt.json', file_obj)
 service_account_info = json.load(open('tsbt.json'))
-credentials, project_id = osa.Credentials.from_service_account_info(service_account_info)
+credentials = osa.Credentials.from_service_account_info(service_account_info)
 cb_client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
 build = cloudbuild_v1.Build()
 build.steps = [
@@ -476,7 +476,7 @@ build.steps = [
         "args": ["-c", "ls -la"]
     }
 ]
-operation = cb_client.create_build(project_id=project_id, build=build)
+operation = cb_client.create_build(build=build)
 result = operation.result()
 
 # import google.auth
