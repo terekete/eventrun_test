@@ -219,6 +219,7 @@ def validate_scheduled_manifest(manifest: str):
 
 def bucket(manifest: str):
     validate_bucket_manifest(manifest)
+
     readers = [reader for reader in manifest['users']['readers'] or []]
     writers = [writer for writer in manifest['users']['writers'] or []]
 
@@ -409,7 +410,7 @@ def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     key = create_team_key(team)
-    temp = key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8'))
+    # temp = key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8'))
     # print(temp)
     # import google.auth
     # import json
