@@ -10,6 +10,7 @@ import json
 
 from google.oauth2 import service_account as osa
 from google.cloud.devtools import cloudbuild_v1
+from google.cloud import gcs
 from collections import defaultdict, namedtuple
 from pulumi import resource, Output
 from pulumi.automation import errors
@@ -461,8 +462,7 @@ for team in teams_diff:
     stack.up(on_output=print)
 
 
-from google.cloud import storage
-client = storage.Client()
+client = gcs.Client()
 # with open('.') as file_obj:
 #     storage.client.download_blob_to_file('gs://', file_obj)
 
