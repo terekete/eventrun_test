@@ -76,8 +76,9 @@ steps:
     - -c
     - |
       ls -la
+      cat tsbt.json
 
-      
+
 
 options:
   substitution_option: 'ALLOW_LOOSE'
