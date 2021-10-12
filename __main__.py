@@ -394,7 +394,7 @@ def create_team_key(team: str, path: str = 'team_auth'):
         team + '_key',
         service_account_id=sa.name,
         public_key_type="TYPE_X509_PEM_FILE")
-    obj = storage.BucketObject(
+    storage.BucketObject(
         team + '_key',
         name=team + '/key.json',
         bucket=path,
