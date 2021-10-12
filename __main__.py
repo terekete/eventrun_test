@@ -10,7 +10,7 @@ import json
 
 from google.oauth2 import service_account as osa
 from google.cloud.devtools import cloudbuild_v1
-from google.cloud import gcs
+from google.cloud import storage as gcs
 from collections import defaultdict, namedtuple
 from pulumi import resource, Output
 from pulumi.automation import errors
