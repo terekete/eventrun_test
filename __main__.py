@@ -462,9 +462,9 @@ for team in teams_diff:
     stack.up(on_output=print)
 
 
-client = gcs.Client()
-with open('/staging') as file_obj:
-    storage.client.download_blob_to_file('gs://team_auth/tsbt/key.json', file_obj)
+# client = gcs.Client()
+# with open('/staging') as file_obj:
+#     storage.client.download_blob_to_file('gs://team_auth/tsbt/key.json', file_obj)
 
 # import google.auth
 # from google.cloud.devtools import cloudbuild_v1
