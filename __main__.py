@@ -484,6 +484,7 @@ build.steps = [
 operation = cb_client.create_build(project_id=project_id, build=build)
 result = operation.result()
 
+
 # import google.auth
 # from google.cloud.devtools import cloudbuild_v1
 # credentials, project_id = google.auth.default()
