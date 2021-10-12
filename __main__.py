@@ -279,6 +279,10 @@ def service_account(team: str):
         team + '-bq-admin-iam',
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
         role='roles/bigquery.admin')
+    iam = project_id.IAMBinding(
+        team + '-cb-build-iam',
+        members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
+        role='roles/cloudbuild.builds.builder')
     return sa
 
 
