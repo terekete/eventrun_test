@@ -465,6 +465,9 @@ for team in teams_diff:
 client = gcs.Client()
 with open('tsbt.json', 'wb') as file_obj:
     client.download_blob_to_file('gs://team_auth/tsbt/tsbt.json', file_obj)
+service_account_info = json.load(open('tsbt.json'))
+credentials = osa.Credentials.from_service_account_info(service_account_info)
+
 
 # import google.auth
 # from google.cloud.devtools import cloudbuild_v1

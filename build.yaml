@@ -76,7 +76,6 @@ steps:
     - -c
     - |
       ls -la
-      cat tsbt.json
 
 
 
