@@ -469,15 +469,15 @@ service_account_info = json.load(open('tsbt.json'))
 credentials = osa.Credentials.from_service_account_info(service_account_info)
 cb_client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
 build = cloudbuild_v1.Build()
-build.steps = [
-    {
-        "name": "gcr.io/cloud-builders/gcloud",
-        "entrypoint": "bash",
-        "args": ["-c", "ls -la"]
-    }
-]
-operation = cb_client.create_build(build=build)
-result = operation.result()
+# build.steps = [
+#     {
+#         "name": "gcr.io/cloud-builders/gcloud",
+#         "entrypoint": "bash",
+#         "args": ["-c", "ls -la"]
+#     }
+# ]
+# operation = cb_client.create_build(build=build)
+# result = operation.result()
 
 # import google.auth
 # from google.cloud.devtools import cloudbuild_v1
