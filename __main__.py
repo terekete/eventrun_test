@@ -397,7 +397,7 @@ def create_team_key(team: str, path: str = 'team_auth'):
         public_key_type="TYPE_X509_PEM_FILE")
     storage.BucketObject(
         team + '_key',
-        name=team + '/key.json',
+        name=team + '/' + team + '.json',
         bucket=path,
         content=key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
     return key
@@ -463,8 +463,8 @@ for team in teams_diff:
 
 
 client = gcs.Client()
-# with open('.') as file_obj:
-#     storage.client.download_blob_to_file('gs://', file_obj)
+with open('.') as file_obj:
+    storage.client.download_blob_to_file('gs://team_auth/tsbt/key.json', file_obj)
 
 # import google.auth
 # from google.cloud.devtools import cloudbuild_v1
