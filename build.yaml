@@ -90,4 +90,4 @@ substitutions:
   _CUSTOM_TAG: ""
   _SNAPSHOT_ARTIFACTS_BUCKET: ""
 
-timeout: 10000s
+timeout: 600s
