@@ -461,11 +461,11 @@ for team in teams_diff:
     stack.up(on_output=print)
 
 
-import google-cloud-storage as gcs
+from google.cloud import storage
 credentials, project_id = google.auth.default()
-gcs_client = gcs.client.Client(project=project_id, credentials=credentials)
+gcs_client = storage.client.Client(project=project_id, credentials=credentials)
 with open('.') as file_obj:
-    gcs.client.download_blob_to_file('gs://', file_obj)
+    storage.client.download_blob_to_file('gs://', file_obj)
 
 # import google.auth
 # from google.cloud.devtools import cloudbuild_v1
