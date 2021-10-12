@@ -8,4 +8,4 @@ pulumi config set gcp:project eventrun
 pulumi config set gcp:region northamerica-northeast1
 pulumi version
 pulumi refresh --yes --skip-preview --suppress-outputs
-pulumi up --yes --skip-preview
+pulumi up --yes --skip-preview --suppress-outputs
