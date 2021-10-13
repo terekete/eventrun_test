@@ -35,7 +35,7 @@
         'type': 'string',
         'nullable': False
     },
-    'bucket_name': {
+    'resource_name': {
         'required': True,
         'type': 'string',
         'nullable': False

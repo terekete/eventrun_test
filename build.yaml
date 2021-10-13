@@ -69,6 +69,14 @@ steps:
       'PROJECT_ID=${_KEY_PROJECT}'
     ]
     waitFor: ['create-staging-dir']
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'list-dir'
+    entrypoint: 'bash'
+    args:
+    - -c
+    - |
+      ls -la
+
 
 
 options:
@@ -82,4 +90,4 @@ substitutions:
   _CUSTOM_TAG: ""
   _SNAPSHOT_ARTIFACTS_BUCKET: ""
 
-timeout: 10000s
+timeout: 600s

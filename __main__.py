@@ -9,8 +9,10 @@ import base64
 import json
 
 from google.oauth2 import service_account as osa
+from google.cloud.devtools import cloudbuild_v1
+from google.cloud import storage as gcs
 from collections import defaultdict, namedtuple
-from pulumi import resource
+from pulumi import resource, Output
 from pulumi.automation import errors
 from pulumi.metadata import get_stack
 from pulumi_gcp import storage, bigquery, serviceaccount, projects, organizations, cloudbuild
@@ -102,8 +104,8 @@ def validate_table_manifest(manifest: str):
 
 
 def table(manifest: str):
-
     validate_table_manifest(manifest)
+
     readers = [reader for reader in manifest['users']['readers']]
     writers = [writer for writer in manifest['users']['writers']]
 
@@ -149,8 +151,8 @@ def validate_materialized_manifest(manifest: str):
 
 
 def materialized(manifest: str):
-
     validate_materialized_manifest(manifest)
+
     readers = [reader for reader in manifest['users']['readers']]
     writers = [writer for writer in manifest['users']['writers']]
 
@@ -190,6 +192,8 @@ def materialized(manifest: str):
 
 
 def scheduled(manifest: str, sa=None):
+    validate_scheduled_manifest(manifest)
+
     scheduled = bigquery.DataTransferConfig(
         resource_name=manifest['resource_name'],
         display_name=manifest['display_name'],
@@ -218,6 +222,7 @@ def validate_scheduled_manifest(manifest: str):
 
 def bucket(manifest: str):
     validate_bucket_manifest(manifest)
+
     readers = [reader for reader in manifest['users']['readers'] or []]
     writers = [writer for writer in manifest['users']['writers'] or []]
 
@@ -274,6 +279,10 @@ def service_account(team: str):
         team + '-bq-admin-iam',
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
         role='roles/bigquery.admin')
+    iam = projects.IAMBinding(
+        team + '-cb-build-iam',
+        members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
+        role='roles/cloudbuild.builds.builder')
     return sa
 
 
@@ -384,7 +393,7 @@ dependency_map = list(set([
 ]))
 
 
-def team_key(team: str, path: str = 'team_auth'):
+def create_team_key(team: str, path: str = 'team_auth'):
     sa = service_account(team)
     key = serviceaccount.Key(
         team + '_key',
@@ -392,27 +401,39 @@ def team_key(team: str, path: str = 'team_auth'):
         public_key_type="TYPE_X509_PEM_FILE")
     storage.BucketObject(
         team + '_key',
-        name=team + '/key.json',
+        name=team + '/' + team + '.json',
         bucket=path,
         content=key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
-    #key = key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8'))
     return key
+
+
+def render_user_data(key) -> Output:
+    temp = base64.b64encode(key.encode("utf-8"))
+    temp_str = str(temp, "utf-8")
+    return temp_str
 
 
 def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
-    key = team_key(team)
-    import google.auth
-    from google.auth import impersonated_credentials
-    source_credentials, project = google.auth.default()
-    target_scopes = ['https://www.googleapis.com/auth/devstorage.read_only']
-    target_credentials = impersonated_credentials.Credentials(
-        source_credentials=source_credentials,
-        target_principal='tsbt-service-account@eventrun.iam.gserviceaccount.com',
-        target_scopes=target_scopes,
-        lifetime=500)
-    # credentials = osa.Credentials.from_service_account_info(key.private_key.apply(lambda x: json.loads(base64.b64decode(x))))
+    key = create_team_key(team)
+    # temp = key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8'))
+    # print(temp)
+    # import google.auth
+    # import json
+    # from google.oauth2 import service_account
+    # credentials, project_id = service_account.Credentials.from_service_account_info(json_key)
+    # scope = credentials.with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
+    # client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
+    # build = cloudbuild_v1.Build()
+    # build.steps = [
+    # {
+    #     "name": "gcr.io/cloud-builders/gcloud",
+    #     "entrypoint": "bash",
+    #     "args": ["-c", "ls -la"]
+    # }]
+    # operation = client.create_build(project_id=project_id, build=build)
+    # result = operation.result()
     context = {
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project()
@@ -443,6 +464,27 @@ for team in teams_diff:
     stack.preview(on_output=print)
     print('##################### Upsert Changes for Team: ' + team + ' #####################')
     stack.up(on_output=print)
+
+
+
+import google.auth
+credentials, project_id = google.auth.default()
+bq_client = gcs.Client()
+with open('tsbt.json', 'wb') as file_obj:
+    bq_client.download_blob_to_file('gs://team_auth/tsbt/tsbt.json', file_obj)
+service_account_info = json.load(open('tsbt.json'))
+credentials = osa.Credentials.from_service_account_info(service_account_info)
+cb_client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
+build = cloudbuild_v1.Build()
+# build.steps = [
+#     {
+#         "name": "gcr.io/cloud-builders/gcloud",
+#         "entrypoint": "bash",
+#         "args": ["-c", "ls -la"]
+#     }
+# ]
+# operation = cb_client.create_build(project_id=project_id, build=build)
+# result = operation.result()
 
 
 # import google.auth
