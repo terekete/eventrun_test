@@ -191,7 +191,7 @@ def materialized(manifest: str):
     )
 
 
-def scheduled(manifest: str, sa):
+def scheduled(manifest: str, sa=None):
     validate_scheduled_manifest(manifest)
 
     scheduled = bigquery.DataTransferConfig(
@@ -279,10 +279,10 @@ def service_account(team: str):
         team + '-bq-admin-iam',
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
         role='roles/bigquery.admin')
-    # iam = projects.IAMBinding(
-    #     team + '-cb-build-iam',
-    #     members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
-    #     role='roles/cloudbuild.builds.builder')
+    iam = projects.IAMBinding(
+        team + '-cb-build-iam',
+        members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
+        role='roles/cloudbuild.builds.builder')
     return sa
 
 
@@ -325,7 +325,7 @@ def list_manifests(root: str):
     return yml_list
 
 
-def update(path:str, context):
+def update(path:str, context=None):
     yml = read_yml(path)
 
     try:
@@ -338,9 +338,9 @@ def update(path:str, context):
         if yml and yml['kind'] == 'materialized':
             validate_materialized_manifest(yml)
             materialized(yml)
-        if yml and yml['kind'] == 'scheduled':
-            validate_scheduled_manifest(yml)
-            scheduled(yml, sa=context['sa'])
+        # if yml and yml['kind'] == 'scheduled':
+        #     validate_scheduled_manifest(yml)
+        #     scheduled(yml, sa=context['sa'])
         if yml and yml['kind'] == 'bucket':
             validate_bucket_manifest(yml)
             bucket(yml)
@@ -368,6 +368,18 @@ def get_value(
             return yml[key]
 
 
+# def create_trigger(team: str, sa=None):
+#     cloudbuild.Trigger(
+#         team + '-trigger',
+#         filename='team-build.yaml',
+#         service_account=sa.id,
+#         trigger_template=cloudbuild.TriggerTriggerTemplateArgs(
+#             branch_name='master',
+#             repo_name='terekete/eventrun_test'
+#         )
+#     )
+
+
 teams_root = '/workspace/teams/'
 manifests_set = list_manifests(teams_root)
 dependency_map = list(set([
@@ -392,7 +404,7 @@ def create_team_key(team: str, path: str = 'team_auth'):
         name=team + '/' + team + '.json',
         bucket=path,
         content=key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
-    return sa
+    return key
 
 
 def render_user_data(key) -> Output:
@@ -404,10 +416,26 @@ def render_user_data(key) -> Output:
 def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
-    sa = create_team_key(team)
+    key = create_team_key(team)
+    # temp = key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8'))
+    # print(temp)
+    # import google.auth
+    # import json
+    # from google.oauth2 import service_account
+    # credentials, project_id = service_account.Credentials.from_service_account_info(json_key)
+    # scope = credentials.with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
+    # client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
+    # build = cloudbuild_v1.Build()
+    # build.steps = [
+    # {
+    #     "name": "gcr.io/cloud-builders/gcloud",
+    #     "entrypoint": "bash",
+    #     "args": ["-c", "ls -la"]
+    # }]
+    # operation = client.create_build(project_id=project_id, build=build)
+    # result = operation.result()
     context = {
         'team_stack': pulumi.get_stack(),
-        'sa': sa,
         'project': pulumi.get_project()
     }
     for path in sorted_path:
@@ -438,3 +466,58 @@ for team in teams_diff:
     stack.up(on_output=print)
 
 
+
+# import google.auth
+# credentials, project_id = google.auth.default()
+# bq_client = gcs.Client()
+# with open('tsbt.json', 'wb') as file_obj:
+#     bq_client.download_blob_to_file('gs://team_auth/tsbt/tsbt.json', file_obj)
+# service_account_info = json.load(open('tsbt.json'))
+# credentials = osa.Credentials.from_service_account_info(service_account_info)
+# cb_client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
+# build = cloudbuild_v1.Build()
+
+
+# build.steps = [
+#     {
+#         "name": "gcr.io/cloud-builders/gcloud",
+#         "entrypoint": "bash",
+#         "args": ["-c", "ls -la"]
+#     }
+# ]
+# operation = cb_client.create_build(project_id=project_id, build=build)
+# result = operation.result()
+
+
+# import google.auth
+# from google.cloud.devtools import cloudbuild_v1
+# credentials, project_id = google.auth.default()
+# client = cloudbuild_v1.services.cloud_build.CloudBuildClient()
+# build = cloudbuild_v1.Build()
+# print('BUILD')
+# print(dir(build))
+# build.steps = [
+#     {
+#         "name": "gcr.io/cloud-builders/gcloud",
+#         "entrypoint": "bash",
+#         "args": ["-c", "ls -la"]
+#     }
+# ]
+# operation = client.create_build(project_id=project_id, build=build)
+# print("IN PROGRESS:")
+# print(operation.metadata)
+# result = operation.result()
+# print("RESULT:", result.status)
+
+
+# - name: 'gcr.io/cloud-builders/gcloud'
+#     id: 'get-key'
+#     entrypoint: 'bash'
+#     dir: .
+#     args:
+#     - '-c'
+#     - |
+#       gcloud secrets versions access latest --secret="github" --project="eventrun" > /root/.ssh/id_rsa
+#     volumes:
+#     - name: 'ssh'
+#       path: /root/.ssh
