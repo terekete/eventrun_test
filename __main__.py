@@ -480,7 +480,6 @@ build.steps = [
     {
         "name": "gcr.io/cloud-builders/gcloud",
         "id": "get-key",
-        "dir": ".",
         "entrypoint": "bash",
         "args": ["-c", "gcloud secrets versions access latest --secret=\"github\" --project=\"eventrun\" > /root/.ssh/id_rsa"],
         "volumes": {
