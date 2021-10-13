@@ -437,3 +437,4 @@ for team in teams_diff:
     print('##################### Upsert Changes for Team: ' + team + ' #####################')
     stack.up(on_output=print)
 
+
