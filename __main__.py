@@ -368,18 +368,6 @@ def get_value(
             return yml[key]
 
 
-# def create_trigger(team: str, sa=None):
-#     cloudbuild.Trigger(
-#         team + '-trigger',
-#         filename='team-build.yaml',
-#         service_account=sa.id,
-#         trigger_template=cloudbuild.TriggerTriggerTemplateArgs(
-#             branch_name='master',
-#             repo_name='terekete/eventrun_test'
-#         )
-#     )
-
-
 teams_root = '/workspace/teams/'
 manifests_set = list_manifests(teams_root)
 dependency_map = list(set([
@@ -449,57 +437,3 @@ for team in teams_diff:
     print('##################### Upsert Changes for Team: ' + team + ' #####################')
     stack.up(on_output=print)
 
-
-
-# import google.auth
-# credentials, project_id = google.auth.default()
-# bq_client = gcs.Client()
-# with open('tsbt.json', 'wb') as file_obj:
-#     bq_client.download_blob_to_file('gs://team_auth/tsbt/tsbt.json', file_obj)
-# service_account_info = json.load(open('tsbt.json'))
-# credentials = osa.Credentials.from_service_account_info(service_account_info)
-# cb_client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
-# build = cloudbuild_v1.Build()
-# build.steps = [
-#     {
-#         "name": "gcr.io/cloud-builders/gcloud",
-#         "id": "get-key",
-#         "entrypoint": "bash",
-#         "args": ["-c", "gcloud secrets versions access latest --secret=\"github\" --project=\"eventrun\" > /root/.ssh/id_rsa"]
-#     }
-# ]
-# operation = cb_client.create_build(project_id=project_id, build=build)
-# result = operation.result()
-
-
-# import google.auth
-# from google.cloud.devtools import cloudbuild_v1
-# credentials, project_id = google.auth.default()
-# client = cloudbuild_v1.services.cloud_build.CloudBuildClient()
-# build = cloudbuild_v1.Build()
-# print('BUILD')
-# print(dir(build))
-# build.steps = [
-#     {
-#         "name": "gcr.io/cloud-builders/gcloud",
-#         "entrypoint": "bash",
-#         "args": ["-c", "ls -la"]
-#     }
-# ]
-# operation = client.create_build(project_id=project_id, build=build)
-# print("IN PROGRESS:")
-# print(operation.metadata)
-# result = operation.result()
-# print("RESULT:", result.status)
-
-# - name: 'gcr.io/cloud-builders/gcloud'
-#     id: 'get-key'
-#     entrypoint: 'bash'
-#     dir: .
-#     args:
-#     - '-c'
-#     - |
-#       gcloud secrets versions access latest --secret="github" --project="eventrun" > /root/.ssh/id_rsa
-#     volumes:
-#     - name: 'ssh'
-#       path: /root/.ssh
