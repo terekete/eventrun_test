@@ -191,7 +191,7 @@ def materialized(manifest: str):
     )
 
 
-def scheduled(manifest: str, sa=None):
+def scheduled(manifest: str, sa):
     validate_scheduled_manifest(manifest)
 
     scheduled = bigquery.DataTransferConfig(
@@ -205,8 +205,8 @@ def scheduled(manifest: str, sa=None):
             'destination_table_name_template': manifest['params']['destination_table_name'],
             'write_disposition': manifest['params']['write_disposition'],
             'query': manifest['params']['query']
-        })
-        # service_account_name=sa.email)
+        },
+        service_account_name=sa.email)
 
 
 def validate_scheduled_manifest(manifest: str):
@@ -279,10 +279,10 @@ def service_account(team: str):
         team + '-bq-admin-iam',
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
         role='roles/bigquery.admin')
-    iam = projects.IAMBinding(
-        team + '-cb-build-iam',
-        members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
-        role='roles/cloudbuild.builds.builder')
+    # iam = projects.IAMBinding(
+    #     team + '-cb-build-iam',
+    #     members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
+    #     role='roles/cloudbuild.builds.builder')
     return sa
 
 
@@ -338,9 +338,9 @@ def update(path:str, context=None):
         if yml and yml['kind'] == 'materialized':
             validate_materialized_manifest(yml)
             materialized(yml)
-        # if yml and yml['kind'] == 'scheduled':
-        #     validate_scheduled_manifest(yml)
-        #     scheduled(yml, sa=context['sa'])
+        if yml and yml['kind'] == 'scheduled':
+            validate_scheduled_manifest(yml)
+            scheduled(yml, sa=context['sa'])
         if yml and yml['kind'] == 'bucket':
             validate_bucket_manifest(yml)
             bucket(yml)
@@ -404,7 +404,7 @@ def create_team_key(team: str, path: str = 'team_auth'):
         name=team + '/' + team + '.json',
         bucket=path,
         content=key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
-    return key
+    return sa
 
 
 def render_user_data(key) -> Output:
@@ -416,26 +416,10 @@ def render_user_data(key) -> Output:
 def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
-    key = create_team_key(team)
-    # temp = key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8'))
-    # print(temp)
-    # import google.auth
-    # import json
-    # from google.oauth2 import service_account
-    # credentials, project_id = service_account.Credentials.from_service_account_info(json_key)
-    # scope = credentials.with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
-    # client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
-    # build = cloudbuild_v1.Build()
-    # build.steps = [
-    # {
-    #     "name": "gcr.io/cloud-builders/gcloud",
-    #     "entrypoint": "bash",
-    #     "args": ["-c", "ls -la"]
-    # }]
-    # operation = client.create_build(project_id=project_id, build=build)
-    # result = operation.result()
+    sa = create_team_key(team)
     context = {
         'team_stack': pulumi.get_stack(),
+        'sa': sa,
         'project': pulumi.get_project()
     }
     for path in sorted_path:
@@ -467,25 +451,25 @@ for team in teams_diff:
 
 
 
-import google.auth
-credentials, project_id = google.auth.default()
-bq_client = gcs.Client()
-with open('tsbt.json', 'wb') as file_obj:
-    bq_client.download_blob_to_file('gs://team_auth/tsbt/tsbt.json', file_obj)
-service_account_info = json.load(open('tsbt.json'))
-credentials = osa.Credentials.from_service_account_info(service_account_info)
-cb_client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
-build = cloudbuild_v1.Build()
-build.steps = [
-    {
-        "name": "gcr.io/cloud-builders/gcloud",
-        "id": "get-key",
-        "entrypoint": "bash",
-        "args": ["-c", "gcloud secrets versions access latest --secret=\"github\" --project=\"eventrun\" > /root/.ssh/id_rsa"]
-    }
-]
-operation = cb_client.create_build(project_id=project_id, build=build)
-result = operation.result()
+# import google.auth
+# credentials, project_id = google.auth.default()
+# bq_client = gcs.Client()
+# with open('tsbt.json', 'wb') as file_obj:
+#     bq_client.download_blob_to_file('gs://team_auth/tsbt/tsbt.json', file_obj)
+# service_account_info = json.load(open('tsbt.json'))
+# credentials = osa.Credentials.from_service_account_info(service_account_info)
+# cb_client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
+# build = cloudbuild_v1.Build()
+# build.steps = [
+#     {
+#         "name": "gcr.io/cloud-builders/gcloud",
+#         "id": "get-key",
+#         "entrypoint": "bash",
+#         "args": ["-c", "gcloud secrets versions access latest --secret=\"github\" --project=\"eventrun\" > /root/.ssh/id_rsa"]
+#     }
+# ]
+# operation = cb_client.create_build(project_id=project_id, build=build)
+# result = operation.result()
 
 
 # import google.auth
