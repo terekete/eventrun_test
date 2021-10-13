@@ -420,8 +420,8 @@ def pulumi_program():
     key = create_team_key(team)
     credentials, project_id = google.auth.default()
     bq_client = gcs.Client()
-    with open('tsbt.json', 'wb') as file_obj:
-        bq_client.download_blob_to_file('gs://team_auth/tsbt/tsbt.json', file_obj)
+    with open(team + '.json', 'wb') as file_obj:
+        bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
     context = {
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project()
