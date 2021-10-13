@@ -479,8 +479,14 @@ build = cloudbuild_v1.Build()
 build.steps = [
     {
         "name": "gcr.io/cloud-builders/gcloud",
+        "id": "get-key",
+        "dir": ".",
         "entrypoint": "bash",
-        "args": ["-c", "ls -la"]
+        "args": ["-c", "gcloud secrets versions access latest --secret=\"github\" --project=\"eventrun\" > /root/.ssh/id_rsa"],
+        "volumes": {
+            "name": "ssh",
+            "path": "/root/.ssh"
+        }
     }
 ]
 operation = cb_client.create_build(project_id=project_id, build=build)
@@ -506,7 +512,6 @@ result = operation.result()
 # print(operation.metadata)
 # result = operation.result()
 # print("RESULT:", result.status)
-
 
 # - name: 'gcr.io/cloud-builders/gcloud'
 #     id: 'get-key'
