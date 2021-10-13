@@ -467,15 +467,15 @@ for team in teams_diff:
 
 
 
-# import google.auth
-# credentials, project_id = google.auth.default()
-# bq_client = gcs.Client()
-# with open('tsbt.json', 'wb') as file_obj:
-#     bq_client.download_blob_to_file('gs://team_auth/tsbt/tsbt.json', file_obj)
-# service_account_info = json.load(open('tsbt.json'))
-# credentials = osa.Credentials.from_service_account_info(service_account_info)
-# cb_client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
-# build = cloudbuild_v1.Build()
+import google.auth
+credentials, project_id = google.auth.default()
+bq_client = gcs.Client()
+with open('tsbt.json', 'wb') as file_obj:
+    bq_client.download_blob_to_file('gs://team_auth/tsbt/tsbt.json', file_obj)
+service_account_info = json.load(open('tsbt.json'))
+credentials = osa.Credentials.from_service_account_info(service_account_info)
+cb_client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
+build = cloudbuild_v1.Build()
 
 
 # build.steps = [
