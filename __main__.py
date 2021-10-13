@@ -7,6 +7,7 @@ import uuid
 import datetime
 import base64
 import json
+import google.auth
 
 from google.oauth2 import service_account as osa
 from google.cloud.devtools import cloudbuild_v1
@@ -417,23 +418,10 @@ def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     key = create_team_key(team)
-    # temp = key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8'))
-    # print(temp)
-    # import google.auth
-    # import json
-    # from google.oauth2 import service_account
-    # credentials, project_id = service_account.Credentials.from_service_account_info(json_key)
-    # scope = credentials.with_scopes(['https://www.googleapis.com/auth/cloud-platform'])
-    # client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
-    # build = cloudbuild_v1.Build()
-    # build.steps = [
-    # {
-    #     "name": "gcr.io/cloud-builders/gcloud",
-    #     "entrypoint": "bash",
-    #     "args": ["-c", "ls -la"]
-    # }]
-    # operation = client.create_build(project_id=project_id, build=build)
-    # result = operation.result()
+    credentials, project_id = google.auth.default()
+    bq_client = gcs.Client()
+    with open(team + '.json', 'wb') as file_obj:
+        bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
     context = {
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project()
@@ -467,11 +455,6 @@ for team in teams_diff:
 
 
 
-# import google.auth
-# credentials, project_id = google.auth.default()
-# bq_client = gcs.Client()
-# with open('tsbt.json', 'wb') as file_obj:
-#     bq_client.download_blob_to_file('gs://team_auth/tsbt/tsbt.json', file_obj)
 # service_account_info = json.load(open('tsbt.json'))
 # credentials = osa.Credentials.from_service_account_info(service_account_info)
 # cb_client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
