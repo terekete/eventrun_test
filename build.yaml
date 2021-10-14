@@ -69,12 +69,12 @@ steps:
       'PROJECT_ID=${_KEY_PROJECT}'
     ]
     waitFor: ['create-staging-dir']
-  - name: 'gcr.io/cloud-builders/git'
-    id: 'list-dir'
-    entrypoint: 'bash'
-    args: [
-      '/workspace/scripts/update_iac.sh'
-    ]
+  # - name: 'gcr.io/cloud-builders/git'
+  #   id: 'list-dir'
+  #   entrypoint: 'bash'
+  #   args: [
+  #     '/workspace/scripts/update_iac.sh'
+  #   ]
 
 
 options:
