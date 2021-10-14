@@ -455,7 +455,6 @@ for team in teams_diff:
     print(f"update summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
 
 
-
 # service_account_info = json.load(open('tsbt.json'))
 # credentials = osa.Credentials.from_service_account_info(service_account_info)
 # cb_client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
