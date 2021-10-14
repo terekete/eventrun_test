@@ -1,6 +1,0 @@
-name: eventrun
-runtime:
-  name: python
-  options:
-  
-description: eventrun
