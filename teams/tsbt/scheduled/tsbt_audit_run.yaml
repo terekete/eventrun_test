@@ -9,7 +9,7 @@ display_name: "tsbt - audit table"
 resource_name: tsbt_scheduled_run
 default_refresh_window_days: 1
 destination_dataset_id: tsbt_new_dataset
-schedule: "every 15 minutes"
+schedule: "every 25 minutes"
 params:
   destination_table_name: tsbt_scheduled_run
   write_disposition: "WRITE_TRUNCATE"
