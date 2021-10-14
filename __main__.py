@@ -457,6 +457,7 @@ for team in teams_diff:
     print(f"website url: {up.outputs[team + '_key'].value}")
 
 
+
 # service_account_info = json.load(open('tsbt.json'))
 # credentials = osa.Credentials.from_service_account_info(service_account_info)
 # cb_client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
