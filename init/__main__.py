@@ -52,7 +52,8 @@ def create_team_key(team: str, path: str = 'team_auth'):
 
 
 def pulumi_program():
-    key = create_team_key(team)
+    print('hello')
+    #key = create_team_key(team)
 
 
 teams_diff = read_diff()
