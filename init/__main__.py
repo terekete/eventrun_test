@@ -58,16 +58,16 @@ def pulumi_program():
 
 teams_diff = read_diff()
 print(teams_diff)
-# for team in teams_diff:
-#     stack = auto.create_or_select_stack(
-#         stack_name='init',
-#         project_name='eventrun',
-#         program=pulumi_program,
-#         work_dir='/workspace')
-#     stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
-#     stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
-#     stack.refresh()
-#     print('##################### Preview Changes for Team: ' + team + ' #####################')
-#     stack.preview(on_output=print)
-#     print('##################### Upsert Changes for Team: ' + team + ' #####################')
-#     stack.up(on_output=print)
+for team in teams_diff:
+    stack = auto.create_or_select_stack(
+        stack_name='init',
+        project_name='eventrun',
+        program=pulumi_program,
+        work_dir='/workspace/init')
+    stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
+    stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
+    stack.refresh()
+    print('##################### Preview Changes for Team: ' + team + ' #####################')
+    stack.preview(on_output=print)
+    print('##################### Upsert Changes for Team: ' + team + ' #####################')
+    stack.up(on_output=print)
