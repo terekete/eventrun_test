@@ -63,7 +63,7 @@ for team in teams_diff:
         stack_name='init',
         project_name='eventrun',
         program=pulumi_program,
-        work_dir='/workspace/init')
+        work_dir='/workspace')
     stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
     stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
     stack.refresh()
