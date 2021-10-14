@@ -418,7 +418,7 @@ def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     key = create_team_key(team)
-    pulumi.export(team + '_key', key.private_key)
+    pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
     credentials, project_id = google.auth.default()
     bq_client = gcs.Client()
     with open(team + '.json', 'wb') as file_obj:
@@ -454,7 +454,7 @@ for team in teams_diff:
     print('##################### Upsert Changes for Team: ' + team + ' #####################')
     up = stack.up(on_output=print)
     print(f"update summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
-    print(f"website url: {up.outputs[team + '_key'].value}")
+    print(f"key: {up.outputs[team + '_key'].value}")
 
 
 
