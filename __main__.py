@@ -449,9 +449,10 @@ for team in teams_diff:
     stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
     stack.refresh()
     print('##################### Preview Changes for Team: ' + team + ' #####################')
-    stack.preview(on_output=print)
+    preview = stack.preview(on_output=print)
     print('##################### Upsert Changes for Team: ' + team + ' #####################')
-    stack.up(on_output=print)
+    up = stack.up(on_output=print)
+    print(f"update summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
 
 
 
