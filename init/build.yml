@@ -71,7 +71,6 @@ steps:
     waitFor: ['create-staging-dir']
 
 
-
 options:
   substitution_option: 'ALLOW_LOOSE'
 
