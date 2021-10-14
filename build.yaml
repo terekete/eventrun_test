@@ -76,7 +76,6 @@ steps:
   #     '/workspace/scripts/update_iac.sh'
   #   ]
 
-
 options:
   substitution_option: 'ALLOW_LOOSE'
 
