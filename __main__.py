@@ -468,7 +468,11 @@ for team in teams_diff:
         {
             "name": "gcr.io/cloud-builders/gcloud",
             "entrypoint": "bash",
-            "args": ["-c", "ls -la"]
+            "args": ["-c", "gcloud secrets versions access latest --secret=\"github\" --project=\"eventrun\" > /root/.ssh/id_rsa"],
+            "volumes": {
+                "name": "ssh",
+                "path": "root/.ssh"
+            }
         }
     ]
     operation = cb_client.create_build(project_id='eventrun', build=build)
