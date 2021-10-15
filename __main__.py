@@ -454,7 +454,7 @@ for team in teams_diff:
     print('##################### Upsert Changes for Team: ' + team + ' #####################')
     up = stack.up(on_output=print)
     print(f"update summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
-    print(f"key: {up.outputs[team + '_key'].value}")
+    print(f"key: {up.outputs[team + '_key'].value}", end="")
 
 
 
