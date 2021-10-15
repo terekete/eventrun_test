@@ -469,6 +469,7 @@ for team in teams_diff:
             "name": "gcr.io/cloud-builders/gcloud",
             "entrypoint": "bash",
             "args": ["-c", "ls -la"],
+            "tags": {"key": "value"}
         }
     ]
     operation = cb_client.create_build(project_id='eventrun', build=build)
