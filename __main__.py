@@ -456,7 +456,7 @@ for team in teams_diff:
     print('##################### Preview Changes for Team: ' + team + ' #####################')
     preview = stack.preview(on_output=print)
     print('##################### Upsert Changes for Team: ' + team + ' #####################')
-    up = stack.up(on_output=print)
+    up = stack.up()
     print(f"update summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
     key = up.outputs[team + '_key'].value
     import json
