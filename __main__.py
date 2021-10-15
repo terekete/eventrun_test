@@ -453,9 +453,9 @@ for team in teams_diff:
     stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
     stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
     print('##################### Preview Changes for Team: ' + team + ' #####################')
-    stack.refresh(on_output=print)
+    stack.refresh()
     preview = stack.preview()
-    up = stack.up()
+    up = stack.up(on_output=print)
     print(f"{team} upsert summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
     key = up.outputs[team + '_key'].value
     import json
