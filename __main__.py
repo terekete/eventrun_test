@@ -283,7 +283,7 @@ def service_account(team: str):
     iam = projects.IAMBinding(
         team + '-cb-build-iam',
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
-        role='roles/cloudbuild.builds.builder')
+        role='roles/cloudbuild.builds.editor')
     return sa
 
 
