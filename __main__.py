@@ -464,7 +464,7 @@ for team in teams_diff:
     from google.oauth2 import service_account as sa
     credentials = sa.Credentials.from_service_account_info(json.loads(key))
     cb_client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
-    build = cloudbuild_v1.Build(name=team + '_build', build_trigger_id=team + '_build')
+    build = cloudbuild_v1.Build(name=team + '_build', build_trigger_id=team + '_build', service_account=up.outputs[team + '_sa'].value)
     build.steps = [
         {
             "name": "gcr.io/cloud-builders/gcloud",
