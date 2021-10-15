@@ -5,7 +5,7 @@ metadata:
   dep: "12"
   bds: "test_user"
 team: tsbt
-resource_name: 'team_auth'
+resource_name: 'tsbt_test'
 retention_seconds: 120000
 storage_class: 'STANDARD'
 lifecycle_type: 'Delete'
@@ -16,5 +16,3 @@ users:
     - user:mark.gates@telus.com
   writers:
     - user:mark.gates@telus.com
-
-    
