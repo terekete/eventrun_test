@@ -442,7 +442,7 @@ teams_set = set([
     if re.search('teams/(.+?)/+', team)
 ])
 
-
+key_out = ""
 teams_diff = read_diff()
 for team in teams_diff:
     stack = auto.create_or_select_stack(
@@ -458,8 +458,10 @@ for team in teams_diff:
     print('##################### Upsert Changes for Team: ' + team + ' #####################')
     up = stack.up(on_output=print)
     print(f"update summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
-    key = f"key: {up.outputs[team + '_key'].value}"
-    print('key: ' + key)
+    key_out = f"key: {up.outputs[team + '_key'].value}"
+    
+
+for team in teams_diff:
     stack = auto.create_or_select_stack(
         stack_name=team,
         project_name='eventrun',
@@ -473,6 +475,7 @@ for team in teams_diff:
     print('##################### Upsert Changes for Team: ' + team + ' #####################')
     up = stack.up(on_output=print)
     print(f"update summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
+    print(key_out)
 
 
 
