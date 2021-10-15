@@ -415,14 +415,26 @@ def render_user_data(key) -> Output:
 
 
 def pulumi_program():
-    sorted_path = graph_sort(dependency_map).sorted
-    sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
+    # sorted_path = graph_sort(dependency_map).sorted
+    # sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     key = create_team_key(team)
     pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
-    credentials, project_id = google.auth.default()
-    bq_client = gcs.Client()
-    with open(team + '.json', 'wb') as file_obj:
-        bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
+    # credentials, project_id = google.auth.default()
+    # bq_client = gcs.Client()
+    # with open(team + '.json', 'wb') as file_obj:
+    #     bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
+    # context = {
+    #     'team_stack': pulumi.get_stack(),
+    #     'project': pulumi.get_project()
+    # }
+    # for path in sorted_path:
+    #     if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
+    #         update(path, context)
+
+
+def pulumi_program2():
+    sorted_path = graph_sort(dependency_map).sorted
+    sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     context = {
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project()
@@ -430,10 +442,6 @@ def pulumi_program():
     for path in sorted_path:
         if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
             update(path, context)
-
-
-def pulumi_program2():
-    print("HEY")
 
 
 teams_set = set([
@@ -446,7 +454,7 @@ key_out = ""
 teams_diff = read_diff()
 for team in teams_diff:
     stack = auto.create_or_select_stack(
-        stack_name=team,
+        stack_name=team + '_sa',
         project_name='eventrun',
         program=pulumi_program,
         work_dir='/workspace')
