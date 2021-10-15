@@ -462,7 +462,8 @@ for team in teams_diff:
     import json
     print(type(key))
     print(json.loads(key))
-
+    from google.oauth2 import service_account as sa
+    credentials = sa.Credentials.from_service_account_info(json.loads(key))
 
 
 
