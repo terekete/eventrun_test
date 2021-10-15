@@ -461,7 +461,7 @@ for team in teams_diff:
     key = f"key: {up.outputs[team + '_key'].value}"
     import json
     print(key['key'])
-    print(type(key))
+    print(json.loads(key['key']))
 
 
 
