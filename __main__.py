@@ -456,7 +456,7 @@ for team in teams_diff:
     stack = auto.create_or_select_stack(
         stack_name=team + '_sa',
         project_name='eventrun',
-        program=pulumi_program,
+        program=pulumi_program2,
         work_dir='/workspace')
     stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
     stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
@@ -469,21 +469,21 @@ for team in teams_diff:
     key_out = f"key: {up.outputs[team + '_key'].value}"
     
 
-for team in teams_diff:
-    stack = auto.create_or_select_stack(
-        stack_name=team,
-        project_name='eventrun',
-        program=pulumi_program2,
-        work_dir='/workspace')
-    stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
-    stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
-    stack.refresh()
-    print('##################### Preview Changes for Team: ' + team + ' #####################')
-    preview = stack.preview(on_output=print)
-    print('##################### Upsert Changes for Team: ' + team + ' #####################')
-    up = stack.up(on_output=print)
-    print(f"update summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
-    print(key_out)
+# for team in teams_diff:
+#     stack = auto.create_or_select_stack(
+#         stack_name=team,
+#         project_name='eventrun',
+#         program=pulumi_program2,
+#         work_dir='/workspace')
+#     stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
+#     stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
+#     stack.refresh()
+#     print('##################### Preview Changes for Team: ' + team + ' #####################')
+#     preview = stack.preview(on_output=print)
+#     print('##################### Upsert Changes for Team: ' + team + ' #####################')
+#     up = stack.up(on_output=print)
+#     print(f"update summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
+#     print(key_out)
 
 
 
