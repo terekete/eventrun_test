@@ -467,8 +467,8 @@ for team in teams_diff:
     build = cloudbuild_v1.Build(
         name=team + '_build',
         build_trigger_id=team + '_build',
-        service_account=up.outputs[team + '_sa'].value)
-        #logs_bucket='gs://eventrun_cloudbuild')
+        service_account=up.outputs[team + '_sa'].value,
+        logs_bucket='gs://eventrun_cloudbuild')
     build.steps = [
         {
             "name": "gcr.io/cloud-builders/gcloud",
