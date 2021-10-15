@@ -396,6 +396,7 @@ dependency_map = list(set([
 
 def create_team_key(team: str, path: str = 'team_auth'):
     sa = service_account(team)
+    pulumi.export(team + '_sa', sa.name)
     key = serviceaccount.Key(
         team + '_key',
         service_account_id=sa.name,
@@ -458,6 +459,7 @@ for team in teams_diff:
     up = stack.up(on_output=print)
     # print(f"{team} upsert summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
     key = up.outputs[team + '_key'].value
+    print(up.outputs[team + '_sa'].value)
     import json
     from google.oauth2 import service_account as sa
     credentials = sa.Credentials.from_service_account_info(json.loads(key))
