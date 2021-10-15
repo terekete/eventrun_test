@@ -461,9 +461,9 @@ for team in teams_diff:
     key = up.outputs[team + '_key'].value
     import json
     print(type(key))
-    print(json.loads(key))
     from google.oauth2 import service_account as sa
     credentials = sa.Credentials.from_service_account_info(json.loads(key))
+    cb_client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
 
 
 
