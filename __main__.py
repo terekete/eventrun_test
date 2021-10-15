@@ -459,10 +459,9 @@ for team in teams_diff:
     up = stack.up(on_output=print)
     print(f"update summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
     key = f"key: {up.outputs[team + '_key'].value}"
-    print('key: ' + key)
+    import json
+    print(json.loads(key))
     print(type(key))
-
-
 
 
 
