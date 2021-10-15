@@ -415,26 +415,14 @@ def render_user_data(key) -> Output:
 
 
 def pulumi_program():
-    # sorted_path = graph_sort(dependency_map).sorted
-    # sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
-    key = create_team_key(team)
-    pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
-    # credentials, project_id = google.auth.default()
-    # bq_client = gcs.Client()
-    # with open(team + '.json', 'wb') as file_obj:
-    #     bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
-    # context = {
-    #     'team_stack': pulumi.get_stack(),
-    #     'project': pulumi.get_project()
-    # }
-    # for path in sorted_path:
-    #     if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
-    #         update(path, context)
-
-
-def pulumi_program2():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
+    key = create_team_key(team)
+    pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
+    credentials, project_id = google.auth.default()
+    bq_client = gcs.Client()
+    with open(team + '.json', 'wb') as file_obj:
+        bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
     context = {
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project()
@@ -444,19 +432,23 @@ def pulumi_program2():
             update(path, context)
 
 
+def pulumi_program2():
+    print("HEY")
+
+
 teams_set = set([
     re.search('teams/(.+?)/+', team).group(1)
     for team in manifests_set
     if re.search('teams/(.+?)/+', team)
 ])
 
-key_out = ""
+
 teams_diff = read_diff()
 for team in teams_diff:
     stack = auto.create_or_select_stack(
         stack_name=team,
         project_name='eventrun',
-        program=pulumi_program2,
+        program=pulumi_program,
         work_dir='/workspace')
     stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
     stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
@@ -466,25 +458,8 @@ for team in teams_diff:
     print('##################### Upsert Changes for Team: ' + team + ' #####################')
     up = stack.up(on_output=print)
     print(f"update summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
-    key_out = f"key: {up.outputs[team + '_key'].value}"
-    
-
-# for team in teams_diff:
-#     stack = auto.create_or_select_stack(
-#         stack_name=team,
-#         project_name='eventrun',
-#         program=pulumi_program2,
-#         work_dir='/workspace')
-#     stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
-#     stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
-#     stack.refresh()
-#     print('##################### Preview Changes for Team: ' + team + ' #####################')
-#     preview = stack.preview(on_output=print)
-#     print('##################### Upsert Changes for Team: ' + team + ' #####################')
-#     up = stack.up(on_output=print)
-#     print(f"update summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
-#     print(key_out)
-
+    key = f"key: {up.outputs[team + '_key'].value}"
+    print('key: ' + key)
 
 
 
