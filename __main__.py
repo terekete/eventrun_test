@@ -460,7 +460,7 @@ for team in teams_diff:
     print(f"update summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
     key = f"key: {up.outputs[team + '_key'].value}"
     import json
-    print(json.loads(key))
+    print(key['key'])
     print(type(key))
 
 
