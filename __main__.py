@@ -454,7 +454,7 @@ key_out = ""
 teams_diff = read_diff()
 for team in teams_diff:
     stack = auto.create_or_select_stack(
-        stack_name=team + '_sa',
+        stack_name=team,
         project_name='eventrun',
         program=pulumi_program2,
         work_dir='/workspace')
