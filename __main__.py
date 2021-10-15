@@ -458,7 +458,8 @@ for team in teams_diff:
     print('##################### Upsert Changes for Team: ' + team + ' #####################')
     up = stack.up(on_output=print)
     print(f"update summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
-    print(f"key: {up.outputs[team + '_key'].value}", end="")
+    key = f"key: {up.outputs[team + '_key'].value}"
+    print('key: ' + key)
     stack = auto.create_or_select_stack(
         stack_name=team,
         project_name='eventrun',
@@ -472,7 +473,6 @@ for team in teams_diff:
     print('##################### Upsert Changes for Team: ' + team + ' #####################')
     up = stack.up(on_output=print)
     print(f"update summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
-
 
 
 
