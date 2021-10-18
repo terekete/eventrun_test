@@ -410,13 +410,13 @@ def render_user_data(key) -> Output:
 def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
-    key = create_team_key(team)
-    pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
-    credentials, project_id = google.auth.default()
-    bq_client = gcs.Client()
-    with open(team + '.json', 'wb') as file_obj:
-        bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/workspace/' + team + '.json'
+    # key = create_team_key(team)
+    # pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
+    # credentials, project_id = google.auth.default()
+    # bq_client = gcs.Client()
+    # with open(team + '.json', 'wb') as file_obj:
+    #     bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
+    # os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/workspace/' + team + '.json'
     context = {
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project()
