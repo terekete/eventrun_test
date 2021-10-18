@@ -15,6 +15,7 @@ cat DIFF_TEAM.txt | while read team
 do
     echo "team:" $team
     python /workspace/scripts/iac.py $team
+    
 
     # if [[ $df_flex_folder =~ ^pipelines/([^/]*)/dataflows/flex-"$LANGUAGE"/([^/]*)/$ ]]
     # then
