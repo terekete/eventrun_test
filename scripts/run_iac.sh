@@ -8,6 +8,7 @@ cat DIFF_TEAM.txt
 
 export PULUMI_CONFIG_PASSPHRASE=test
 pulumi login gs://eventrun-state
+pulumi plugin install resource gcp v5.23.0
 #COMMIT=$(cat /workspace/commit.txt)
 
 cat DIFF_TEAM.txt | while read team
