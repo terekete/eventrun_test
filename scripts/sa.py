@@ -15,12 +15,11 @@ def service_account(
     team: str,
     postfix='-service-account'):
 
-    sa = serviceaccount.Account(
+    sva = serviceaccount.Account(
         team + postfix,
         account_id=team + postfix,
-        description='SA - ' + team,
         display_name=team + ' - service account'),
-    print(dir(sa))
+    print(dir(sva))
     # projects.IAMMember(
     #     team + '-bq-admin-iam',
     #     member=
