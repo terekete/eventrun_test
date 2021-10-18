@@ -381,7 +381,7 @@ if __name__ == "__main__":
     team = sys.argv[1]
     print("TEAM in MAIN: " + team)
     stack = auto.create_or_select_stack(
-        stack_name=team,
+        stack_name=team + '_iac',
         project_name='eventrun',
         program=pulumi_program,
         work_dir='/workspace')
@@ -391,4 +391,3 @@ if __name__ == "__main__":
     stack.refresh()
     preview = stack.preview()
     up = stack.up(on_output=print)
-
