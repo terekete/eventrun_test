@@ -1,22 +1,15 @@
 import yaml
 import re
 import pulumi
+import sys
 import os
-import glob
-import uuid
-import datetime
 import base64
-import json
-import google.auth
 
 from google.oauth2 import service_account as osa
-from google.cloud.devtools import cloudbuild_v1
-from google.cloud import storage as gcs
 from collections import defaultdict, namedtuple
 from pulumi import resource, Output
 from pulumi.automation import errors
-from pulumi.metadata import get_stack
-from pulumi_gcp import storage, bigquery, serviceaccount, projects, organizations, cloudbuild
+from pulumi_gcp import storage, bigquery, serviceaccount, projects
 from pulumi import automation as auto
 from cerberus import Validator
 
@@ -428,7 +421,6 @@ def pulumi_program():
 
 
 if __name__ == "__main__":
-    import sys
     team = sys.argv[1]
     print("TEAM in MAIN: " + team)
     stack = auto.create_or_select_stack(
