@@ -4,7 +4,6 @@
 set -e
 BUILD_DIR=$(pwd)
 echo "Build dir: " ${BUILD_DIR}
-ls -la
 cat DIFF_TEAM.txt
 
 export PULUMI_CONFIG_PASSPHRASE=test
@@ -15,7 +14,7 @@ cat DIFF_TEAM.txt | while read team
 do
     echo "team:" $team
     python /workspace/scripts/iac.py $team
-    
+    ls -la
 
     # if [[ $df_flex_folder =~ ^pipelines/([^/]*)/dataflows/flex-"$LANGUAGE"/([^/]*)/$ ]]
     # then
