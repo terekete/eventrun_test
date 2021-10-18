@@ -70,6 +70,7 @@ def pulumi_program():
     pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
 
 
+
 if __name__ == "__main__":
     team = sys.argv[1]
     stack = auto.create_or_select_stack(
