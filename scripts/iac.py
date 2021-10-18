@@ -330,18 +330,18 @@ def update(path:str, context=None):
         if yml and yml['kind'] == 'dataset':
             validate_dataset_manifest(yml)
             dataset(yml)
-        if yml and yml['kind'] == 'table':
-            validate_table_manifest(yml)
-            table(yml)
-        if yml and yml['kind'] == 'materialized':
-            validate_materialized_manifest(yml)
-            materialized(yml)
+        # if yml and yml['kind'] == 'table':
+        #     validate_table_manifest(yml)
+        #     table(yml)
+        # if yml and yml['kind'] == 'materialized':
+        #     validate_materialized_manifest(yml)
+        #     materialized(yml)
         # if yml and yml['kind'] == 'scheduled':
         #     validate_scheduled_manifest(yml)
         #     scheduled(yml, sa=context['sa'])
-        if yml and yml['kind'] == 'bucket':
-            validate_bucket_manifest(yml)
-            bucket(yml)
+        # if yml and yml['kind'] == 'bucket':
+        #     validate_bucket_manifest(yml)
+        #     bucket(yml)
     except auto.errors.CommandError as e:
         raise e
 
