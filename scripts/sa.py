@@ -14,20 +14,21 @@ from pulumi import automation as auto
 def service_account(
     team: str,
     postfix='-service-account'):
-    
+
     sa = serviceaccount.Account(
         team + postfix,
         account_id=team + postfix,
         description='SA - ' + team,
         display_name=team + ' - service account'),
-    projects.IAMMember(
-        team + '-bq-admin-iam',
-        member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
-        role='roles/bigquery.admin'),
-    projects.IAMMember(
-        team + '-storage-admin-iam',
-        member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
-        role='roles/storage.admin')
+    print(sa.email.apply(lambda e: f"serviceAccount:{e}"))
+    # projects.IAMMember(
+    #     team + '-bq-admin-iam',
+    #     member=
+    #     role='roles/bigquery.admin'),
+    # projects.IAMMember(
+    #     team + '-storage-admin-iam',
+    #     member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
+    #     role='roles/storage.admin')
     return sa
 
 
