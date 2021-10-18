@@ -80,3 +80,7 @@ if __name__ == "__main__":
     stack.refresh()
     preview = stack.preview()
     up = stack.up(on_output=print)
+    credentials, project_id = google.auth.default()
+    bq_client = gcs.Client()
+    with open(team + '.json', 'wb') as file_obj:
+        bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
