@@ -412,6 +412,7 @@ def pulumi_program():
     bq_client = gcs.Client()
     with open(team + '.json', 'wb') as file_obj:
         bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/workspace/' + team + '.json'
     context = {
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project()
@@ -438,5 +439,4 @@ if __name__ == "__main__":
     preview = stack.preview()
     up = stack.up(on_output=print)
     # print(f"{team} upsert summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
-    key = up.outputs[team + '_key'].value
     print(up.outputs[team + '_sa'].value)
