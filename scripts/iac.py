@@ -368,6 +368,8 @@ def pulumi_program():
 if __name__ == "__main__":
     teams_root = '/workspace/teams/'
     manifests_set = list_manifests(teams_root)
+    print('MANIFEST SET: ')
+    print(manifests_set)
     dependency_map = list(set([
         (root_manifest, dep_manifest)
         for dep_manifest in manifests_set
@@ -377,6 +379,7 @@ if __name__ == "__main__":
         and get_value(root_manifest, 'resource_name') in get_value(dep_manifest, 'dependencies')
         and root_manifest != dep_manifest
     ]))
+    print(dependency_map)
 
     team = sys.argv[1]
     print("TEAM in MAIN: " + team)
@@ -388,6 +391,6 @@ if __name__ == "__main__":
     stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
     stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
     print('##################### Preview Changes for Team: ' + team + ' #####################')
-    stack.refresh()
-    preview = stack.preview()
+    stack.refresh(on_output=print)
+    preview = stack.preview(on_output=print)
     up = stack.up(on_output=print)
