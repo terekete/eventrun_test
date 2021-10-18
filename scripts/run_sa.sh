@@ -8,7 +8,6 @@ pulumi login gs://eventrun-state
 pulumi plugin install resource gcp v5.24.0
 
 
-
 cat DIFF_TEAM.txt | while read team
 do
     python /workspace/scripts/sa.py $team
