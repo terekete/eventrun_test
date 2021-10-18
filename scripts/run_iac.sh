@@ -3,7 +3,8 @@
 
 set -e
 BUILD_DIR=$(pwd)
-echo ${BUILD_DIR}
+echo "Build dir: " ${BUILD_DIR}
+ls -la
 cat DIFF_TEAM.txt
 
 #COMMIT=$(cat /workspace/commit.txt)
