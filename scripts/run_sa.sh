@@ -14,3 +14,4 @@ do
     python /workspace/scripts/sa.py $team
     python /workspace/scripts/iac.py $team
 done
+la -la
