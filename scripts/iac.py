@@ -412,7 +412,6 @@ def pulumi_program():
             update(path, context)
 
 
-
 if __name__ == "__main__":
     team = sys.argv[1]
     print("TEAM in MAIN: " + team)
