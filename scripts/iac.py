@@ -427,4 +427,3 @@ if __name__ == "__main__":
     preview = stack.preview()
     up = stack.up(on_output=print)
     # print(f"{team} upsert summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
-
