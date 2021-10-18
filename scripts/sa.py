@@ -1,28 +1,17 @@
-import yaml
 import re
 import pulumi
 import os
-import glob
-import uuid
-import datetime
 import base64
-import json
-import google.auth
 
-from google.oauth2 import service_account as osa
-from collections import defaultdict, namedtuple
-from pulumi import resource, Output
 from pulumi.automation import errors
-from pulumi.metadata import get_stack
-from pulumi_gcp import storage, bigquery, serviceaccount, projects, organizations, cloudbuild
+from pulumi_gcp import storage, serviceaccount, projects, organizations, cloudbuild
 from pulumi import automation as auto
-from cerberus import Validator
 
 
-def service_account(team: str):
+def service_account(team: str, postfix='-service-account'):
     sa = serviceaccount.Account(
-        team + '-service-account',
-        account_id=team + '-service-account',
+        team + postfix,
+        account_id=team + postfix,
         display_name=team + ' - service account')
     iam = projects.IAMBinding(
         team + '-bq-admin-iam',
