@@ -7,7 +7,7 @@ import google.auth
 
 from google.cloud import storage as gcs
 from pulumi.automation import errors
-from pulumi_gcp import storage, serviceaccount, projects, service_account
+from pulumi_gcp import storage, serviceaccount, projects
 from pulumi import automation as auto
 
 
