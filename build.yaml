@@ -82,9 +82,10 @@ steps:
   - name: 'gcr.io/cloud-builders/git'
     id: 'list-dir'
     entrypoint: 'bash'
-    args: [
-      'ls -la'
-    ]
+    args:
+    - -exc
+    - |
+      ls -la
 
 options:
   substitution_option: 'ALLOW_LOOSE'
