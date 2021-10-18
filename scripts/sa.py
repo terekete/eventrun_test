@@ -408,18 +408,25 @@ def render_user_data(key) -> Output:
 
 
 def pulumi_program():
-    key = create_team_key(team)
-    pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
-    credentials, project_id = google.auth.default()
+    for team in get_teams():
+        key = create_team_key(team)
+        pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
+        credentials, project_id = google.auth.default()
     # bq_client = gcs.Client()
     # with open(team + '.json', 'wb') as file_obj:
     #     bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
 
 
+def get_teams():
+    teams_set = set([
+        re.search('teams/(.+?)/+', team).group(1)
+        for team in manifests_set
+        if re.search('teams/(.+?)/+', team)
+    ])
+    return teams_set
+
+
 if __name__ == "__main__":
-    import sys
-    team = sys.argv[1]
-    print("TEAM in MAIN: " + team)
     stack = auto.create_or_select_stack(
             stack_name='sa',
             project_name='eventrun',
@@ -427,8 +434,6 @@ if __name__ == "__main__":
             work_dir='/workspace')
     stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
     stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
-    print('##################### Update Key for Team: ' + team + ' #####################')
     stack.refresh()
     preview = stack.preview()
     up = stack.up(on_output=print)
-    print(up.outputs[team + '_sa'].value)
