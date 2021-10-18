@@ -74,7 +74,7 @@ def pulumi_program():
 
 if __name__ == "__main__":
     team = sys.argv[1]
-    print("TEAM SA: " + team)
+    print("TEAM SA START: " + team)
     stack = auto.create_or_select_stack(
             stack_name=team + '_sa',
             project_name='eventrun',
@@ -82,11 +82,12 @@ if __name__ == "__main__":
             work_dir='/workspace')
     stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
     stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
-    stack.refresh()
-    preview = stack.preview()
+    stack.refresh(on_output=print)
+    preview = stack.preview(on_output=print)
     up = stack.up(on_output=print)
     credentials, project_id = google.auth.default()
     bq_client = gcs.Client()
     with open(team + '.json', 'wb') as file_obj:
         bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
+    print("TEAM SA END: " + team)
 
