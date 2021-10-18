@@ -64,15 +64,14 @@ def get_teams(root: str = '/workspace/teams/'):
 
 
 def pulumi_program():
-    print("HEY")
-    # key = create_team_key(team)
-    # pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
+    key = create_team_key(team)
+    pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
 
 
 if __name__ == "__main__":
     team = sys.argv[1]
     stack = auto.create_or_select_stack(
-            stack_name='sa',
+            stack_name=team + '_sa',
             project_name='eventrun',
             program=pulumi_program,
             work_dir='/workspace')
