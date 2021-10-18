@@ -11,7 +11,7 @@ cat DIFF_TEAM.txt
 
 cat DIFF_TEAM.txt | while read team
 do
-    echo "team:" team
+    echo "team:" $team
     # if [[ $df_flex_folder =~ ^pipelines/([^/]*)/dataflows/flex-"$LANGUAGE"/([^/]*)/$ ]]
     # then
     #     # Generate directory for dataflow job in the zip artifact
