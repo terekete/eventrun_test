@@ -73,8 +73,8 @@ def pulumi_program():
 
 
 if __name__ == "__main__":
-    print("TEAM SA: " + team)
     team = sys.argv[1]
+    print("TEAM SA: " + team)
     stack = auto.create_or_select_stack(
             stack_name=team + '_sa',
             project_name='eventrun',
