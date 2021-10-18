@@ -56,5 +56,5 @@ python /workspace/scripts/sa.py
     #     echo "Error: $df_flex_folder does not match a dataflow flex directory structure"
     #     exit 1
     # fi
-done
+# done
 
