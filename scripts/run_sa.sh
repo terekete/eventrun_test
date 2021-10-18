@@ -10,9 +10,9 @@ pulumi plugin install resource gcp v5.23.0
 
 cat DIFF_TEAM.txt | while read team
 do
-    echo "team:" $team
+    echo "team:" ${team}
     python /workspace/scripts/sa.py $team
-    export GOOGLE_APPLICATION_CREDENTIALS=/workspace/${team}/${team}.json
+    export GOOGLE_APPLICATION_CREDENTIALS="/workspace/${team}/${team}.json"
     python /workspace/scripts/iac.py $team
 done
 ls -la
