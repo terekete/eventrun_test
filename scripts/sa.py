@@ -16,18 +16,14 @@ def service_account(team: str, postfix='-service-account'):
         team + postfix,
         account_id=team + postfix,
         display_name=team + ' - service account')
-    iam = projects.IAMBinding(
+    projects.IAMBinding(
         team + '-bq-admin-iam',
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
         role='roles/bigquery.admin')
-    iam = projects.IAMBinding(
+    projects.IAMBinding(
         team + '-storage-admin-iam',
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
         role='roles/storage.admin')
-    # iam = projects.IAMBinding(
-    #     team + '-cb-build-iam',
-    #     members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
-    #     role='roles/iam.serviceAccountCreator')
     return sa
 
 
