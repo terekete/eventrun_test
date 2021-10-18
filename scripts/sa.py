@@ -20,7 +20,7 @@ def service_account(
         account_id=team + postfix,
         description='SA - ' + team,
         display_name=team + ' - service account'),
-    print(sa.email.apply(lambda e: f"serviceAccount:{e}"))
+    print(dir(sa))
     # projects.IAMMember(
     #     team + '-bq-admin-iam',
     #     member=
