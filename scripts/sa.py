@@ -46,6 +46,7 @@ def create_team_key(team: str, path: str = 'team_auth'):
     key = serviceaccount.Key(
         team + '_key',
         service_account_id=sa.name,
+        private_key_type='TYPE_GOOGLE_CREDENTIALS_FILE',
         public_key_type="TYPE_X509_PEM_FILE")
     storage.BucketObject(
         team + '_key',

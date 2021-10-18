@@ -54,6 +54,7 @@ def dataset(manifest: str):
         resource_name=manifest['resource_name'] + '_dataset',
         dataset_id=manifest['dataset_id'],
         description=manifest['description'],
+        delete_contents_on_destroy=False,
         labels={
             'cost_center': manifest['metadata']['cost_center'],
             'dep': manifest['metadata']['dep'],
