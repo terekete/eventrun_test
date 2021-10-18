@@ -355,8 +355,8 @@ def render_user_data(key) -> Output:
 
 def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
-    print(sorted_path)
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
+    print(sorted_path)
     context = {
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project()
@@ -364,6 +364,7 @@ def pulumi_program():
     for path in sorted_path:
         print('PATH: ' + path)
         if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
+            print("RE FOUND")
             update(path, context)
 
 
