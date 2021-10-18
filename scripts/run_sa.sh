@@ -12,6 +12,7 @@ cat DIFF_TEAM.txt | while read team
 do
     echo "team:" $team
     python /workspace/scripts/sa.py $team
+    export GOOGLE_APPLICATION_CREDENTIALS=/workspace/${team}/${team}.json
     python /workspace/scripts/iac.py $team
 done
 ls -la
