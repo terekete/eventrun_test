@@ -87,3 +87,4 @@ if __name__ == "__main__":
     bq_client = gcs.Client()
     with open(team + '.json', 'wb') as file_obj:
         bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
+
