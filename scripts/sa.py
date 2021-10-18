@@ -19,11 +19,11 @@ def service_account(team: str, postfix='-service-account'):
         display_name=team + ' - service account'),
     projects.IAMMember(
         team + '-bq-admin-iam',
-        member=sa.email.apply(lambda email: f"serviceAccount:{email}"),
+        member=sa.email,
         role='roles/bigquery.admin'),
     projects.IAMMember(
         team + '-storage-admin-iam',
-        member=sa.email.apply(lambda email: f"serviceAccount:{email}"),
+        member=sa.email,
         role='roles/storage.admin')
     return sa
 
