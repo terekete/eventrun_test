@@ -411,9 +411,9 @@ def pulumi_program():
     key = create_team_key(team)
     pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
     credentials, project_id = google.auth.default()
-    bq_client = gcs.Client()
-    with open(team + '.json', 'wb') as file_obj:
-        bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
+    # bq_client = gcs.Client()
+    # with open(team + '.json', 'wb') as file_obj:
+    #     bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
 
 
 if __name__ == "__main__":
