@@ -4,4 +4,4 @@
 export PULUMI_CONFIG_PASSPHRASE=test
 
 pulumi login gs://eventrun-state
-python iac.py
+python ./iac.py
