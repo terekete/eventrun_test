@@ -13,7 +13,7 @@ pulumi login gs://eventrun-state
 cat DIFF_TEAM.txt | while read team
 do
     echo "team:" $team
-    python /workspace/scripts/iac.py $team
+    python /workspace/scripts/sa.py $team
     ls -la
 
     # if [[ $df_flex_folder =~ ^pipelines/([^/]*)/dataflows/flex-"$LANGUAGE"/([^/]*)/$ ]]
