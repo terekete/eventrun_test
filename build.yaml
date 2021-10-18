@@ -83,7 +83,7 @@ steps:
     id: 'list-dir'
     entrypoint: 'bash'
     args: [
-      '-c ls -la'
+      'ls -la'
     ]
 
 options:
