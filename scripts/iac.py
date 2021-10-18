@@ -265,26 +265,6 @@ def validate_bucket_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
-def service_account(team: str):
-    sa = serviceaccount.Account(
-        team + '-service-account',
-        account_id=team + '-service-account',
-        display_name=team + ' - service account')
-    iam = projects.IAMBinding(
-        team + '-bq-admin-iam',
-        members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
-        role='roles/bigquery.admin')
-    iam = projects.IAMBinding(
-        team + '-storage-admin-iam',
-        members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
-        role='roles/storage.objectAdmin')
-    # iam = projects.IAMBinding(
-    #     team + '-cb-build-iam',
-    #     members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
-    #     role='roles/cloudbuild.builds.editor')
-    return sa
-
-
 def read_yml(path: str):
     file = open(path, 'r')
     try:
@@ -367,34 +347,6 @@ def get_value(
             return yml[key]
 
 
-teams_root = '/workspace/teams/'
-manifests_set = list_manifests(teams_root)
-dependency_map = list(set([
-    (root_manifest, dep_manifest)
-    for dep_manifest in manifests_set
-    for root_manifest in manifests_set
-    if get_value(dep_manifest, 'dependencies')
-    and get_value(root_manifest, 'resource_name')
-    and get_value(root_manifest, 'resource_name') in get_value(dep_manifest, 'dependencies')
-    and root_manifest != dep_manifest
-]))
-
-
-def create_team_key(team: str, path: str = 'team_auth'):
-    sa = service_account(team)
-    pulumi.export(team + '_sa', sa.name)
-    key = serviceaccount.Key(
-        team + '_key',
-        service_account_id=sa.name,
-        public_key_type="TYPE_X509_PEM_FILE")
-    storage.BucketObject(
-        team + '_key',
-        name=team + '/' + team + '.json',
-        bucket=path,
-        content=key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
-    return key
-
-
 def render_user_data(key) -> Output:
     temp = base64.b64encode(key.encode("utf-8"))
     temp_str = str(temp, "utf-8")
@@ -414,6 +366,18 @@ def pulumi_program():
 
 
 if __name__ == "__main__":
+    teams_root = '/workspace/teams/'
+    manifests_set = list_manifests(teams_root)
+    dependency_map = list(set([
+        (root_manifest, dep_manifest)
+        for dep_manifest in manifests_set
+        for root_manifest in manifests_set
+        if get_value(dep_manifest, 'dependencies')
+        and get_value(root_manifest, 'resource_name')
+        and get_value(root_manifest, 'resource_name') in get_value(dep_manifest, 'dependencies')
+        and root_manifest != dep_manifest
+    ]))
+
     team = sys.argv[1]
     print("TEAM in MAIN: " + team)
     stack = auto.create_or_select_stack(
@@ -427,5 +391,3 @@ if __name__ == "__main__":
     stack.refresh()
     preview = stack.preview()
     up = stack.up(on_output=print)
-    # print(f"{team} upsert summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
-
