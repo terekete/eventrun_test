@@ -73,7 +73,7 @@ steps:
     id: 'build-pulumi'
     entrypoint: 'bash'
     args: [
-      '/workspace/scripts/run_iac.sh'
+      '/workspace/scripts/run_sa.sh'
     ]
     env: [
       'PROJECT_ID=${_KEY_PROJECT}'
