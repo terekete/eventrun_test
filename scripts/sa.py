@@ -11,24 +11,24 @@ from pulumi_gcp import storage, serviceaccount, projects
 from pulumi import automation as auto
 
 
-def service_account(
-    team: str,
-    postfix='-service-account'):
-
-    sva = serviceaccount.Account(
+def service_account(team: str, postfix='-service-account'):
+    sa = serviceaccount.Account(
         team + postfix,
         account_id=team + postfix,
-        display_name=team + ' - service account'),
-    print(dir(sva))
-    # projects.IAMMember(
-    #     team + '-bq-admin-iam',
-    #     member=
-    #     role='roles/bigquery.admin'),
+        display_name=team + ' - service account')
     # projects.IAMMember(
     #     team + '-storage-admin-iam',
     #     member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
     #     role='roles/storage.admin')
-    return sva
+    # projects.IAMBinding(
+    #     team + '-bq-admin-iam',
+    #     members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
+    #     role='roles/bigquery.admin')
+    # projects.IAMBinding(
+    #     team + '-storage-admin-iam',
+    #     members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
+    #     role='roles/storage.admin')
+    return sa
 
 
 def list_manifests(root: str):
@@ -72,7 +72,6 @@ def pulumi_program():
 
 
 
-
 if __name__ == "__main__":
     team = sys.argv[1]
     stack = auto.create_or_select_stack(
@@ -86,7 +85,7 @@ if __name__ == "__main__":
     preview = stack.preview(on_output=print)
     up = stack.up(on_output=print)
     credentials, project_id = google.auth.default()
-    # bq_client = gcs.Client()
-    # with open(team + '.json', 'wb') as file_obj:
-    #     bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
+    bq_client = gcs.Client()
+    with open(team + '.json', 'wb') as file_obj:
+        bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
 
