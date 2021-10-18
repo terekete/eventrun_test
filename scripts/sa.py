@@ -7,7 +7,7 @@ import google.auth
 
 from google.cloud import storage as gcs
 from pulumi.automation import errors
-from pulumi_gcp import storage, serviceaccount, projects
+from pulumi_gcp import storage, serviceaccount, projects, service_account
 from pulumi import automation as auto
 
 
@@ -15,14 +15,15 @@ def service_account(team: str, postfix='-service-account'):
     sa = serviceaccount.Account(
         team + postfix,
         account_id=team + postfix,
-        display_name=team + ' - service account')
-    projects.IAMBinding(
+        description='SA - ' + team,
+        display_name=team + ' - service account'),
+    projects.IAMMember(
         team + '-bq-admin-iam',
-        members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
-        role='roles/bigquery.admin')
-    projects.IAMBinding(
+        member=sa.email.apply(lambda email: f"serviceAccount:{email}"),
+        role='roles/bigquery.admin'),
+    projects.IAMMember(
         team + '-storage-admin-iam',
-        members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
+        member=sa.email.apply(lambda email: f"serviceAccount:{email}"),
         role='roles/storage.admin')
     return sa
 
