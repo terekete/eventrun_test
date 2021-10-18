@@ -3,6 +3,7 @@ import sys
 import pulumi
 import os
 import base64
+import google.auth
 
 from pulumi.automation import errors
 from pulumi_gcp import storage, serviceaccount, projects
