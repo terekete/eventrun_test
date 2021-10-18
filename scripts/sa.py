@@ -10,8 +10,6 @@ import json
 import google.auth
 
 from google.oauth2 import service_account as osa
-from google.cloud.devtools import cloudbuild_v1
-from google.cloud import storage as gcs
 from collections import defaultdict, namedtuple
 from pulumi import resource, Output
 from pulumi.automation import errors
@@ -41,6 +39,15 @@ def service_account(team: str):
     return sa
 
 
+def list_manifests(root: str):
+    yml_list = []
+    for path, subdirs, files in os.walk(root):
+        for name in files:
+            if name.endswith('.yaml') or name.endswith('.yml'):
+                yml_list.append(path + '/' + name)
+    return yml_list
+
+
 def create_team_key(team: str, path: str = 'team_auth'):
     sa = service_account(team)
     pulumi.export(team + '_sa', sa.name)
@@ -56,19 +63,20 @@ def create_team_key(team: str, path: str = 'team_auth'):
     return key
 
 
-def pulumi_program():
-    for team in get_teams():
-        key = create_team_key(team)
-        pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
-
-
-def get_teams():
+def get_teams(root: str = '/workspace/teams/'):
+    manifests_set = list_manifests(root)
     teams_set = set([
         re.search('teams/(.+?)/+', team).group(1)
         for team in manifests_set
         if re.search('teams/(.+?)/+', team)
     ])
     return teams_set
+
+
+def pulumi_program():
+    for team in get_teams():
+        key = create_team_key(team)
+        pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
 
 
 if __name__ == "__main__":
