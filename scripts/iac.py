@@ -423,26 +423,20 @@ def pulumi_program():
 
 
 if __name__ == "__main__":
-    teams_set = set([
-        re.search('teams/(.+?)/+', team).group(1)
-        for team in manifests_set
-        if re.search('teams/(.+?)/+', team)
-    ])
-
-
-    teams_diff = read_diff()
-    for team in teams_diff:
-        stack = auto.create_or_select_stack(
-            stack_name=team,
-            project_name='eventrun',
-            program=pulumi_program,
-            work_dir='/workspace')
-        stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
-        stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
-        print('##################### Preview Changes for Team: ' + team + ' #####################')
-        stack.refresh()
-        preview = stack.preview()
-        up = stack.up(on_output=print)
-        # print(f"{team} upsert summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
-        key = up.outputs[team + '_key'].value
-        print(up.outputs[team + '_sa'].value)
+    import sys
+    team = sys.argv[1]
+    print("TEAM in MAIN: " + team)
+    stack = auto.create_or_select_stack(
+        stack_name=team,
+        project_name='eventrun',
+        program=pulumi_program,
+        work_dir='/workspace')
+    stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
+    stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
+    print('##################### Preview Changes for Team: ' + team + ' #####################')
+    stack.refresh()
+    preview = stack.preview()
+    up = stack.up(on_output=print)
+    # print(f"{team} upsert summary: \n{json.dumps(up.summary.resource_changes, indent=4)}")
+    key = up.outputs[team + '_key'].value
+    print(up.outputs[team + '_sa'].value)

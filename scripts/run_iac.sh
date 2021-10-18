@@ -7,11 +7,15 @@ echo "Build dir: " ${BUILD_DIR}
 ls -la
 cat DIFF_TEAM.txt
 
+export PULUMI_CONFIG_PASSPHRASE=test
+pulumi login gs://eventrun-state
 #COMMIT=$(cat /workspace/commit.txt)
 
 cat DIFF_TEAM.txt | while read team
 do
     echo "team:" $team
+    python /workspace/scripts/iac.py $team
+
     # if [[ $df_flex_folder =~ ^pipelines/([^/]*)/dataflows/flex-"$LANGUAGE"/([^/]*)/$ ]]
     # then
     #     # Generate directory for dataflow job in the zip artifact
@@ -51,6 +55,3 @@ do
     # fi
 done
 
-export PULUMI_CONFIG_PASSPHRASE=test
-pulumi login gs://eventrun-state
-python /workspace/scripts/iac.py
