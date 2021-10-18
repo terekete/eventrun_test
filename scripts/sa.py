@@ -11,7 +11,10 @@ from pulumi_gcp import storage, serviceaccount, projects
 from pulumi import automation as auto
 
 
-def service_account(team: str, postfix='-service-account'):
+def service_account(
+    team: str,
+    postfix='-service-account'):
+    
     sa = serviceaccount.Account(
         team + postfix,
         account_id=team + postfix,
@@ -66,6 +69,7 @@ def get_teams(root: str = '/workspace/teams/'):
 def pulumi_program():
     key = create_team_key(team)
     pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
+
 
 
 
