@@ -16,3 +16,4 @@ do
     python /workspace/scripts/iac.py $team
 done
 ls -la
+pwd
