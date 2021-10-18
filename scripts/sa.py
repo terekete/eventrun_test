@@ -16,10 +16,10 @@ def service_account(team: str, postfix='-service-account'):
         team + postfix,
         account_id=team + postfix,
         display_name=team + ' - service account')
-    # projects.IAMMember(
-    #     team + '-storage-admin-iam',
-    #     member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
-    #     role='roles/storage.admin')
+    projects.IAMMember(
+        team + '-storage-admin-iam',
+        member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
+        role='roles/storage.admin')
     # projects.IAMBinding(
     #     team + '-bq-admin-iam',
     #     members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
