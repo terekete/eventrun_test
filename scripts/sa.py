@@ -28,7 +28,7 @@ def service_account(
     #     team + '-storage-admin-iam',
     #     member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
     #     role='roles/storage.admin')
-    return sa
+    return sva
 
 
 def list_manifests(root: str):
