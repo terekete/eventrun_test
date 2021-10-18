@@ -278,10 +278,10 @@ def service_account(team: str):
         team + '-storage-admin-iam',
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
         role='roles/storage.objectAdmin')
-    iam = projects.IAMBinding(
-        team + '-cb-build-iam',
-        members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
-        role='roles/cloudbuild.builds.editor')
+    # iam = projects.IAMBinding(
+    #     team + '-cb-build-iam',
+    #     members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
+    #     role='roles/cloudbuild.builds.editor')
     return sa
 
 
@@ -331,12 +331,12 @@ def update(path:str, context=None):
         if yml and yml['kind'] == 'dataset':
             validate_dataset_manifest(yml)
             dataset(yml)
-        if yml and yml['kind'] == 'table':
-            validate_table_manifest(yml)
-            table(yml)
-        if yml and yml['kind'] == 'materialized':
-            validate_materialized_manifest(yml)
-            materialized(yml)
+        # if yml and yml['kind'] == 'table':
+        #     validate_table_manifest(yml)
+        #     table(yml)
+        # if yml and yml['kind'] == 'materialized':
+        #     validate_materialized_manifest(yml)
+        #     materialized(yml)
         # if yml and yml['kind'] == 'scheduled':
         #     validate_scheduled_manifest(yml)
         #     scheduled(yml, sa=context['sa'])
