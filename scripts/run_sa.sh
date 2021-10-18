@@ -18,3 +18,4 @@ do
     export GOOGLE_APPLICATION_CREDENTIALS="/workspace/${team}.json"
     python /workspace/scripts/iac.py $team
 done
+
