@@ -355,12 +355,14 @@ def render_user_data(key) -> Output:
 
 def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
+    print(sorted_path)
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     context = {
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project()
     }
     for path in sorted_path:
+        print('PATH: ' + path)
         if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
             update(path, context)
 
@@ -379,8 +381,6 @@ if __name__ == "__main__":
         and get_value(root_manifest, 'resource_name') in get_value(dep_manifest, 'dependencies')
         and root_manifest != dep_manifest
     ]))
-    print(dependency_map)
-
     team = sys.argv[1]
     print("TEAM in MAIN: " + team)
     stack = auto.create_or_select_stack(
