@@ -239,14 +239,15 @@ def bucket(
 
     readers = [reader for reader in manifest['users']['readers'] or []]
     writers = [writer for writer in manifest['users']['writers'] or []]
+    
 
     bucket = storage.Bucket(
-        manifest['resource_name'],
-        name=manifest['resource_name'],
+        manifest['bucket_name'],
+        name=manifest['bucket_name'],
         force_destroy=True,
         lifecycle_rules=[storage.BucketLifecycleRuleArgs(
             action=storage.BucketLifecycleRuleActionArgs(
-                type=manifest['lifecycle_type']
+                type='Delete' if not manifest['lifecycle_type'] else manifest['lifecycle_type']
             ),
             condition=storage.BucketLifecycleRuleConditionArgs(
                 age=manifest['lifecycle_age_days']
