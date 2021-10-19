@@ -186,7 +186,7 @@ def materialized(manifest: str):
     )
 
 
-def scheduled(manifest: str, sa=None):
+def scheduled(manifest: str):
     validate_scheduled_manifest(manifest)
 
     scheduled = bigquery.DataTransferConfig(
@@ -318,7 +318,7 @@ def update(path:str, context=None):
             materialized(yml)
         if yml and yml['kind'] == 'scheduled':
             validate_scheduled_manifest(yml)
-            scheduled(yml, sa=context['sa'])
+            scheduled(yml)
         if yml and yml['kind'] == 'bucket':
             validate_bucket_manifest(yml)
             bucket(yml)
@@ -355,23 +355,18 @@ def render_user_data(key) -> Output:
 def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
-    print(sorted_path)
     context = {
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project()
     }
     for path in sorted_path:
-        print('PATH: ' + path)
         if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
-            print("RE FOUND")
             update(path, context)
 
 
 if __name__ == "__main__":
     teams_root = '/workspace/teams/'
     manifests_set = list_manifests(teams_root)
-    print('MANIFEST SET: ')
-    print(manifests_set)
     dependency_map = list(set([
         (root_manifest, dep_manifest)
         for dep_manifest in manifests_set
