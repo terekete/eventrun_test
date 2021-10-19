@@ -4,6 +4,7 @@ import pulumi
 import sys
 import os
 import base64
+import time
 
 from google.oauth2 import service_account as osa
 from collections import defaultdict, namedtuple
@@ -47,7 +48,10 @@ def validate_dataset_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
-def dataset(manifest: str):
+def dataset(
+    manifest: str,
+    delay: int = 3):
+
     validate_dataset_manifest(manifest)
 
     dts = bigquery.Dataset(
@@ -85,6 +89,7 @@ def dataset(manifest: str):
             user_by_email=writer,
             role='roles/bigquery.dataEditor'
         )
+    time.sleep(delay)
 
 
 def validate_table_manifest(manifest: str):
@@ -98,7 +103,10 @@ def validate_table_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
-def table(manifest: str):
+def table(
+    manifest: str,
+    delay: int = 1):
+
     validate_table_manifest(manifest)
 
     readers = [reader for reader in manifest['users']['readers']]
@@ -132,6 +140,7 @@ def table(manifest: str):
         role='roles/bigquery.dataEditor',
         members=writers
     )
+    time.sleep(delay)
 
 
 def validate_materialized_manifest(manifest: str):
@@ -145,7 +154,10 @@ def validate_materialized_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
-def materialized(manifest: str):
+def materialized(
+    manifest: str,
+    delay: int = 1):
+
     validate_materialized_manifest(manifest)
 
     readers = [reader for reader in manifest['users']['readers']]
@@ -184,9 +196,13 @@ def materialized(manifest: str):
         role='roles/bigquery.dataEditor',
         members=writers
     )
+    time.sleep(delay)
 
 
-def scheduled(manifest: str):
+def scheduled(
+    manifest: str,
+    delay: int = 1):
+
     validate_scheduled_manifest(manifest)
 
     scheduled = bigquery.DataTransferConfig(
@@ -201,6 +217,7 @@ def scheduled(manifest: str):
             'write_disposition': manifest['params']['write_disposition'],
             'query': manifest['params']['query']
         })
+    time.sleep(delay)
 
 
 def validate_scheduled_manifest(manifest: str):
@@ -214,7 +231,10 @@ def validate_scheduled_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
-def bucket(manifest: str):
+def bucket(
+    manifest: str,
+    delay: int = 1):
+
     validate_bucket_manifest(manifest)
 
     readers = [reader for reader in manifest['users']['readers'] or []]
@@ -251,6 +271,7 @@ def bucket(manifest: str):
             bucket=bucket.id,
             role="roles/storage.objectAdmin",
             members=writers)
+    time.sleep(delay)
 
 
 def validate_bucket_manifest(manifest: str):
