@@ -5,7 +5,7 @@ metadata:
   dep: "12"
   bds: "test_user"
 team: tsbt
-resource_name: 'tsbt_test'
+resource_name: 'test'
 storage_class: 'STANDARD'
 lifecycle_type: 'Delete'
 lifecycle_age_days: 90
