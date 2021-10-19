@@ -12,6 +12,6 @@ lifecycle_age_days: 90
 dependencies:
 users:
   readers:
-    - user:mark.gates@telus.com
+    - user:gates.mark@gmail.com
   writers:
     - user:gates.mark@gmail.com
