@@ -395,3 +395,4 @@ if __name__ == "__main__":
     stack.refresh(on_output=print)
     preview = stack.preview(on_output=print)
     up = stack.up(on_output=print)
+
