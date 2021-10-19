@@ -242,15 +242,15 @@ def bucket(
     
 
     bucket = storage.Bucket(
-        manifest['bucket_name'],
-        name=manifest['bucket_name'],
+        manifest['resource_name'],
+        name=manifest['resource_name'],
         force_destroy=True,
         lifecycle_rules=[storage.BucketLifecycleRuleArgs(
             action=storage.BucketLifecycleRuleActionArgs(
                 type='Delete' if not manifest['lifecycle_type'] else manifest['lifecycle_type']
             ),
             condition=storage.BucketLifecycleRuleConditionArgs(
-                age=manifest['lifecycle_age_days']
+                age=90 if not manifest['lifecycle_age_days'] else manifest['lifecycle_age_days']
             ),
         )],
         location="northamerica-northeast1",
