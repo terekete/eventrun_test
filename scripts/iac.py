@@ -50,6 +50,7 @@ def validate_dataset_manifest(manifest: str):
 
 def dataset(
     manifest: str,
+    team: str,
     delay: int = 3):
 
     validate_dataset_manifest(manifest)
@@ -105,6 +106,7 @@ def validate_table_manifest(manifest: str):
 
 def table(
     manifest: str,
+    team: str,
     delay: int = 1):
 
     validate_table_manifest(manifest)
@@ -156,6 +158,7 @@ def validate_materialized_manifest(manifest: str):
 
 def materialized(
     manifest: str,
+    team: str,
     delay: int = 1):
 
     validate_materialized_manifest(manifest)
@@ -201,6 +204,7 @@ def materialized(
 
 def scheduled(
     manifest: str,
+    team: str,
     delay: int = 1):
 
     validate_scheduled_manifest(manifest)
@@ -233,6 +237,7 @@ def validate_scheduled_manifest(manifest: str):
 
 def bucket(
     manifest: str,
+    team: str,
     delay: int = 1):
 
     validate_bucket_manifest(manifest)
@@ -243,7 +248,7 @@ def bucket(
 
     bucket = storage.Bucket(
         manifest['resource_name'],
-        name=manifest['resource_name'],
+        name= 'gcs_' + team + '_' + manifest['resource_name'],
         force_destroy=True,
         storage_class='STANDARD' if not manifest['storage_class'] else manifest['storage_class'],
         lifecycle_rules=[storage.BucketLifecycleRuleArgs(
@@ -326,25 +331,27 @@ def list_manifests(root: str):
     return yml_list
 
 
-def update(path:str, context=None):
-    yml = read_yml(path)
+def update(
+    path: str,
+    team: str):
 
+    yml = read_yml(path)
     try:
         if yml and yml['kind'] == 'dataset':
             validate_dataset_manifest(yml)
-            dataset(yml)
+            dataset(yml, team)
         if yml and yml['kind'] == 'table':
             validate_table_manifest(yml)
-            table(yml)
+            table(yml, team)
         if yml and yml['kind'] == 'materialized':
             validate_materialized_manifest(yml)
-            materialized(yml)
+            materialized(yml, team)
         if yml and yml['kind'] == 'scheduled':
             validate_scheduled_manifest(yml)
-            scheduled(yml)
+            scheduled(yml, team)
         if yml and yml['kind'] == 'bucket':
             validate_bucket_manifest(yml)
-            bucket(yml)
+            bucket(yml, team)
     except auto.errors.CommandError as e:
         raise e
 
@@ -378,13 +385,10 @@ def render_user_data(key) -> Output:
 def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
-    context = {
-        'team_stack': pulumi.get_stack(),
-        'project': pulumi.get_project()
-    }
+    team = pulumi.get_stack()
     for path in sorted_path:
-        if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
-            update(path, context)
+        if re.search('/workspace/teams/(.+?)/+', path).group(1) == team:
+            update(path, team)
 
 
 if __name__ == "__main__":
