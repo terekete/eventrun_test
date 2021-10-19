@@ -59,25 +59,33 @@ steps:
     - -exc
     - |
       mkdir staging
+  # - name: 'gcr.io/eventrun/pulumi:latest'
+  #   id: 'build-pulumi'
+  #   entrypoint: 'bash'
+  #   args: [
+  #     '/workspace/scripts/get_iac.sh'
+  #   ]
+  #   env: [
+  #     'PROJECT_ID=${_KEY_PROJECT}'
+  #   ]
+  #   waitFor: ['create-staging-dir']
   - name: 'gcr.io/eventrun/pulumi:latest'
     id: 'build-pulumi'
     entrypoint: 'bash'
     args: [
-      '/workspace/scripts/get_iac.sh'
+      '/workspace/scripts/run_sa.sh'
     ]
     env: [
       'PROJECT_ID=${_KEY_PROJECT}'
     ]
     waitFor: ['create-staging-dir']
-  - name: 'gcr.io/cloud-builders/git'
-    id: 'list-dir'
-    entrypoint: 'bash'
-    args:
-    - -c
-    - |
-      ls -la
-
-
+  # - name: 'gcr.io/cloud-builders/git'
+  #   id: 'list-dir'
+  #   entrypoint: 'bash'
+  #   args:
+  #   - -exc
+  #   - |
+  #     ls -la
 
 options:
   substitution_option: 'ALLOW_LOOSE'

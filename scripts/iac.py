@@ -1,22 +1,16 @@
 import yaml
 import re
 import pulumi
+import sys
 import os
-import glob
-import uuid
-import datetime
 import base64
-import json
-import google.auth
+import time
 
 from google.oauth2 import service_account as osa
-from google.cloud.devtools import cloudbuild_v1
-from google.cloud import storage as gcs
 from collections import defaultdict, namedtuple
 from pulumi import resource, Output
 from pulumi.automation import errors
-from pulumi.metadata import get_stack
-from pulumi_gcp import storage, bigquery, serviceaccount, projects, organizations, cloudbuild
+from pulumi_gcp import storage, bigquery, serviceaccount, projects
 from pulumi import automation as auto
 from cerberus import Validator
 
@@ -54,13 +48,18 @@ def validate_dataset_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
-def dataset(manifest: str):
+def dataset(
+    manifest: str,
+    team: str,
+    delay: int = 3):
+
     validate_dataset_manifest(manifest)
 
     dts = bigquery.Dataset(
         resource_name=manifest['resource_name'] + '_dataset',
-        dataset_id=manifest['dataset_id'],
+        dataset_id=team + '_' + manifest['resource_name'],
         description=manifest['description'],
+        delete_contents_on_destroy=False,
         labels={
             'cost_center': manifest['metadata']['cost_center'],
             'dep': manifest['metadata']['dep'],
@@ -91,6 +90,7 @@ def dataset(manifest: str):
             user_by_email=writer,
             role='roles/bigquery.dataEditor'
         )
+    time.sleep(delay)
 
 
 def validate_table_manifest(manifest: str):
@@ -104,7 +104,11 @@ def validate_table_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
-def table(manifest: str):
+def table(
+    manifest: str,
+    team: str,
+    delay: int = 1):
+
     validate_table_manifest(manifest)
 
     readers = [reader for reader in manifest['users']['readers']]
@@ -112,11 +116,10 @@ def table(manifest: str):
 
     tbl = bigquery.Table(
         resource_name=manifest['resource_name'] + '_table',
-        dataset_id=manifest['dataset_id'],
-        table_id=manifest['table_id'],
+        dataset_id=manifest['dataset_name'],
+        table_id= 'bq_' + team + '_' + manifest['resource_name'],
         deletion_protection=False,
         expiration_time=manifest['expiration_ms'],
-        friendly_name=manifest['friendly_name'],
         labels={
             'cost_center': manifest['metadata']['cost_center'],
             'dep': manifest['metadata']['dep'],
@@ -138,6 +141,7 @@ def table(manifest: str):
         role='roles/bigquery.dataEditor',
         members=writers
     )
+    time.sleep(delay)
 
 
 def validate_materialized_manifest(manifest: str):
@@ -151,7 +155,11 @@ def validate_materialized_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
-def materialized(manifest: str):
+def materialized(
+    manifest: str,
+    team: str,
+    delay: int = 1):
+
     validate_materialized_manifest(manifest)
 
     readers = [reader for reader in manifest['users']['readers']]
@@ -190,9 +198,14 @@ def materialized(manifest: str):
         role='roles/bigquery.dataEditor',
         members=writers
     )
+    time.sleep(delay)
 
 
-def scheduled(manifest: str, sa=None):
+def scheduled(
+    manifest: str,
+    team: str,
+    delay: int = 1):
+
     validate_scheduled_manifest(manifest)
 
     scheduled = bigquery.DataTransferConfig(
@@ -207,7 +220,7 @@ def scheduled(manifest: str, sa=None):
             'write_disposition': manifest['params']['write_disposition'],
             'query': manifest['params']['query']
         })
-        # service_account_name=sa.email)
+    time.sleep(delay)
 
 
 def validate_scheduled_manifest(manifest: str):
@@ -221,22 +234,28 @@ def validate_scheduled_manifest(manifest: str):
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
-def bucket(manifest: str):
+def bucket(
+    manifest: str,
+    team: str,
+    delay: int = 1):
+
     validate_bucket_manifest(manifest)
 
     readers = [reader for reader in manifest['users']['readers'] or []]
     writers = [writer for writer in manifest['users']['writers'] or []]
+    
 
     bucket = storage.Bucket(
         manifest['resource_name'],
-        name=manifest['resource_name'],
+        name= 'gcs_' + team + '_' + manifest['resource_name'],
         force_destroy=True,
+        storage_class='STANDARD' if not manifest['storage_class'] else manifest['storage_class'],
         lifecycle_rules=[storage.BucketLifecycleRuleArgs(
             action=storage.BucketLifecycleRuleActionArgs(
-                type=manifest['lifecycle_type']
+                type='Delete' if not manifest['lifecycle_type'] else manifest['lifecycle_type']
             ),
             condition=storage.BucketLifecycleRuleConditionArgs(
-                age=manifest['lifecycle_age_days']
+                age=90 if not manifest['lifecycle_age_days'] else manifest['lifecycle_age_days']
             ),
         )],
         location="northamerica-northeast1",
@@ -258,6 +277,7 @@ def bucket(manifest: str):
             bucket=bucket.id,
             role="roles/storage.objectAdmin",
             members=writers)
+    time.sleep(delay)
 
 
 def validate_bucket_manifest(manifest: str):
@@ -269,22 +289,6 @@ def validate_bucket_manifest(manifest: str):
     except:
         print("##### Bucket Exception - " + manifest['bucket_name'])
         raise auto.InlineSourceRuntimeError(validator.errors)
-
-
-def service_account(team: str):
-    sa = serviceaccount.Account(
-        team + '-service-account',
-        account_id=team + '-service-account',
-        display_name=team + ' - service account')
-    iam = projects.IAMBinding(
-        team + '-bq-admin-iam',
-        members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
-        role='roles/bigquery.admin')
-    iam = projects.IAMBinding(
-        team + '-cb-build-iam',
-        members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
-        role='roles/cloudbuild.builds.builder')
-    return sa
 
 
 def read_yml(path: str):
@@ -326,25 +330,27 @@ def list_manifests(root: str):
     return yml_list
 
 
-def update(path:str, context=None):
-    yml = read_yml(path)
+def update(
+    path: str,
+    team: str):
 
+    yml = read_yml(path)
     try:
         if yml and yml['kind'] == 'dataset':
             validate_dataset_manifest(yml)
-            dataset(yml)
+            dataset(yml, team)
         if yml and yml['kind'] == 'table':
             validate_table_manifest(yml)
-            table(yml)
+            table(yml, team)
         if yml and yml['kind'] == 'materialized':
             validate_materialized_manifest(yml)
-            materialized(yml)
-        # if yml and yml['kind'] == 'scheduled':
-        #     validate_scheduled_manifest(yml)
-        #     scheduled(yml, sa=context['sa'])
+            materialized(yml, team)
+        if yml and yml['kind'] == 'scheduled':
+            validate_scheduled_manifest(yml)
+            scheduled(yml, team)
         if yml and yml['kind'] == 'bucket':
             validate_bucket_manifest(yml)
-            bucket(yml)
+            bucket(yml, team)
     except auto.errors.CommandError as e:
         raise e
 
@@ -369,45 +375,6 @@ def get_value(
             return yml[key]
 
 
-# def create_trigger(team: str, sa=None):
-#     cloudbuild.Trigger(
-#         team + '-trigger',
-#         filename='team-build.yaml',
-#         service_account=sa.id,
-#         trigger_template=cloudbuild.TriggerTriggerTemplateArgs(
-#             branch_name='master',
-#             repo_name='terekete/eventrun_test'
-#         )
-#     )
-
-
-teams_root = '/workspace/teams/'
-manifests_set = list_manifests(teams_root)
-dependency_map = list(set([
-    (root_manifest, dep_manifest)
-    for dep_manifest in manifests_set
-    for root_manifest in manifests_set
-    if get_value(dep_manifest, 'dependencies')
-    and get_value(root_manifest, 'resource_name')
-    and get_value(root_manifest, 'resource_name') in get_value(dep_manifest, 'dependencies')
-    and root_manifest != dep_manifest
-]))
-
-
-def create_team_key(team: str, path: str = 'team_auth'):
-    sa = service_account(team)
-    key = serviceaccount.Key(
-        team + '_key',
-        service_account_id=sa.name,
-        public_key_type="TYPE_X509_PEM_FILE")
-    storage.BucketObject(
-        team + '_key',
-        name=team + '/' + team + '.json',
-        bucket=path,
-        content=key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
-    return key
-
-
 def render_user_data(key) -> Output:
     temp = base64.b64encode(key.encode("utf-8"))
     temp_str = str(temp, "utf-8")
@@ -417,29 +384,26 @@ def render_user_data(key) -> Output:
 def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
-    key = create_team_key(team)
-    credentials, project_id = google.auth.default()
-    bq_client = gcs.Client()
-    with open(team + '.json', 'wb') as file_obj:
-        bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
-    context = {
-        'team_stack': pulumi.get_stack(),
-        'project': pulumi.get_project()
-    }
+    team = pulumi.get_stack()
     for path in sorted_path:
-        if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
-            update(path, context)
+        if re.search('/workspace/teams/(.+?)/+', path).group(1) == team:
+            update(path, team)
 
 
-teams_set = set([
-    re.search('teams/(.+?)/+', team).group(1)
-    for team in manifests_set
-    if re.search('teams/(.+?)/+', team)
-])
-
-
-teams_diff = read_diff()
-for team in teams_diff:
+if __name__ == "__main__":
+    teams_root = '/workspace/teams/'
+    manifests_set = list_manifests(teams_root)
+    dependency_map = list(set([
+        (root_manifest, dep_manifest)
+        for dep_manifest in manifests_set
+        for root_manifest in manifests_set
+        if get_value(dep_manifest, 'dependencies')
+        and get_value(root_manifest, 'resource_name')
+        and get_value(root_manifest, 'resource_name') in get_value(dep_manifest, 'dependencies')
+        and root_manifest != dep_manifest
+    ]))
+    team = sys.argv[1]
+    print("TEAM in MAIN: " + team)
     stack = auto.create_or_select_stack(
         stack_name=team,
         project_name='eventrun',
@@ -447,59 +411,8 @@ for team in teams_diff:
         work_dir='/workspace')
     stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
     stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
-    stack.refresh()
     print('##################### Preview Changes for Team: ' + team + ' #####################')
-    stack.preview(on_output=print)
-    print('##################### Upsert Changes for Team: ' + team + ' #####################')
-    stack.up(on_output=print)
+    stack.refresh(on_output=print)
+    preview = stack.preview(on_output=print)
+    up = stack.up(on_output=print)
 
-
-# service_account_info = json.load(open('tsbt.json'))
-# credentials = osa.Credentials.from_service_account_info(service_account_info)
-# cb_client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
-# build = cloudbuild_v1.Build()
-
-
-# build.steps = [
-#     {
-#         "name": "gcr.io/cloud-builders/gcloud",
-#         "entrypoint": "bash",
-#         "args": ["-c", "ls -la"]
-#     }
-# ]
-# operation = cb_client.create_build(project_id=project_id, build=build)
-# result = operation.result()
-
-
-# import google.auth
-# from google.cloud.devtools import cloudbuild_v1
-# credentials, project_id = google.auth.default()
-# client = cloudbuild_v1.services.cloud_build.CloudBuildClient()
-# build = cloudbuild_v1.Build()
-# print('BUILD')
-# print(dir(build))
-# build.steps = [
-#     {
-#         "name": "gcr.io/cloud-builders/gcloud",
-#         "entrypoint": "bash",
-#         "args": ["-c", "ls -la"]
-#     }
-# ]
-# operation = client.create_build(project_id=project_id, build=build)
-# print("IN PROGRESS:")
-# print(operation.metadata)
-# result = operation.result()
-# print("RESULT:", result.status)
-
-
-# - name: 'gcr.io/cloud-builders/gcloud'
-#     id: 'get-key'
-#     entrypoint: 'bash'
-#     dir: .
-#     args:
-#     - '-c'
-#     - |
-#       gcloud secrets versions access latest --secret="github" --project="eventrun" > /root/.ssh/id_rsa
-#     volumes:
-#     - name: 'ssh'
-#       path: /root/.ssh

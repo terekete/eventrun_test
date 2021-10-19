@@ -283,7 +283,7 @@ def service_account(team: str):
     iam = projects.IAMBinding(
         team + '-cb-build-iam',
         members=[sa.email.apply(lambda email: f"serviceAccount:{email}")],
-        role='roles/cloudbuild.builds.builder')
+        role='roles/cloudbuild.builds.editor')
     return sa
 
 
@@ -396,6 +396,7 @@ dependency_map = list(set([
 
 def create_team_key(team: str, path: str = 'team_auth'):
     sa = service_account(team)
+    pulumi.export(team + '_sa', sa.name)
     key = serviceaccount.Key(
         team + '_key',
         service_account_id=sa.name,
@@ -418,10 +419,11 @@ def pulumi_program():
     sorted_path = graph_sort(dependency_map).sorted
     sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     key = create_team_key(team)
-    credentials, project_id = google.auth.default()
-    bq_client = gcs.Client()
-    with open(team + '.json', 'wb') as file_obj:
-        bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
+    pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
+    # credentials, project_id = google.auth.default()
+    # bq_client = gcs.Client()
+    # with open(team + '.json', 'wb') as file_obj:
+    #     bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
     context = {
         'team_stack': pulumi.get_stack(),
         'project': pulumi.get_project()
@@ -429,6 +431,10 @@ def pulumi_program():
     for path in sorted_path:
         if re.search('/workspace/teams/(.+?)/+', path).group(1) == context['team_stack']:
             update(path, context)
+
+
+def pulumi_program2():
+    print("HEY")
 
 
 teams_set = set([
@@ -447,11 +453,36 @@ for team in teams_diff:
         work_dir='/workspace')
     stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
     stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
-    stack.refresh()
     print('##################### Preview Changes for Team: ' + team + ' #####################')
-    stack.preview(on_output=print)
-    print('##################### Upsert Changes for Team: ' + team + ' #####################')
-    stack.up(on_output=print)
+    stack.refresh()
+    preview = stack.preview()
+    up = stack.up(on_output=print)
+    key = up.outputs[team + '_key'].value
+    print(up.outputs[team + '_sa'].value)
+    import json
+    from google.oauth2 import service_account as sa
+    credentials = sa.Credentials.from_service_account_info(json.loads(key))
+    cb_client = cloudbuild_v1.services.cloud_build.CloudBuildClient(credentials=credentials)
+    build = cloudbuild_v1.Build(
+        name=team + '_build',
+        build_trigger_id=team + '_build',
+        service_account=up.outputs[team + '_sa'].value,
+        logs_bucket='gs://eventrun_cloudbuild')
+    build.steps = [
+        {
+            "name": "gcr.io/cloud-builders/gcloud",
+            "entrypoint": "bash",
+            "args": ["-c", "gcloud auth list"]
+        }
+    ]
+    operation = cb_client.create_build(project_id='eventrun', build=build)
+    result = operation.result()
+
+
+
+
+
+
 
 
 

@@ -6,16 +6,12 @@ metadata:
   bds: "test_user"
 team: tsbt
 description: "TSBT Test Dataset"
-resource_name: tsbt_new_dataset
-dataset_id: tsbt_new_dataset
+resource_name: new_dataset
 partition_expiration_ms:
 table_expiration_ms:
-friendly_name: tsbt_new_dataset
 dependencies:
-  - tsbt_new_dataset
 users:
   readers:
     - user:gates.mark@gmail.com
   writers:
     - user:gates.mark@gmail.com
-

@@ -6,11 +6,9 @@ metadata:
   bds: "test_user"
 team: tsbt
 description: "Table for testing"
-resource_name: tsbt_audit_run
-dataset_id: tsbt_new_dataset
-table_id: tsbt_audit_run
+resource_name: audit_run
+dataset_name: tsbt_new_dataset
 expiration_ms:
-friendly_name: tsbt_audit_run
 dependencies:
   - tsbt_new_dataset
 schema: >
