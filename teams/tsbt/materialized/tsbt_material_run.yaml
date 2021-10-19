@@ -13,9 +13,9 @@ expiration_ms:
 friendly_name: tsbt_material_run
 dependencies:
   - tsbt_new_dataset
-  - tsbt_audit_run
+  - bq_tsbt_audit_run
 params:
-  query: "select * from `eventrun.tsbt_new_dataset.tsbt_audit_run`"
+  query: "select * from `eventrun.tsbt_new_dataset.bq_tsbt_audit_run`"
   refresh: true
   refresh_ms: 60000
 users:
