@@ -45,12 +45,7 @@
         'type': 'string',
         'nullable': False
     },
-    'dataset_id': {
-        'required': True,
-        'type': 'string',
-        'nullable': False
-    },
-    'table_id': {
+    'dataset_name': {
         'required': True,
         'type': 'string',
         'nullable': False
@@ -59,11 +54,6 @@
         'required': False,
         'type': 'string',
         'nullable': True
-    },
-    'friendly_name': {
-        'required': True,
-        'type': 'string',
-        'nullable': False
     },
     'dependencies': {
         'required': False,

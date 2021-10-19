@@ -116,11 +116,10 @@ def table(
 
     tbl = bigquery.Table(
         resource_name=manifest['resource_name'] + '_table',
-        dataset_id=manifest['dataset_id'],
-        table_id=manifest['table_id'],
+        dataset_id=manifest['dataset_name'],
+        table_id= 'bq_' + team + '_' + manifest['resource_name'],
         deletion_protection=False,
         expiration_time=manifest['expiration_ms'],
-        friendly_name=manifest['friendly_name'],
         labels={
             'cost_center': manifest['metadata']['cost_center'],
             'dep': manifest['metadata']['dep'],
