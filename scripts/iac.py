@@ -244,7 +244,8 @@ def bucket(
     bucket = storage.Bucket(
         manifest['resource_name'],
         name=manifest['resource_name'],
-        force_destroy=True,
+        force_destroy=True if not manifest['force_destroy'] else manifest['force_destroy'],
+        storage_class='STANDARD' if not manifest['storage_class'] else manifest['storage_class'],
         lifecycle_rules=[storage.BucketLifecycleRuleArgs(
             action=storage.BucketLifecycleRuleActionArgs(
                 type='Delete' if not manifest['lifecycle_type'] else manifest['lifecycle_type']
