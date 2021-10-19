@@ -40,11 +40,6 @@
         'type': 'string',
         'nullable': False
     },
-    'retention_seconds': {
-        'required': False,
-        'type': 'number',
-        'nullable': True
-    },
     'storage_class': {
         'required': False,
         'type': 'string',
