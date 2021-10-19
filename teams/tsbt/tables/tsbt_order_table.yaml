@@ -7,7 +7,7 @@ metadata:
 team: tsbt
 description: "Table for testing"
 resource_name: order_table
-dataset_name: new_dataset
+dataset_name: tsbt_new_dataset
 expiration_ms:
 dependencies:
   - tsbt_new_dataset
