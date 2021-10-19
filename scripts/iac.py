@@ -201,7 +201,6 @@ def scheduled(manifest: str, sa=None):
             'write_disposition': manifest['params']['write_disposition'],
             'query': manifest['params']['query']
         })
-        # service_account_name=sa.email)
 
 
 def validate_scheduled_manifest(manifest: str):
@@ -317,9 +316,9 @@ def update(path:str, context=None):
         if yml and yml['kind'] == 'materialized':
             validate_materialized_manifest(yml)
             materialized(yml)
-        # if yml and yml['kind'] == 'scheduled':
-        #     validate_scheduled_manifest(yml)
-        #     scheduled(yml, sa=context['sa'])
+        if yml and yml['kind'] == 'scheduled':
+            validate_scheduled_manifest(yml)
+            scheduled(yml, sa=context['sa'])
         if yml and yml['kind'] == 'bucket':
             validate_bucket_manifest(yml)
             bucket(yml)
