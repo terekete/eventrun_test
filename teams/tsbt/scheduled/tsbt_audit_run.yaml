@@ -14,7 +14,7 @@ params:
   destination_table_name: tsbt_scheduled_run
   write_disposition: "WRITE_TRUNCATE"
   query: >
-    select * from `eventrun.tsbt_new_dataset.tsbt_audit_run` limit 1
+    select * from `eventrun.tsbt_new_dataset.bq_tsbt_audit_run` limit 1
 dependencies:
   - tsbt_new_dataset
-  - tsbt_audit_run
+  - bq_tsbt_audit_run
