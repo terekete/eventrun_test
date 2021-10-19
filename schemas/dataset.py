@@ -45,11 +45,6 @@
         'type': 'string',
         'nullable': False
     },
-    'dataset_id': {
-        'required': True,
-        'type': 'string',
-        'nullable': False
-    },
     'partition_expiration_ms': {
         'required': False,
         'type': 'number',
@@ -59,11 +54,6 @@
         'required': False,
         'type': 'number',
         'nullable': True
-    },
-    'friendly_name': {
-        'required': True,
-        'type': 'string',
-        'nullable': False
     },
     'users': {
         'required': True,
