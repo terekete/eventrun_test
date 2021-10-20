@@ -128,7 +128,7 @@ def table(
     tbl = bigquery.Table(
         resource_name=manifest['resource_name'].lower() + '_table',
         table_id=validate_resource_name(manifest['resource_name'].lower(), team, prefix),
-        dataset_id=manifest['dataset_name'].lower(),
+        dataset_id=manifest['dataset_id'].lower(),
         deletion_protection=False,
         expiration_time=manifest['expiration_ms'],
         labels={

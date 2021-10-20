@@ -5,9 +5,10 @@ metadata:
   dep: "144"
   bds_email: "test_user"
 team: tsbt
+stage: false
 description: "Table for testing"
 resource_name: new_table
-dataset_name: tsbt_new_dataset
+dataset_id: tsbt_new_dataset
 expiration_ms:
 dependencies:
   - tsbt_new_dataset
