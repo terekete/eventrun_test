@@ -213,6 +213,7 @@ def scheduled(
         resource_name=manifest['resource_name'].lower(),
         display_name=manifest['resource_name'].lower(),
         data_source_id='scheduled_query',
+        disabled=False if not manifest['disabled'] else manifest['disabled'],
         schedule=manifest['schedule'],
         destination_dataset_id=manifest['destination_dataset_id'],
         location='northamerica-northeast1',
