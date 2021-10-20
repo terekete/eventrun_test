@@ -16,6 +16,19 @@ from pulumi import automation as auto
 from cerberus import Validator
 
 
+def validate_resource_name(
+    resource_name,
+    team: str,
+    prefix: str = None):
+
+    prefix_group = re.search('(' + prefix + ')_([a-z0-9]+)_(.*)', resource_name).group(1)
+    team_group = re.search('(' + prefix + ')_([a-z0-9]+)_(.*)', resource_name).group(2)
+    if prefix:
+        return resource_name if prefix_group == prefix and team_group == team else prefix + '_' + team + '_' + resource_name
+    else:
+        return resource_name if team_group == team else team + '_' + resource_name
+
+
 results = namedtuple('results', ['sorted', 'cyclic'])
 def graph_sort(l: str):
     n_heads = defaultdict(int)
@@ -58,7 +71,7 @@ def dataset(
 
     dts = bigquery.Dataset(
         resource_name=manifest['resource_name'].lower() + '_dataset',
-        dataset_id=manifest['resource_name'] if re.search('([a-z0-9]+)_(.*)', manifest['resource_name'].lower()).group(1) == team else team + '_' + manifest['resource_name'].lower(),
+        dataset_id=validate_resource_name(manifest['resource_name'].lower, team),
         description=manifest['description'],
         delete_contents_on_destroy=False,
         labels={
@@ -108,7 +121,8 @@ def validate_table_manifest(manifest: str):
 def table(
     manifest: str,
     team: str,
-    delay: int = 1):
+    delay: int = 1,
+    prefix: str = 'bq'):
 
     validate_table_manifest(manifest)
 
@@ -117,7 +131,7 @@ def table(
 
     tbl = bigquery.Table(
         resource_name=manifest['resource_name'].lower() + '_table',
-        table_id=manifest['resource_name'].lower() if re.search('([b][q])_([a-z0-9]+)_(.*)', manifest['resource_name'].lower()).group(1) == 'bq' and re.search('([b][q])_([a-z0-9]+)_(.*)', manifest['resource_name'].lower()).group(2) == team else 'bq_' + team + '_' + manifest['resource_name'].lower(),
+        table_id=validate_resource_name(manifest['resource_name'], team, prefix),
         dataset_id=manifest['dataset_name'].lower(),
         deletion_protection=False,
         expiration_time=manifest['expiration_ms'],
@@ -159,7 +173,8 @@ def validate_materialized_manifest(manifest: str):
 def materialized(
     manifest: str,
     team: str,
-    delay: int = 1):
+    delay: int = 1,
+    prefix: str = 'bq'):
 
     validate_materialized_manifest(manifest)
 
@@ -238,7 +253,8 @@ def validate_scheduled_manifest(manifest: str):
 def bucket(
     manifest: str,
     team: str,
-    delay: int = 1):
+    delay: int = 1,
+    prefix: str = 'gcs'):
 
     validate_bucket_manifest(manifest)
 
@@ -248,7 +264,7 @@ def bucket(
 
     bucket = storage.Bucket(
         manifest['resource_name'].lower() + '_bucket',
-        name=manifest['resource_name'].lower() if re.search('([g][c][s])_([a-z0-9]+)_(.*)', manifest['resource_name'].lower()).group(1) == 'gcs' and re.search('([g][c][s])_([a-z0-9]+)_(.*)', manifest['resource_name'].lower()).group(2) == team else 'gcs_' + team + '_' + manifest['resource_name'].lower(),
+        name=validate_resource_name(manifest['resource_name'], team, prefix),
         force_destroy=True,
         storage_class='STANDARD' if not manifest['storage_class'] else manifest['storage_class'],
         lifecycle_rules=[storage.BucketLifecycleRuleArgs(
