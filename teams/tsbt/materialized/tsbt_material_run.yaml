@@ -6,7 +6,7 @@ metadata:
   bds_email: "test_user"
 team: tsbt
 description: "Table for testing"
-resource_name: tsbt_material_run
+resource_name: material_run
 dataset_id: tsbt_new_dataset
 expiration_ms:
 dependencies:

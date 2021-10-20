@@ -202,10 +202,9 @@ def materialized(
     tbl = bigquery.Table(
         resource_name=manifest['resource_name'],
         dataset_id=manifest['dataset_id'],
-        table_id=manifest['table_id'],
+        table_id=validate_resource_name(manifest['resource_name'].lower(), team, prefix),
         deletion_protection=False,
         expiration_time=manifest['expiration_ms'],
-        friendly_name=manifest['friendly_name'],
         labels={
             'cost_center': manifest['metadata']['cost_center'],
             'dep': manifest['metadata']['dep'],
