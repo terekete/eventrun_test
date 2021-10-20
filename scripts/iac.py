@@ -19,11 +19,12 @@ def validate_resource_name(
     team: str,
     prefix: str = None):
 
-    team_group = re.search('(' + prefix + ')_([a-z0-9]+)_(.*)', resource_name).group(2)
     if prefix:
+        team_group = re.search('(' + prefix + ')_([a-z0-9]+)_(.*)', resource_name).group(2)
         prefix_group = re.search('(' + prefix + ')_([a-z0-9]+)_(.*)', resource_name).group(1)
         return resource_name if prefix_group == prefix and team_group == team else prefix + '_' + team + '_' + resource_name
     else:
+        team_group = re.search('([a-z0-9]+)_(.*)', resource_name).group(1)
         return resource_name if team_group == team else team + '_' + resource_name
 
 
@@ -63,15 +64,15 @@ def graph_sort(l: str):
     return results(ordered, cyclic)
 
 
-def validate_dataset_manifest(manifest: str):
-    schema = eval(open('./schemas/dataset.py', 'r').read())
-    validator = Validator(schema)
-    try:
-        if validator.validate(manifest, schema):
-            return
-    except:
-        print("##### Dataset Exception - " + manifest['dataset_id'])
-        raise auto.InlineSourceRuntimeError(validator.errors)
+# def validate_dataset_manifest(manifest: str):
+#     schema = eval(open('./schemas/dataset.py', 'r').read())
+#     validator = Validator(schema)
+#     try:
+#         if validator.validate(manifest, schema):
+#             return
+#     except:
+#         print("##### Dataset Exception - " + manifest['dataset_id'])
+#         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
 def dataset(
@@ -79,8 +80,7 @@ def dataset(
     team: str,
     delay: int = 3):
 
-    validate_dataset_manifest(manifest)
-    print(validate_resource_name(manifest['resource_name'].lower, team))
+    validate_manifest(manifest, './schemas/dataset.py')
 
     dts = bigquery.Dataset(
         resource_name=manifest['resource_name'].lower() + '_dataset',
@@ -120,15 +120,15 @@ def dataset(
     time.sleep(delay)
 
 
-def validate_table_manifest(manifest: str):
-    schema = eval(open('./schemas/table.py', 'r').read())
-    validator = Validator(schema)
-    try:
-        if validator.validate(manifest, schema):
-            return
-    except:
-        print("##### Table Exception - " + manifest['table_id'])
-        raise auto.InlineSourceRuntimeError(validator.errors)
+# def validate_table_manifest(manifest: str):
+#     schema = eval(open('./schemas/table.py', 'r').read())
+#     validator = Validator(schema)
+#     try:
+#         if validator.validate(manifest, schema):
+#             return
+#     except:
+#         print("##### Table Exception - " + manifest['table_id'])
+#         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
 def table(
@@ -137,7 +137,7 @@ def table(
     delay: int = 1,
     prefix: str = 'bq'):
 
-    validate_table_manifest(manifest)
+    validate_manifest(manifest, './schemas/table.py')
 
     readers = [reader for reader in manifest['users']['readers']]
     writers = [writer for writer in manifest['users']['writers']]
@@ -172,15 +172,15 @@ def table(
     time.sleep(delay)
 
 
-def validate_materialized_manifest(manifest: str):
-    schema = eval(open('./schemas/materialized.py', 'r').read())
-    validator = Validator(schema)
-    try:
-        if validator.validate(manifest, schema):
-            return
-    except:
-        print("##### Materialized Exception - " + manifest['table_id'])
-        raise auto.InlineSourceRuntimeError(validator.errors)
+# def validate_materialized_manifest(manifest: str):
+#     schema = eval(open('./schemas/materialized.py', 'r').read())
+#     validator = Validator(schema)
+#     try:
+#         if validator.validate(manifest, schema):
+#             return
+#     except:
+#         print("##### Materialized Exception - " + manifest['table_id'])
+#         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
 def materialized(
@@ -189,7 +189,7 @@ def materialized(
     delay: int = 1,
     prefix: str = 'bq'):
 
-    validate_materialized_manifest(manifest)
+    validate_manifest(manifest, './schemas/materialized.py')
 
     readers = [reader for reader in manifest['users']['readers']]
     writers = [writer for writer in manifest['users']['writers']]
