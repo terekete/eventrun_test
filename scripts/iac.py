@@ -122,8 +122,8 @@ def table(
 
     validate_manifest(manifest, './schemas/table.py')
 
-    readers = [reader for reader in manifest['users']['readers']]
-    writers = [writer for writer in manifest['users']['writers']]
+    readers = [reader for reader in manifest['users']['readers'] or []]
+    writers = [writer for writer in manifest['users']['writers'] or []]
 
     tbl = bigquery.Table(
         resource_name=manifest['resource_name'].lower() + '_table',
@@ -138,21 +138,23 @@ def table(
         },
         schema=manifest['schema']
     )
-    readers = bigquery.IamBinding(
-        resource_name=manifest['resource_name'] + '_read_iam',
-        dataset_id=tbl.dataset_id,
-        table_id=tbl.table_id,
-        role='roles/bigquery.dataViewer',
-        members=readers
-    )
-    writers = bigquery.IamBinding(
-        resource_name=manifest['resource_name'] + '_write_iam',
-        dataset_id=tbl.dataset_id,
-        table_id=tbl.table_id,
-        role='roles/bigquery.dataEditor',
-        members=writers
-    )
-    time.sleep(delay)
+    if readers:
+        bigquery.IamBinding(
+            resource_name=manifest['resource_name'] + '_read_iam',
+            dataset_id=tbl.dataset_id,
+            table_id=tbl.table_id,
+            role='roles/bigquery.dataViewer',
+            members=readers
+        )
+    if writers:
+        bigquery.IamBinding(
+            resource_name=manifest['resource_name'] + '_write_iam',
+            dataset_id=tbl.dataset_id,
+            table_id=tbl.table_id,
+            role='roles/bigquery.dataEditor',
+            members=writers
+        )
+        time.sleep(delay)
 
 
 def materialized(
@@ -163,8 +165,8 @@ def materialized(
 
     validate_manifest(manifest, './schemas/materialized.py')
 
-    readers = [reader for reader in manifest['users']['readers']]
-    writers = [writer for writer in manifest['users']['writers']]
+    readers = [reader for reader in manifest['users']['readers'] or []]
+    writers = [writer for writer in manifest['users']['writers'] or []]
 
     mat = bigquery.TableMaterializedViewArgs(
         query=manifest['params']['query'],
@@ -184,20 +186,22 @@ def materialized(
         },
         materialized_view=mat
     )
-    readers = bigquery.IamBinding(
-        resource_name=manifest['resource_name'] + '_read_iam',
-        dataset_id=tbl.dataset_id,
-        table_id=tbl.table_id,
-        role='roles/bigquery.dataViewer',
-        members=readers
-    )
-    writers = bigquery.IamBinding(
-        resource_name=manifest['resource_name'] + '_write_iam',
-        dataset_id=tbl.dataset_id,
-        table_id=tbl.table_id,
-        role='roles/bigquery.dataEditor',
-        members=writers
-    )
+    if readers:
+        bigquery.IamBinding(
+            resource_name=manifest['resource_name'] + '_read_iam',
+            dataset_id=tbl.dataset_id,
+            table_id=tbl.table_id,
+            role='roles/bigquery.dataViewer',
+            members=readers
+        )
+    if writers:
+        bigquery.IamBinding(
+            resource_name=manifest['resource_name'] + '_write_iam',
+            dataset_id=tbl.dataset_id,
+            table_id=tbl.table_id,
+            role='roles/bigquery.dataEditor',
+            members=writers
+        )
     time.sleep(delay)
 
 
