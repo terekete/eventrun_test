@@ -20,12 +20,18 @@ def validate_resource_name(
     prefix: str = None):
 
     if prefix:
-        team_group = re.search('(' + prefix + ')_([a-z0-9]+)_(.*)', resource_name).group(2)
-        prefix_group = re.search('(' + prefix + ')_([a-z0-9]+)_(.*)', resource_name).group(1)
-        return resource_name if prefix_group == prefix and team_group == team else prefix + '_' + team + '_' + resource_name
+        return (
+            resource_name
+            if re.search('(' + prefix + ')_([a-z0-9]+)_(.*)', resource_name).group(1) == prefix
+                and re.search('(' + prefix + ')_([a-z0-9]+)_(.*)', resource_name).group(2) == team
+            else prefix + '_' + team + '_' + resource_name
+        )
     else:
-        team_group = re.search('([a-z0-9]+)_(.*)', resource_name).group(1)
-        return resource_name if team_group == team else team + '_' + resource_name
+        return (
+            resource_name
+            if re.search('([a-z0-9]+)_(.*)', resource_name).group(1) == team
+            else team + '_' + resource_name
+        )
 
 
 def validate_manifest(
@@ -144,7 +150,7 @@ def table(
 
     tbl = bigquery.Table(
         resource_name=manifest['resource_name'].lower() + '_table',
-        table_id=validate_resource_name(manifest['resource_name'], team, prefix),
+        table_id=validate_resource_name(manifest['resource_name'].lower(), team, prefix),
         dataset_id=manifest['dataset_name'].lower(),
         deletion_protection=False,
         expiration_time=manifest['expiration_ms'],
@@ -436,7 +442,7 @@ if __name__ == "__main__":
     stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
     stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
     print('##################### Preview Changes for Team: ' + team + ' #####################')
-    stack.refresh(on_output=print)
-    preview = stack.preview(on_output=print)
+    stack.refresh()
+    preview = stack.preview()
     up = stack.up(on_output=print)
 
