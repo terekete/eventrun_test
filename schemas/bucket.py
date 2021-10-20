@@ -43,12 +43,14 @@
     'storage_class': {
         'required': False,
         'type': 'string',
-        'nullable': True
+        'nullable': True,
+        'allowed': ['STANDARD', 'ARCHIVE', 'NEARLINE']
     },
     'lifecycle_type': {
         'required': False,
         'type': 'string',
-        'nullable': True
+        'nullable': True,
+        'allowed': ['SetStorageClass', 'Delete']
     },
     'lifecycle_age_days': {
         'required': False,

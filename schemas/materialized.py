@@ -50,20 +50,10 @@
         'type': 'string',
         'nullable': False
     },
-    'table_id': {
-        'required': True,
-        'type': 'string',
-        'nullable': False
-    },
     'expiration_ms': {
         'required': False,
         'type': 'string',
         'nullable': True
-    },
-    'friendly_name': {
-        'required': True,
-        'type': 'string',
-        'nullable': False
     },
     'dependencies': {
         'required': False,
