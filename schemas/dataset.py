@@ -43,7 +43,8 @@
     'resource_name': {
         'required': True,
         'type': 'string',
-        'nullable': False
+        'nullable': False,
+        'regex': '^[a-z0-9_-]+$'
     },
     'partition_expiration_ms': {
         'required': False,
