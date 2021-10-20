@@ -7,11 +7,9 @@ import base64
 import time
 import re
 
-from google.oauth2 import service_account as osa
 from collections import defaultdict, namedtuple
-from pulumi import resource, Output
-from pulumi.automation import errors
-from pulumi_gcp import storage, bigquery, serviceaccount, projects
+from pulumi import Output
+from pulumi_gcp import storage, bigquery
 from pulumi import automation as auto
 from cerberus import Validator
 
@@ -21,9 +19,9 @@ def validate_resource_name(
     team: str,
     prefix: str = None):
 
-    prefix_group = re.search('(' + prefix + ')_([a-z0-9]+)_(.*)', resource_name).group(1)
     team_group = re.search('(' + prefix + ')_([a-z0-9]+)_(.*)', resource_name).group(2)
     if prefix:
+        prefix_group = re.search('(' + prefix + ')_([a-z0-9]+)_(.*)', resource_name).group(1)
         return resource_name if prefix_group == prefix and team_group == team else prefix + '_' + team + '_' + resource_name
     else:
         return resource_name if team_group == team else team + '_' + resource_name
