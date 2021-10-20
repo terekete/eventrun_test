@@ -38,7 +38,7 @@ def validate_manifest(
         if validator.validate(manifest, schema):
             return
     except:
-        print("##### Schema Exception - " + manifest['display_name'])
+        print("##### Schema Exception - " + manifest['resource_name'].lower())
         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
@@ -235,7 +235,7 @@ def scheduled(
     team: str,
     delay: int = 1):
 
-    validate_scheduled_manifest(manifest)
+    validate_manifest(manifest, './schemas/scheduled.py')
 
     scheduled = bigquery.DataTransferConfig(
         resource_name=manifest['resource_name'],
@@ -252,15 +252,15 @@ def scheduled(
     time.sleep(delay)
 
 
-def validate_scheduled_manifest(manifest: str):
-    schema = eval(open('./schemas/scheduled.py').read())
-    validator = Validator(schema)
-    try:
-        if validator.validate(manifest, schema):
-            return
-    except:
-        print("##### Scheduled Exception - " + manifest['display_name'])
-        raise auto.InlineSourceRuntimeError(validator.errors)
+# def validate_scheduled_manifest(manifest: str):
+#     schema = eval(open('./schemas/scheduled.py').read())
+#     validator = Validator(schema)
+#     try:
+#         if validator.validate(manifest, schema):
+#             return
+#     except:
+#         print("##### Scheduled Exception - " + manifest['display_name'])
+#         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
 def bucket(
@@ -269,7 +269,7 @@ def bucket(
     delay: int = 1,
     prefix: str = 'gcs'):
 
-    validate_bucket_manifest(manifest)
+    validate_manifest(manifest, './schemas/bucket.py')
 
     readers = [reader for reader in manifest['users']['readers'] or []]
     writers = [writer for writer in manifest['users']['writers'] or []]
@@ -310,15 +310,15 @@ def bucket(
     time.sleep(delay)
 
 
-def validate_bucket_manifest(manifest: str):
-    schema = eval(open('./schemas/bucket.py').read())
-    validator = Validator(schema)
-    try:
-        if validator.validate(manifest, schema):
-            return
-    except:
-        print("##### Bucket Exception - " + manifest['bucket_name'])
-        raise auto.InlineSourceRuntimeError(validator.errors)
+# def validate_bucket_manifest(manifest: str):
+#     schema = eval(open('./schemas/bucket.py').read())
+#     validator = Validator(schema)
+#     try:
+#         if validator.validate(manifest, schema):
+#             return
+#     except:
+#         print("##### Bucket Exception - " + manifest['bucket_name'])
+#         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
 def read_yml(path: str):
@@ -367,19 +367,14 @@ def update(
     yml = read_yml(path)
     try:
         if yml and yml['kind'] == 'dataset':
-            validate_dataset_manifest(yml)
             dataset(yml, team)
         if yml and yml['kind'] == 'table':
-            validate_table_manifest(yml)
             table(yml, team)
         if yml and yml['kind'] == 'materialized':
-            validate_materialized_manifest(yml)
             materialized(yml, team)
         if yml and yml['kind'] == 'scheduled':
-            validate_scheduled_manifest(yml)
             scheduled(yml, team)
         if yml and yml['kind'] == 'bucket':
-            validate_bucket_manifest(yml)
             bucket(yml, team)
     except auto.errors.CommandError as e:
         raise e
