@@ -3,14 +3,12 @@ kind: materialized
 metadata:
   cost_center: "12"
   dep: "144"
-  bds: "test_user"
+  bds_email: "test_user"
 team: tsbt
 description: "Table for testing"
 resource_name: tsbt_material_run
 dataset_id: tsbt_new_dataset
-table_id: tsbt_material_run
 expiration_ms:
-friendly_name: tsbt_material_run
 dependencies:
   - tsbt_new_dataset
   - bq_tsbt_audit_run

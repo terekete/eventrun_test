@@ -3,7 +3,7 @@ kind: scheduled
 metadata:
   cost_center: "12"
   dep: "12"
-  bds: "test_user"
+  bds_email: "test_user"
 team: tsbt
 display_name: "tsbt - audit table"
 resource_name: tsbt_scheduled_run

@@ -3,7 +3,7 @@ kind: table
 metadata:
   cost_center: "12"
   dep: "144"
-  bds: "test_user"
+  bds_email: "test_user"
 team: tsbt
 description: "Table for testing"
 resource_name: order_table
