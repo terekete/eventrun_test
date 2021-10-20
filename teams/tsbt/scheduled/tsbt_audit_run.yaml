@@ -16,3 +16,8 @@ query: >
 dependencies:
   - tsbt_new_dataset
   - bq_tsbt_audit_run
+users:
+  readers:
+    - user:mark.gates@telus.com
+  writers:
+    - user:mark.gates@telus.com
