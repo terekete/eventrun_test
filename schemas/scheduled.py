@@ -35,11 +35,6 @@
         'type': 'string',
         'nullable': False
     },
-    'display_name': {
-        'required': True,
-        'type': 'string',
-        'nullable': False
-    },
     'resource_name': {
         'required': True,
         'type': 'string',
@@ -55,26 +50,20 @@
         'type': 'string',
         'nullable': True
     },
-    'params': {
+    'destination_table_id': {
         'required': True,
-        'type': 'dict',
-        'schema': {
-            'destination_table_name': {
-                'required': True,
-                'type': 'string',
-                'nullable': False
-            },
-            'write_disposition': {
-                'required': True,
-                'type': 'string',
-                'nullable': False                
-            },
-            'query': {
-                'required': True,
-                'type': 'string',
-                'nullable': False            
-            }
-        }
+        'type': 'string',
+        'nullable': False
+    },
+    'write_disposition': {
+        'required': True,
+        'type': 'string',
+        'nullable': False                
+    },
+    'query': {
+        'required': True,
+        'type': 'string',
+        'nullable': False            
     },
     'dependencies': {
         'required': False,

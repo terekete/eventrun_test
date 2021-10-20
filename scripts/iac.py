@@ -72,7 +72,7 @@ def graph_sort(l: str):
 def dataset(
     manifest: str,
     team: str,
-    delay: int = 3):
+    delay: int = 5):
 
     validate_manifest(manifest, './schemas/dataset.py')
 
@@ -204,21 +204,22 @@ def materialized(
 def scheduled(
     manifest: str,
     team: str,
-    delay: int = 1):
+    delay: int = 1,
+    prefix: str = 'bq'):
 
     validate_manifest(manifest, './schemas/scheduled.py')
 
     scheduled = bigquery.DataTransferConfig(
-        resource_name=manifest['resource_name'],
-        display_name=manifest['display_name'],
+        resource_name=manifest['resource_name'].lower(),
+        display_name=manifest['resource_name'].lower(),
         data_source_id='scheduled_query',
         schedule=manifest['schedule'],
         destination_dataset_id=manifest['destination_dataset_id'],
         location='northamerica-northeast1',
         params={
-            'destination_table_name_template': manifest['params']['destination_table_name'],
-            'write_disposition': manifest['params']['write_disposition'],
-            'query': manifest['params']['query']
+            'destination_table_name_template': validate_resource_name(manifest['destination_table_id'], team, prefix),
+            'write_disposition': manifest['write_disposition'],
+            'query': manifest['query']
         })
     time.sleep(delay)
 
