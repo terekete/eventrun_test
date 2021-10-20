@@ -84,7 +84,7 @@ def dataset(
 
     dts = bigquery.Dataset(
         resource_name=manifest['resource_name'].lower() + '_dataset',
-        dataset_id=validate_resource_name(manifest['resource_name'].lower, team),
+        dataset_id=validate_resource_name(manifest['resource_name'].lower(), team),
         description=manifest['description'],
         delete_contents_on_destroy=False,
         labels={
