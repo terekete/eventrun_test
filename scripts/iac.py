@@ -5,6 +5,7 @@ import sys
 import os
 import base64
 import time
+import re
 
 from google.oauth2 import service_account as osa
 from collections import defaultdict, namedtuple
@@ -56,14 +57,14 @@ def dataset(
     validate_dataset_manifest(manifest)
 
     dts = bigquery.Dataset(
-        resource_name=manifest['resource_name'] + '_dataset',
-        dataset_id=team + '_' + manifest['resource_name'],
+        resource_name=manifest['resource_name'].lower() + '_dataset',
+        dataset_id=manifest['resource_name'] if re.search('([a-z0-9]+)_(.*)', manifest['resource_name'].lower()).group(1) == team else team + '_' + manifest['resource_name'].lower(),
         description=manifest['description'],
         delete_contents_on_destroy=False,
         labels={
             'cost_center': manifest['metadata']['cost_center'],
             'dep': manifest['metadata']['dep'],
-            'bds': manifest['metadata']['bds'],
+            'bds_email': manifest['metadata']['bds_email'].lower(),
         },
         default_table_expiration_ms=manifest['table_expiration_ms'],
         location='northamerica-northeast1'
@@ -115,15 +116,15 @@ def table(
     writers = [writer for writer in manifest['users']['writers']]
 
     tbl = bigquery.Table(
-        resource_name=manifest['resource_name'] + '_table',
-        dataset_id=manifest['dataset_name'],
-        table_id= 'bq_' + team + '_' + manifest['resource_name'],
+        resource_name=manifest['resource_name'].lower() + '_table',
+        table_id=manifest['resource_name'].lower() if re.search('([b][q])_([a-z0-9]+)_(.*)', manifest['resource_name'].lower()).group(1) == 'bq' and re.search('([b][q])_([a-z0-9]+)_(.*)', manifest['resource_name'].lower()).group(2) == team else 'bq_' + team + '_' + manifest['resource_name'].lower(),
+        dataset_id=manifest['dataset_name'].lower(),
         deletion_protection=False,
         expiration_time=manifest['expiration_ms'],
         labels={
             'cost_center': manifest['metadata']['cost_center'],
             'dep': manifest['metadata']['dep'],
-            'bds': manifest['metadata']['bds'],
+            'bds_email': manifest['metadata']['bds_email'].lower(),
         },
         schema=manifest['schema']
     )
@@ -180,7 +181,7 @@ def materialized(
         labels={
             'cost_center': manifest['metadata']['cost_center'],
             'dep': manifest['metadata']['dep'],
-            'bds': manifest['metadata']['bds'],
+            'bds_email': manifest['metadata']['bds_email'].lower(),
         },
         materialized_view=mat
     )
@@ -246,8 +247,8 @@ def bucket(
     
 
     bucket = storage.Bucket(
-        manifest['resource_name'],
-        name= 'gcs_' + team + '_' + manifest['resource_name'],
+        manifest['resource_name'].lower() + '_bucket',
+        name=manifest['resource_name'].lower() if re.search('([g][c][s])_([a-z0-9]+)_(.*)', manifest['resource_name'].lower()).group(1) == 'gcs' and re.search('([g][c][s])_([a-z0-9]+)_(.*)', manifest['resource_name'].lower()).group(2) == team else 'gcs_' + team + '_' + manifest['resource_name'].lower(),
         force_destroy=True,
         storage_class='STANDARD' if not manifest['storage_class'] else manifest['storage_class'],
         lifecycle_rules=[storage.BucketLifecycleRuleArgs(
@@ -262,7 +263,7 @@ def bucket(
         labels={
             'cost_center': manifest['metadata']['cost_center'],
             'dep': manifest['metadata']['dep'],
-            'bds': manifest['metadata']['bds'],
+            'bds_email': manifest['metadata']['bds_email'].lower(),
         }
     )
     if readers:
