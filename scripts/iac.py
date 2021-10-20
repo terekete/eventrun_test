@@ -29,6 +29,20 @@ def validate_resource_name(
         return resource_name if team_group == team else team + '_' + resource_name
 
 
+def validate_manifest(
+    manifest: str,
+    schema_path: str):
+
+    schema = eval(open(schema_path).read())
+    validator = Validator(schema)
+    try:
+        if validator.validate(manifest, schema):
+            return
+    except:
+        print("##### Schema Exception - " + manifest['display_name'])
+        raise auto.InlineSourceRuntimeError(validator.errors)
+
+
 results = namedtuple('results', ['sorted', 'cyclic'])
 def graph_sort(l: str):
     n_heads = defaultdict(int)
@@ -68,6 +82,7 @@ def dataset(
     delay: int = 3):
 
     validate_dataset_manifest(manifest)
+    print(validate_resource_name(manifest['resource_name'].lower, team))
 
     dts = bigquery.Dataset(
         resource_name=manifest['resource_name'].lower() + '_dataset',
