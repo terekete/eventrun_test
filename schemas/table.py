@@ -23,7 +23,7 @@
                 'type': 'string',
                 'nullable': False
             },
-            'bds': {
+            'bds_email': {
                 'required': True,
                 'type': 'string',
                 'nullable': False
