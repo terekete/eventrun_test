@@ -10,7 +10,7 @@ default_refresh_window_days: 1
 schedule: "every 25 minutes"
 destination_dataset_id: tsbt_new_dataset
 destination_table_id: scheduled_run
-write_disposition: "WRITE_TRUNCATE"
+write_disposition: "WRITE_APPEND"
 query: >
   select * from `eventrun.tsbt_new_dataset.bq_tsbt_audit_run` limit 1
 dependencies:
