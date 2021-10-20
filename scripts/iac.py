@@ -377,7 +377,6 @@ if __name__ == "__main__":
         and root_manifest != dep_manifest
     ]))
     team = sys.argv[1]
-    print("TEAM in MAIN: " + team)
     stack = auto.create_or_select_stack(
         stack_name=team,
         project_name='eventrun',
@@ -385,7 +384,7 @@ if __name__ == "__main__":
         work_dir='/workspace')
     stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
     stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
-    print('##################### Preview Changes for Team: ' + team + ' #####################')
+    print('##################### IAC Changes for Team: ' + team + ' #####################')
     stack.refresh()
     preview = stack.preview()
     up = stack.up(on_output=print)
