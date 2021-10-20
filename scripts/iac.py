@@ -22,14 +22,13 @@ def validate_resource_name(
     if prefix:
         return (
             resource_name
-            if re.search('(' + prefix + ')_([a-z0-9]+)_(.*)', resource_name).group(1) == prefix
-                and re.search('(' + prefix + ')_([a-z0-9]+)_(.*)', resource_name).group(2) == team
+            if re.search('(' + prefix + ')_(' + team + ')_(.*)', resource_name)
             else prefix + '_' + team + '_' + resource_name
         )
     else:
         return (
             resource_name
-            if re.search('([a-z0-9]+)_(.*)', resource_name).group(1) == team
+            if re.search('(' + team + ')_(.*)', resource_name)
             else team + '_' + resource_name
         )
 
@@ -68,17 +67,6 @@ def graph_sort(l: str):
                 ordered.append(t)
     cyclic = [n for n, heads in n_heads.items() if heads]
     return results(ordered, cyclic)
-
-
-# def validate_dataset_manifest(manifest: str):
-#     schema = eval(open('./schemas/dataset.py', 'r').read())
-#     validator = Validator(schema)
-#     try:
-#         if validator.validate(manifest, schema):
-#             return
-#     except:
-#         print("##### Dataset Exception - " + manifest['dataset_id'])
-#         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
 def dataset(
@@ -126,17 +114,6 @@ def dataset(
     time.sleep(delay)
 
 
-# def validate_table_manifest(manifest: str):
-#     schema = eval(open('./schemas/table.py', 'r').read())
-#     validator = Validator(schema)
-#     try:
-#         if validator.validate(manifest, schema):
-#             return
-#     except:
-#         print("##### Table Exception - " + manifest['table_id'])
-#         raise auto.InlineSourceRuntimeError(validator.errors)
-
-
 def table(
     manifest: str,
     team: str,
@@ -176,17 +153,6 @@ def table(
         members=writers
     )
     time.sleep(delay)
-
-
-# def validate_materialized_manifest(manifest: str):
-#     schema = eval(open('./schemas/materialized.py', 'r').read())
-#     validator = Validator(schema)
-#     try:
-#         if validator.validate(manifest, schema):
-#             return
-#     except:
-#         print("##### Materialized Exception - " + manifest['table_id'])
-#         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
 def materialized(
@@ -257,17 +223,6 @@ def scheduled(
     time.sleep(delay)
 
 
-# def validate_scheduled_manifest(manifest: str):
-#     schema = eval(open('./schemas/scheduled.py').read())
-#     validator = Validator(schema)
-#     try:
-#         if validator.validate(manifest, schema):
-#             return
-#     except:
-#         print("##### Scheduled Exception - " + manifest['display_name'])
-#         raise auto.InlineSourceRuntimeError(validator.errors)
-
-
 def bucket(
     manifest: str,
     team: str,
@@ -313,17 +268,6 @@ def bucket(
             role="roles/storage.objectAdmin",
             members=writers)
     time.sleep(delay)
-
-
-# def validate_bucket_manifest(manifest: str):
-#     schema = eval(open('./schemas/bucket.py').read())
-#     validator = Validator(schema)
-#     try:
-#         if validator.validate(manifest, schema):
-#             return
-#     except:
-#         print("##### Bucket Exception - " + manifest['bucket_name'])
-#         raise auto.InlineSourceRuntimeError(validator.errors)
 
 
 def read_yml(path: str):
