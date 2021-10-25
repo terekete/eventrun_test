@@ -16,3 +16,4 @@ ENV PATH=$PATH:/root/.pulumi/bin
 RUN pulumi plugin install resource gcp
 
 ENTRYPOINT [ "pulumi", "version" ]
+
