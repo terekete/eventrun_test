@@ -13,7 +13,7 @@ RUN pip3 install --upgrade google-cloud-storage
 ENV PULUMI_SKIP_UPDATE_CHECK=false
 ENV PATH=$PATH:/root/.pulumi/bin
 
-RUN pulumi plugin install resource gcp
+# RUN pulumi plugin install resource gcp
 
 ENTRYPOINT [ "pulumi", "version" ]
 
