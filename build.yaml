@@ -90,9 +90,8 @@ steps:
         apt-get update
         apt-get install -y zip
         cd staging/
-        zip -r "${commit}.zip" .
-        gsutil cp "${commit}.zip" "gs://${_ARTIFACT_BUCKET}/"
-
+        ls -la
+        
 
 options:
   substitution_option: 'ALLOW_LOOSE'
