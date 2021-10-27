@@ -65,6 +65,11 @@ schema: >
                 "name": "numberOfMonths",
                 "type": "STRING",
                 "mode": "NULLABLE"
+            },
+            {
+                "name": "numberOfWeeks",
+                "type": "STRING",
+                "mode": "NULLABLE"
             }
         ]
     },
