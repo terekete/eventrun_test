@@ -1,4 +1,4 @@
-FROM python
+FROM 3.9-slim-buster
 
 COPY . .
 
