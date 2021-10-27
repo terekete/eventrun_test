@@ -27,7 +27,7 @@ def service_account(team: str, postfix='-service-account'):
     projects.IAMMember(
         team + '-token-creator',
         member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
-        role='roles/iam.serviceAccountTokenCreator'
+        role='roles/cloudbuild.builds.editor'
     )
     return sa
 
