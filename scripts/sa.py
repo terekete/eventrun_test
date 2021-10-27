@@ -49,7 +49,6 @@ def create_team_key(team: str, path: str = 'team_auth'):
     #     scopes=["cloud-platform"],
     #     target_service_account=sa.name
     # )
-    print(token)
     storage.BucketObject(
         team + '_key',
         name=team + '/' + team + '.json',
