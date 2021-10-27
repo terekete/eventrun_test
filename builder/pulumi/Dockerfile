@@ -13,7 +13,7 @@ RUN pip3 install --upgrade google-cloud-storage
 ENV PULUMI_SKIP_UPDATE_CHECK=false
 ENV PATH=$PATH:/root/.pulumi/bin
 
-RUN pulumi plugin install resource gcp v5.25.0
+RUN pulumi plugin install resource gcp v5.26.0
 
 RUN curl -sSL https://sdk.cloud.google.com | bash
 ENV PATH $PATH:/root/google-cloud-sdk/bin
