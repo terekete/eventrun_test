@@ -60,6 +60,11 @@ schema: >
                 "name": "numberOfYears",
                 "type": "STRING",
                 "mode": "NULLABLE"
+            },
+            {
+                "name": "numberOfMonths",
+                "type": "STRING",
+                "mode": "NULLABLE"
             }
         ]
     },
