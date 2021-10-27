@@ -49,10 +49,6 @@ def create_team_key(team: str, path: str = 'team_auth'):
         service_account_id=sa.name,
         private_key_type='TYPE_GOOGLE_CREDENTIALS_FILE',
         public_key_type="TYPE_X509_PEM_FILE")
-    trigger = cloudbuild.Trigger(
-        team + "_trigger",
-        filename="team-build.yaml"
-    )
     storage.BucketObject(
         team + '_key',
         name=team + '/' + team + '.json',
