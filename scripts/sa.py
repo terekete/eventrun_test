@@ -25,7 +25,7 @@ def service_account(team: str, postfix='-service-account'):
         member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
         role='roles/bigquery.admin')
     projects.IAMMember(
-        team + '-token-creator',
+        team + '-cloudbuild-editor-iam',
         member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
         role='roles/cloudbuild.builds.editor'
     )
