@@ -55,6 +55,21 @@ schema: >
                 "name": "zip",
                 "type": "STRING",
                 "mode": "NULLABLE"
+            },
+            {
+                "name": "numberOfYears",
+                "type": "STRING",
+                "mode": "NULLABLE"
+            },
+            {
+                "name": "numberOfMonths",
+                "type": "STRING",
+                "mode": "NULLABLE"
+            },
+            {
+                "name": "numberOfWeeks",
+                "type": "STRING",
+                "mode": "NULLABLE"
             }
         ]
     },
