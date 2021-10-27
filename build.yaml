@@ -89,7 +89,6 @@ steps:
         commit=$(cat commit.txt)
         apt-get update
         apt-get install -y zip
-        cd staging/
         ls -la
         
 
