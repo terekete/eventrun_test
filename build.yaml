@@ -84,6 +84,7 @@ steps:
     args:
       - '-c'
       - |
+        ls -la
         echo "Creating artifact to: ${_ARTIFACT_BUCKET}"
         commit=$(cat commit.txt)
         apt-get update
