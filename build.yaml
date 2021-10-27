@@ -70,7 +70,7 @@ steps:
   #   ]
   #   waitFor: ['create-staging-dir']
   - name: 'gcr.io/eventrun/pulumi:latest'
-    id: 'build-pulumi'
+    id: 'build-sa'
     entrypoint: 'bash'
     args: [
       '/workspace/scripts/run_sa.sh'
@@ -79,19 +79,29 @@ steps:
       'PROJECT_ID=${_KEY_PROJECT}'
     ]
     waitFor: ['create-staging-dir']
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'gcr.io/eventrun/pulumi:latest'
+    id: 'build-iac'
     entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        ls -la
-        echo "Creating artifact to: ${_ARTIFACT_BUCKET}"
-        commit=$(cat commit.txt)
-        apt-get update
-        apt-get install -y zip
-        ls -la
-        zip -r "${commit}.zip" .
-        gsutil cp "${commit}.zip" "gs://${_ARTIFACT_BUCKET}/"
+    args: [
+      '/workspace/scripts/run_iac.sh'
+    ]
+    env: [
+      'PROJECT_ID=${_KEY_PROJECT}'
+    ]
+    waitFor: ['create-staging-dir']
+  # - name: 'gcr.io/cloud-builders/gcloud'
+  #   entrypoint: 'bash'
+  #   args:
+  #     - '-c'
+  #     - |
+  #       ls -la
+  #       echo "Creating artifact to: ${_ARTIFACT_BUCKET}"
+  #       commit=$(cat commit.txt)
+  #       apt-get update
+  #       apt-get install -y zip
+  #       ls -la
+  #       zip -r "${commit}.zip" .
+  #       gsutil cp "${commit}.zip" "gs://${_ARTIFACT_BUCKET}/"
 
 
 options:
