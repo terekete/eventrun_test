@@ -79,13 +79,19 @@ steps:
       'PROJECT_ID=${_KEY_PROJECT}'
     ]
     waitFor: ['create-staging-dir']
-  # - name: 'gcr.io/cloud-builders/git'
-  #   id: 'list-dir'
-  #   entrypoint: 'bash'
-  #   args:
-  #   - -exc
-  #   - |
-  #     ls -la
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Creating artifact to: ${_ARTIFACT_BUCKET}"
+        commit=$(cat commit.txt)
+        apt-get update
+        apt-get install -y zip
+        cd staging/
+        zip -r "${commit}.zip" .
+        gsutil cp "${commit}.zip" "gs://${_ARTIFACT_BUCKET}/"
+
 
 options:
   substitution_option: 'ALLOW_LOOSE'
@@ -96,6 +102,6 @@ substitutions:
   _BASE_BRANCH: "main"
   _ENV: "np"
   _CUSTOM_TAG: ""
-  _SNAPSHOT_ARTIFACTS_BUCKET: ""
+  _ARTIFACTS_BUCKET: "eventrun-artifacts"
 
 timeout: 600s

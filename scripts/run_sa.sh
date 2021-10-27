@@ -12,9 +12,9 @@ cat DIFF_TEAM.txt | while read team
 do
     python /workspace/scripts/sa.py $team
 done
-cat DIFF_TEAM.txt | while read team
-do
-    export GOOGLE_APPLICATION_CREDENTIALS="/workspace/${team}.json"
-    python /workspace/scripts/iac.py $team
-done
+# cat DIFF_TEAM.txt | while read team
+# do
+#     export GOOGLE_APPLICATION_CREDENTIALS="/workspace/${team}.json"
+#     python /workspace/scripts/iac.py $team
+# done
 
