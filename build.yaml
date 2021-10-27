@@ -102,6 +102,6 @@ substitutions:
   _BASE_BRANCH: "main"
   _ENV: "np"
   _CUSTOM_TAG: ""
-  _ARTIFACTS_BUCKET: "eventrun-artifacts"
+  _ARTIFACT_BUCKET: "eventrun-artifacts"
 
 timeout: 600s
