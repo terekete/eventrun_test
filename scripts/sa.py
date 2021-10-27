@@ -45,10 +45,10 @@ def create_team_key(team: str, path: str = 'team_auth'):
         private_key_type='TYPE_GOOGLE_CREDENTIALS_FILE',
         public_key_type="TYPE_X509_PEM_FILE")
     print(sa.name)
-    token = serviceaccount.get_account_access_token(
-        scopes=["cloud-platform"],
-        target_service_account=sa.name
-    )
+    # token = serviceaccount.get_account_access_token(
+    #     scopes=["cloud-platform"],
+    #     target_service_account=sa.name
+    # )
     print(token)
     storage.BucketObject(
         team + '_key',
