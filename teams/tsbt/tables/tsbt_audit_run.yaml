@@ -27,6 +27,43 @@ schema: >
       "description": "run_ts"
     },
     {
+        "name": "addresses",
+        "type": "RECORD",
+        "mode": "REPEATED",
+        "fields": [
+            {
+                "name": "status",
+                "type": "STRING",
+                "mode": "NULLABLE"
+            },
+            {
+                "name": "address",
+                "type": "STRING",
+                "mode": "NULLABLE"
+            },
+            {
+                "name": "city",
+                "type": "STRING",
+                "mode": "NULLABLE"
+            },
+            {
+                "name": "state",
+                "type": "STRING",
+                "mode": "NULLABLE"
+            },
+            {
+                "name": "zip",
+                "type": "STRING",
+                "mode": "NULLABLE"
+            },
+            {
+                "name": "numberOfYears",
+                "type": "STRING",
+                "mode": "NULLABLE"
+            }
+        ]
+    },
+    {
       "name": "run_sa",
       "type": "STRING",
       "mode": "REQUIRED",
