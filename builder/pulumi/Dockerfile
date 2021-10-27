@@ -1,4 +1,4 @@
-FROM 3.9-slim-buster
+FROM 3.8-slim-buster
 
 COPY . .
 
