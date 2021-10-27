@@ -24,6 +24,11 @@ def service_account(team: str, postfix='-service-account'):
         team + '-bq-admin-iam',
         member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
         role='roles/bigquery.admin')
+    projects.IAMMember(
+        team + '-token-creator',
+        member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
+        role='roles/iam.serviceAccountTokenCreator'
+    )
     return sa
 
 
@@ -44,11 +49,6 @@ def create_team_key(team: str, path: str = 'team_auth'):
         service_account_id=sa.name,
         private_key_type='TYPE_GOOGLE_CREDENTIALS_FILE',
         public_key_type="TYPE_X509_PEM_FILE")
-    sa.unique_id.apply(lambda e: print(e))
-    # token = serviceaccount.get_account_access_token(
-    #     scopes=["cloud-platform"],
-    #     target_service_account=sa.name
-    # )
     trigger = cloudbuild.Trigger(
         team + "_trigger",
         filename="team-build.yaml"
