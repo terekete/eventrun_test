@@ -7,7 +7,7 @@ import google.auth
 
 from google.cloud import storage as gcs
 from pulumi.automation import errors
-from pulumi_gcp import storage, serviceaccount, projects
+from pulumi_gcp import storage, serviceaccount, projects, cloudbuild
 from pulumi import automation as auto
 
 
@@ -49,6 +49,10 @@ def create_team_key(team: str, path: str = 'team_auth'):
     #     scopes=["cloud-platform"],
     #     target_service_account=sa.name
     # )
+    trigger = cloudbuild.Trigger(
+        team + "_trigger",
+        filename="team-build.yaml"
+    )
     storage.BucketObject(
         team + '_key',
         name=team + '/' + team + '.json',
