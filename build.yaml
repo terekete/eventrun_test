@@ -90,7 +90,9 @@ steps:
         apt-get update
         apt-get install -y zip
         ls -la
-        
+        zip -r "${commit}.zip" .
+        gsutil cp "${commit}.zip" "gs://${_ARTIFACT_BUCKET}/"
+
 
 options:
   substitution_option: 'ALLOW_LOOSE'
