@@ -102,8 +102,8 @@ def pulumi_program():
         dataset_id='tsbt_new_dataset',
         deletion_protection=False,
         view=bigquery.TableViewArgs(
-            query='select * from `eventrun.tsbt_new_dataset.bq_tsbt_audit_run`',
-            use_legacy_sql=True
+            query='select * from `eventrun.tsbt_new_dataset.bq_tsbt_audit_run` limit 10',
+            use_legacy_sql=False
         ),
         opts=pulumi.ResourceOptions(provider=pr)
     )
