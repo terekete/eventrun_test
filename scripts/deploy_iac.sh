@@ -1,5 +1,4 @@
 #!/bin/sh
-
 set -e
 
 # export PULUMI_CONFIG_PASSPHRASE=test

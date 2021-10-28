@@ -68,18 +68,18 @@ steps:
     env: [
       'PROJECT_ID=${_KEY_PROJECT}'
     ]
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'build-artifact'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        echo "Creating artifact to: ${_ARTIFACT_BUCKET}"
-        commit=$(cat commit.txt)
-        apt-get -qq update
-        apt-get install -qq -o=Dpkg::Use-Pty=0 -y zip
-        zip -qqr "${commit}.zip" . -x ./.git/**\*
-        gsutil cp "${commit}.zip" "gs://${_ARTIFACT_BUCKET}/"
+  # - name: 'gcr.io/cloud-builders/gcloud'
+  #   id: 'build-artifact'
+  #   entrypoint: 'bash'
+  #   args:
+  #     - '-c'
+  #     - |
+  #       echo "Creating artifact to: ${_ARTIFACT_BUCKET}"
+  #       commit=$(cat commit.txt)
+  #       apt-get -qq update
+  #       apt-get install -qq -o=Dpkg::Use-Pty=0 -y zip
+  #       zip -qqr "${commit}.zip" . -x ./.git/**\*
+  #       gsutil cp "${commit}.zip" "gs://${_ARTIFACT_BUCKET}/"
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'deploy-iac'
     entrypoint: 'bash'
