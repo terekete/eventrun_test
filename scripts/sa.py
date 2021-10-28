@@ -96,8 +96,8 @@ def pulumi_program():
         location="northamerica-northeast1",
         opts=pulumi.ResourceOptions(provider=pr)
     )
-    pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
-    pulumi.export(team + '_token', token.access_token)
+    # pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
+    # pulumi.export(team + '_token', token.access_token)
 
 
 
@@ -115,8 +115,8 @@ if __name__ == "__main__":
     up = stack.up(on_output=print)
     credentials, project_id = google.auth.default()
     bq_client = gcs.Client()
-    with open(team + '.json', 'wb') as file_obj:
-        bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
-    with open(team, 'wb') as file_obj:
-        bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.token', file_obj)
+    # with open(team + '.json', 'wb') as file_obj:
+    #     bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
+    # with open(team, 'wb') as file_obj:
+    #     bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.token', file_obj)
 
