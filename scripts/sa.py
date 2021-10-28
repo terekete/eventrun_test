@@ -61,11 +61,11 @@ def create_team_token(sa, team: str, path: str = 'team_auth'):
     token = serviceaccount.get_account_access_token(
             target_service_account=sa.email,
             scopes=['cloud-platform'])
-    storage.BucketObject(
-        team + '_token',
-        name=team + '/' + team + '.token',
-        bucket=path,
-        content=token.access_token)
+    # storage.BucketObject(
+    #     team + '_token',
+    #     name=team + '/' + team + '.token',
+    #     bucket=path,
+    #     content=token.access_token)
     return token
     
 
@@ -81,7 +81,7 @@ def get_teams(root: str = '/workspace/teams/'):
 
 def pulumi_program():
     sa = service_account(team)
-    key = create_team_key(sa, team)
+    # key = create_team_key(sa, team)
     token = create_team_token(sa, team)
     pr = gcp.Provider(
         team + '-provider',
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     preview = stack.preview()
     up = stack.up(on_output=print)
     credentials, project_id = google.auth.default()
-    bq_client = gcs.Client()
+    # bq_client = gcs.Client()
     # with open(team + '.json', 'wb') as file_obj:
     #     bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
     # with open(team, 'wb') as file_obj:
