@@ -107,7 +107,6 @@ def pulumi_program():
         ),
         opts=pulumi.ResourceOptions(provider=pr)
     )
-    )
     # pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
     # pulumi.export(team + '_token', token.access_token)
 
