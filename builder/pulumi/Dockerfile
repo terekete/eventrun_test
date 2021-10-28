@@ -5,7 +5,7 @@ COPY . .
 # Download and install required tools.
 RUN curl -L https://get.pulumi.com/ | bash
 RUN pip3 install pulumi==3.16.0
-RUN pip3 install pulumi-gcp=5.25.0
+RUN pip3 install pulumi-gcp==5.25.0
 RUN pip3 install --upgrade Cerberus
 RUN pip3 install --upgrade google-cloud-build
 RUN pip3 install --upgrade google-cloud-storage
