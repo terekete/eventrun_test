@@ -83,7 +83,7 @@ def pulumi_program():
     print("###### updating for " + team + "#######")
     sa = service_account(team)
     # key = create_team_key(sa, team)
-    # token = create_team_token(sa, team)
+    token = create_team_token(sa, team)
     # pr = gcp.Provider(
     #     team + '-provider',
     #     access_token=token.access_token,
