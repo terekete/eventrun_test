@@ -78,7 +78,6 @@ steps:
     env: [
       'PROJECT_ID=${_KEY_PROJECT}'
     ]
-    waitFor: ['create-staging-dir']
   - name: 'gcr.io/eventrun/pulumi:latest'
     id: 'build-iac'
     entrypoint: 'bash'
@@ -88,7 +87,7 @@ steps:
     env: [
       'PROJECT_ID=${_KEY_PROJECT}'
     ]
-    waitFor: ['create-staging-dir']
+    waitFor: ['build-sa']
   # - name: 'gcr.io/cloud-builders/gcloud'
   #   entrypoint: 'bash'
   #   args:

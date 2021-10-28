@@ -2,6 +2,8 @@
 
 set -e
 
+
+ls -la
 gcloud auth list
 
 # export PULUMI_CONFIG_PASSPHRASE=test
