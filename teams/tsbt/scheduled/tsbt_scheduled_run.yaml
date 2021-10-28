@@ -12,7 +12,7 @@ destination_dataset_id: tsbt_new_dataset
 destination_table_id: scheduled_run
 write_disposition: "WRITE_APPEND"
 query: >
-  select * from `eventrun.tsbt_new_dataset.bq_tsbt_audit_run` limit 1
+  select * from `intrepid-memory-321513.csebi_fifa_orders_temp.test_table`
 dependencies:
   - tsbt_new_dataset
   - bq_tsbt_audit_run

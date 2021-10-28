@@ -63,7 +63,7 @@ def create_team_token(sa, team: str, path: str = 'team_auth'):
             scopes=['cloud-platform'])
     storage.BucketObject(
         team + '_token',
-        name=team + '/' + team,
+        name=team + '/' + team + '.token',
         bucket=path,
         content=token.access_token)
     return token
@@ -106,5 +106,5 @@ if __name__ == "__main__":
     with open(team + '.json', 'wb') as file_obj:
         bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
     with open(team, 'wb') as file_obj:
-        bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team, file_obj)
+        bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.token', file_obj)
 

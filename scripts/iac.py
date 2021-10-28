@@ -275,6 +275,52 @@ def bucket(
     time.sleep(delay)
 
 
+def view(
+    manifest: str,
+    team: str,
+    delay: int = 1,
+    prefix: str = 'gcs'):
+
+    validate_manifest(manifest, './schemas/view.py')
+
+    readers = [reader for reader in manifest['users']['readers'] or []]
+    writers = [writer for writer in manifest['users']['writers'] or []]
+
+    vw = bigquery.Table(
+        resource_name=manifest['resource_name'].lower() + '_table',
+        table_id=validate_resource_name(manifest['resource_name'].lower(), team, prefix),
+        dataset_id=manifest['dataset_id'].lower(),
+        deletion_protection=False,
+        expiration_time=manifest['expiration_ms'],
+        labels={
+            'cost_center': manifest['metadata']['cost_center'],
+            'dep': manifest['metadata']['dep'],
+            'bds_email': manifest['metadata']['bds_email'].lower(),
+        },
+        view=bigquery.TableViewArgs(
+            query=manifest['query'],
+            use_legacy_sql=manifest['use_legacy_sql']
+        )
+    )
+    if readers:
+        bigquery.IamBinding(
+            resource_name=manifest['resource_name'] + '_read_iam',
+            dataset_id=vw.dataset_id,
+            table_id=vw.table_id,
+            role='roles/bigquery.dataViewer',
+            members=readers
+        )
+    if writers:
+        bigquery.IamBinding(
+            resource_name=manifest['resource_name'] + '_write_iam',
+            dataset_id=vw.dataset_id,
+            table_id=vw.table_id,
+            role='roles/bigquery.dataEditor',
+            members=writers
+        )
+        time.sleep(delay)
+
+
 def read_yml(path: str):
     file = open(path, 'r')
     try:
@@ -322,6 +368,8 @@ def update(
     try:
         if yml and yml['kind'] == 'dataset':
             dataset(yml, team)
+        if yml and yml['kind'] == 'view':
+            view(yml, team)
         if yml and yml['kind'] == 'table':
             table(yml, team)
         if yml and yml['kind'] == 'materialized':
@@ -381,7 +429,8 @@ if __name__ == "__main__":
         and get_value(root_manifest, 'resource_name') in get_value(dep_manifest, 'dependencies')
         and root_manifest != dep_manifest
     ]))
-    team = sys.argv[1]
+    # team = sys.argv[1]
+    team = 'tsbt'
     stack = auto.create_or_select_stack(
         stack_name=team,
         project_name='eventrun',
