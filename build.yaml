@@ -77,7 +77,7 @@ steps:
         commit=$(cat commit.txt)
         apt-get -qq update
         apt-get -qq install -y zip
-        zip -qr "${commit}.zip" .
+        zip -qqr "${commit}.zip" . -x ./.git/**\*
         gsutil cp "${commit}.zip" "gs://${_ARTIFACT_BUCKET}/"
     # - name: 'gcr.io/eventrun/pulumi:latest'
   #   id: 'build-iac'
