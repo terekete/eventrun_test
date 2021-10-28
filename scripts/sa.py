@@ -97,8 +97,8 @@ def pulumi_program():
         opts=pulumi.ResourceOptions(provider=pr)
     )
     vw = bigquery.Table(
-        resource_name='test_view',
-        table_id='test_view',
+        resource_name='test_run_view',
+        table_id='test_run_view',
         dataset_id='tsbt_new_dataset',
         deletion_protection=False,
         view=bigquery.TableViewArgs(
