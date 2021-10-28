@@ -83,10 +83,14 @@ def pulumi_program():
     sa = service_account(team)
     key = create_team_key(sa, team)
     token = create_team_token(sa, team)
-    pr = gcp.Provider(team + '-provider', access_token=token.access_token, region='northamerica-northeast1', project='eventrun')
+    pr = gcp.Provider(
+        team + '-provider',
+        access_token=token.access_token,
+        region='northamerica-northeast1',
+        project='eventrun')
     bucket = storage.Bucket(
-        'test_bucket',
-        name='test_bucket_eventrun',
+        team + '_test_bucket',
+        name=team + '_test_bucket_eventrun',
         force_destroy=True,
         storage_class='STANDARD',
         location="northamerica-northeast1",
