@@ -1,0 +1,17 @@
+steps:
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+    - '-c'
+    - |
+        ls -la
+
+
+options:
+  substitution_option: 'ALLOW_LOOSE'
+
+# substitutions:
+#   _ENV:
+#   _CUSTOM_TAG: "pull-${_PR_NUMBER}"
+
+timeout: 600s

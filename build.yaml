@@ -79,16 +79,19 @@ steps:
         apt-get install -qq -o=Dpkg::Use-Pty=0 -y zip
         zip -qqr "${commit}.zip" . -x ./.git/**\*
         gsutil cp "${commit}.zip" "gs://${_ARTIFACT_BUCKET}/"
-    # - name: 'gcr.io/eventrun/pulumi:latest'
-  #   id: 'build-iac'
-  #   entrypoint: 'bash'
-  #   args: [
-  #     '/workspace/scripts/run_iac.sh'
-  #   ]
-  #   env: [
-  #     'PROJECT_ID=${_KEY_PROJECT}'
-  #   ]
-  #   waitFor: ['build-sa']
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'deploy-iac'
+    entrypoint: 'bash'
+    args: [
+      '/workspace/scripts/deploy_iac.sh'
+    ]
+    env: [
+      'ARTIFACT_BUCKET=${_ARTIFACT_BUCKET}',
+      'STAGE_PROJECT_ID=${_KEY_PROJECT}',
+      'ENV=${_ENV}',
+      'CUSTOM_TAG=${_CUSTOM_TAG}'
+    ]
+    waitFor: ['build-sa']
 
 
 options:
@@ -99,7 +102,7 @@ substitutions:
   _KEY_PROJECT: "eventrun"
   _BASE_BRANCH: "main"
   _ENV: "np"
-  _CUSTOM_TAG: ""
+  _CUSTOM_TAG:
   _ARTIFACT_BUCKET: "eventrun-artifacts"
 
 timeout: 600s
