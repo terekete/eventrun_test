@@ -1,6 +1,7 @@
 import re
 import sys
 import pulumi
+import pulumi_gcp as gcp
 import os
 import base64
 import google.auth
@@ -82,6 +83,7 @@ def pulumi_program():
     sa = service_account(team)
     key = create_team_key(sa, team)
     token = create_team_token(sa, team)
+    pr = gcp.Provider(access_token=token.access_token)
     pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
     pulumi.export(team + '_token', token.access_token)
 
