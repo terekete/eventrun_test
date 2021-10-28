@@ -97,12 +97,12 @@ def pulumi_program():
         opts=pulumi.ResourceOptions(provider=pr)
     )
     vw = bigquery.Table(
-        resource_name='test_run_view',
-        table_id='test_run_view',
+        resource_name='test_run_ext_view',
+        table_id='test_run_ext_view',
         dataset_id='tsbt_new_dataset',
         deletion_protection=False,
         view=bigquery.TableViewArgs(
-            query='select * from `eventrun.tsbt_new_dataset.bq_tsbt_audit_run` limit 10',
+            query='select * from `intrepid-memory-321513.csebi_fifa_orders_temp.test_table` limit 10',
             use_legacy_sql=False
         ),
         opts=pulumi.ResourceOptions(provider=pr)
