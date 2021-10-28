@@ -100,17 +100,17 @@ def pulumi_program():
         location="northamerica-northeast1",
         opts=pulumi.ResourceOptions(provider=pr)
     )
-    # vw = bigquery.Table(
-    #     resource_name='test_run_ext_view',
-    #     table_id='test_run_ext_view',
-    #     dataset_id='tsbt_new_dataset',
-    #     deletion_protection=False,
-    #     view=bigquery.TableViewArgs(
-    #         query='select * from `intrepid-memory-321513.csebi_fifa_orders_temp.test_table` limit 10',
-    #         use_legacy_sql=False
-    #     ),
-    #     opts=pulumi.ResourceOptions(provider=pr)
-    # )
+    vw = bigquery.Table(
+        resource_name='test_run_ext_view',
+        table_id='test_run_ext_view',
+        dataset_id='tsbt_new_dataset',
+        deletion_protection=False,
+        view=bigquery.TableViewArgs(
+            query='select * from `intrepid-memory-321513.csebi_fifa_orders_temp.test_table` limit 10',
+            use_legacy_sql=False
+        ),
+        opts=pulumi.ResourceOptions(provider=pr)
+    )
     # pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
     # pulumi.export(team + '_token', token.access_token)
 
