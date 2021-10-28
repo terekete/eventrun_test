@@ -392,6 +392,4 @@ if __name__ == "__main__":
     print('##################### IAC Changes for Team: ' + team + ' #####################')
     stack.refresh()
     preview = stack.preview()
-    up = stack.up()
-
-
+    up = stack.up(on_output=print)
