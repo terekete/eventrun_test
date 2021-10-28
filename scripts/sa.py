@@ -16,11 +16,6 @@ def service_account(team: str, postfix='-service-account'):
         team + postfix,
         account_id=team + postfix,
         display_name=team + ' - service account')
-    token = serviceaccount.get_account_access_token(
-        target_service_account=sa.email,
-        scopes=['cloud-platform']
-    )
-    print(token.access_token)
     projects.IAMMember(
         team + '-storage-admin-iam',
         member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
@@ -46,8 +41,7 @@ def list_manifests(root: str):
     return yml_list
 
 
-def create_team_key(team: str, path: str = 'team_auth'):
-    sa = service_account(team)
+def create_team_key(sa, team: str, path: str = 'team_auth'):
     pulumi.export(team + '_sa', sa.name)
     key = serviceaccount.Key(
         team + '_key',
@@ -62,6 +56,18 @@ def create_team_key(team: str, path: str = 'team_auth'):
     return key
 
 
+def create_team_token(sa, team: str, path: str = 'team_auth'):
+    token = serviceaccount.get_account_access_token(
+            target_service_account=sa.email,
+            scopes=['cloud-platform'])
+    storage.BucketObject(
+        team + '_token',
+        name=team + '/' + team,
+        bucket=path,
+        content=token.access_token)
+    return token
+    
+
 def get_teams(root: str = '/workspace/teams/'):
     manifests_set = list_manifests(root)
     teams_set = set([
@@ -73,8 +79,11 @@ def get_teams(root: str = '/workspace/teams/'):
 
 
 def pulumi_program():
-    key = create_team_key(team)
+    sa = service_account(team)
+    key = create_team_key(sa, team)
+    token = create_team_token(sa, team)
     pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
+    pulumi.export(team + '_token', token.access_token)
 
 
 
