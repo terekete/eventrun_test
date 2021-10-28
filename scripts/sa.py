@@ -28,7 +28,11 @@ def service_account(team: str, postfix='-service-account'):
     projects.IAMMember(
         team + '-cloudbuild-editor-iam',
         member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
-        role='roles/cloudbuild.builds.editor'
+        role='roles/cloudbuild.builds.editor')
+    projects.IAMMember(
+        team + '-custom-view-access-iam',
+        member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
+        role='projects/eventrun/roles/CustomViewsAccessor'
     )
     return sa
 
