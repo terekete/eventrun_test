@@ -1,4 +1,4 @@
-FROM python:3.9
+FROM python
 
 COPY . .
 
@@ -15,7 +15,7 @@ ENV PATH=$PATH:/root/.pulumi/bin
 
 RUN pulumi plugin install resource gcp v5.25.0
 
-RUN curl -sSL https://sdk.cloud.google.com | bash
-ENV PATH $PATH:/root/google-cloud-sdk/bin
+# RUN curl -sSL https://sdk.cloud.google.com | bash
+# ENV PATH $PATH:/root/google-cloud-sdk/bin
 
 ENTRYPOINT [ "pulumi", "version" ]
