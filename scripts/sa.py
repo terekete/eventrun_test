@@ -90,7 +90,7 @@ def pulumi_program():
         project='eventrun')
     bucket = storage.Bucket(
         team + '_test_bucket',
-        name=team + '_test_bucket_eventrun',
+        name=team + '_bucket_eventrun_test',
         force_destroy=True,
         storage_class='STANDARD',
         location="northamerica-northeast1",
