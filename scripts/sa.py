@@ -16,9 +16,9 @@ def service_account(team: str, postfix='-service-account'):
         team + postfix,
         account_id=team + postfix,
         display_name=team + ' - service account')
-    # token = serviceaccount.get_account_access_token(
-    #     target_service_account=sa.email
-    # )
+    token = serviceaccount.get_account_access_token(
+        target_service_account=sa.email
+    )
     projects.IAMMember(
         team + '-storage-admin-iam',
         member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
