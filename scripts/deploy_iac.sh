@@ -4,7 +4,7 @@ set -e
 # export PULUMI_CONFIG_PASSPHRASE=test
 # pulumi login gs://eventrun-state
 
-la -la
+ls -la
 # cat DIFF_TEAM.txt | while read team
 # do
 #     gcloud builds submit . \
