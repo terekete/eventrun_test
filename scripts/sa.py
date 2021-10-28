@@ -80,6 +80,7 @@ def get_teams(root: str = '/workspace/teams/'):
 
 
 def pulumi_program():
+    print("###### updating for " + team + "#######")
     sa = service_account(team)
     # key = create_team_key(sa, team)
     token = create_team_token(sa, team)
@@ -113,7 +114,8 @@ if __name__ == "__main__":
     stack.refresh()
     preview = stack.preview()
     up = stack.up(on_output=print)
-    credentials, project_id = google.auth.default()
+
+    # credentials, project_id = google.auth.default()
     # bq_client = gcs.Client()
     # with open(team + '.json', 'wb') as file_obj:
     #     bq_client.download_blob_to_file('gs://team_auth/' + team + '/' + team + '.json', file_obj)
