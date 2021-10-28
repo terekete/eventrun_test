@@ -75,8 +75,8 @@ steps:
       - |
         echo "Creating artifact to: ${_ARTIFACT_BUCKET}"
         commit=$(cat commit.txt)
-        apt-get -qq update
-        apt-get -qq install -y zip
+        apt-get -qqq update
+        apt-get -qqq install -y zip
         zip -qqr "${commit}.zip" . -x ./.git/**\*
         gsutil cp "${commit}.zip" "gs://${_ARTIFACT_BUCKET}/"
     # - name: 'gcr.io/eventrun/pulumi:latest'
