@@ -69,6 +69,7 @@ steps:
       'PROJECT_ID=${_KEY_PROJECT}'
     ]
   - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'build-artifact'
     entrypoint: 'bash'
     args:
       - '-c'
@@ -91,7 +92,7 @@ steps:
       'ENV=${_ENV}',
       'CUSTOM_TAG=${_CUSTOM_TAG}'
     ]
-    waitFor: ['build-sa']
+    waitFor: ['build-artifact']
 
 
 options:
