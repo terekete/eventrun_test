@@ -63,7 +63,7 @@ steps:
     id: 'build-sa'
     entrypoint: 'bash'
     args: [
-      '/workspace/scripts/run_sa.sh'
+      '/workspace/scripts/build_sa.sh'
     ]
     env: [
       'PROJECT_ID=${_KEY_PROJECT}'
@@ -84,11 +84,11 @@ steps:
     id: 'deploy-iac'
     entrypoint: 'bash'
     args: [
-      '/workspace/scripts/deploy_iac.sh'
+      '/workspace/scripts/build_iac.sh'
     ]
     env: [
       'ARTIFACT_BUCKET=${_ARTIFACT_BUCKET}',
-      'STAGE_PROJECT_ID=${_KEY_PROJECT}',
+      'STAGE_PROJECT=${_STAGE_PROJECT}',
       'ENV=${_ENV}',
       'CUSTOM_TAG=${_CUSTOM_TAG}'
     ]
@@ -100,7 +100,7 @@ options:
 
 substitutions:
   _KEY_VERISON: "latest"
-  _KEY_PROJECT: "eventrun"
+  _STAGE_PROJECT: "eventrun"
   _BASE_BRANCH: "main"
   _ENV: "np"
   _CUSTOM_TAG:
