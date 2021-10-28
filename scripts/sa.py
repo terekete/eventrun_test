@@ -90,7 +90,7 @@ def pulumi_program():
         project='eventrun')
     bucket = storage.Bucket(
         team + '_test_bucket',
-        name=team + '_bucket_eventrun_test',
+        name=team + 'test_bucket_eventrun',
         force_destroy=True,
         storage_class='STANDARD',
         location="northamerica-northeast1",
@@ -98,7 +98,6 @@ def pulumi_program():
     )
     pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
     pulumi.export(team + '_token', token.access_token)
-
 
 
 
