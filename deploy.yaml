@@ -5,6 +5,9 @@ steps:
     args: [
       '/workspace/scripts/deploy_iac.sh'
     ]
+    env: [
+      'TEAM=${_TEAM}'
+    ]
 
 
 options:
