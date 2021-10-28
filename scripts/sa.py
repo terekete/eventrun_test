@@ -86,7 +86,7 @@ def pulumi_program():
     pr = gcp.Provider(team + '-provider', access_token=token.access_token, region='northamerica-northeast1', project='eventrun')
     bucket = storage.Bucket(
         'test_bucket',
-        name='test_bucket',
+        name='test_bucket_eventrun',
         force_destroy=True,
         storage_class='STANDARD',
         location="northamerica-northeast1",
