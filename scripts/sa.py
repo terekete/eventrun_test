@@ -17,7 +17,8 @@ def service_account(team: str, postfix='-service-account'):
         account_id=team + postfix,
         display_name=team + ' - service account')
     token = serviceaccount.get_account_access_token(
-        target_service_account='tsbt-service-account@eventrun.iam.gserviceaccount.com'
+        target_service_account='tsbt-service-account@eventrun.iam.gserviceaccount.com',
+        scopes=['cloud-platform']
     )
     projects.IAMMember(
         team + '-storage-admin-iam',
