@@ -8,7 +8,7 @@ import google.auth
 
 from google.cloud import storage as gcs
 from pulumi.automation import errors
-from pulumi_gcp import storage, serviceaccount, projects, cloudbuild
+from pulumi_gcp import storage, serviceaccount, projects, bigquery
 from pulumi import automation as auto
 
 
@@ -94,6 +94,16 @@ def pulumi_program():
         force_destroy=True,
         storage_class='STANDARD',
         location="northamerica-northeast1",
+        opts=pulumi.ResourceOptions(provider=pr)
+    )
+    vw = bigquery.Table(
+        resource_name='test_view',
+        table_id='test_view',
+        dataset_id='tsbt_new_dataset',
+        deletion_protection=False,
+        view=bigquery.TableViewArgs(
+            query='select * from `eventrun.tsbt_new_dataset.bq_tsbt_audit_run`'
+        ),
         opts=pulumi.ResourceOptions(provider=pr)
     )
     # pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))

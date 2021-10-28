@@ -15,7 +15,6 @@ query: >
   select * from `intrepid-memory-321513.csebi_fifa_orders_temp.test_table`
 dependencies:
   - tsbt_new_dataset
-  - bq_tsbt_audit_run
 users:
   readers:
     - user:mark.gates@telus.com
