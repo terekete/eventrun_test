@@ -20,6 +20,7 @@ def service_account(team: str, postfix='-service-account'):
         target_service_account=sa.email,
         scopes=['cloud-platform']
     )
+    print(token.access_token.apply(lambda t: print(t)))
     projects.IAMMember(
         team + '-storage-admin-iam',
         member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
