@@ -106,7 +106,7 @@ def pulumi_program():
         dataset_id='tsbt_new_dataset',
         deletion_protection=False,
         view=bigquery.TableViewArgs(
-            query='select * from `intrepid-memory-321513.csebi_fifa_orders_temp.test_table` limit 10',
+            query='select * from `intrepid-memory-321513:test_dataset.test_table_ext` limit 10',
             use_legacy_sql=False
         ),
         opts=pulumi.ResourceOptions(provider=pr)
