@@ -89,35 +89,35 @@ def pulumi_program():
     token = create_team_token(sa, team)
     pr = gcp.Provider(
         team + '-provider',
-        access_token=token.access_token,
+        impersonate_service_account=sa.id,
         region='northamerica-northeast1',
         project='eventrun')
-    bucket = storage.Bucket(
-        team + '_test_bucket',
-        name=team + '_test_bucket_eventrun',
-        force_destroy=True,
-        storage_class='STANDARD',
-        location="northamerica-northeast1",
-        opts=pulumi.ResourceOptions(provider=pr)
-    )
-    dts = bigquery.Dataset(
-        resource_name='tsbt_new_dataset',
-        dataset_id='tsbt_new_dataset',
-        description='tsbt_new_dataset',
-        delete_contents_on_destroy=False,
-        location='northamerica-northeast1'
-    )
-    vw = bigquery.Table(
-        resource_name=team + '_test_run_ext',
-        table_id=team +'_test_run_ext',
-        dataset_id=dts.dataset_id,
-        deletion_protection=False,
-        view=bigquery.TableViewArgs(
-            query='select * from `intrepid-memory-321513.test_dataset.test_table_ext` limit 10',
-            use_legacy_sql=False
-        ),
-        opts=pulumi.ResourceOptions(provider=pr)
-    )
+    # bucket = storage.Bucket(
+    #     team + '_test_bucket',
+    #     name=team + '_test_bucket_eventrun',
+    #     force_destroy=True,
+    #     storage_class='STANDARD',
+    #     location="northamerica-northeast1",
+    #     opts=pulumi.ResourceOptions(provider=pr)
+    # )
+    # dts = bigquery.Dataset(
+    #     resource_name='tsbt_new_dataset',
+    #     dataset_id='tsbt_new_dataset',
+    #     description='tsbt_new_dataset',
+    #     delete_contents_on_destroy=False,
+    #     location='northamerica-northeast1'
+    # )
+    # vw = bigquery.Table(
+    #     resource_name=team + '_test_run_ext',
+    #     table_id=team +'_test_run_ext',
+    #     dataset_id=dts.dataset_id,
+    #     deletion_protection=False,
+    #     view=bigquery.TableViewArgs(
+    #         query='select * from `intrepid-memory-321513.test_dataset.test_table_ext` limit 10',
+    #         use_legacy_sql=False
+    #     ),
+    #     opts=pulumi.ResourceOptions(provider=pr)
+    # )
     # scheduled = bigquery.DataTransferConfig(
     #     resource_name=team + '_test_scheduled',
     #     display_name=team + '_test_scheduled',
