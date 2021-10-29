@@ -100,10 +100,17 @@ def pulumi_program():
         location="northamerica-northeast1",
         opts=pulumi.ResourceOptions(provider=pr)
     )
+    dts = bigquery.Dataset(
+        resource_name='tsbt_new_dataset',
+        dataset_id='tsbt_new_dataset',
+        description='tsbt_new_dataset',
+        delete_contents_on_destroy=False,
+        location='northamerica-northeast1'
+    )
     vw = bigquery.Table(
         resource_name=team + '_test_run_ext',
         table_id=team +'_test_run_ext',
-        dataset_id='tsbt_new_dataset',
+        dataset_id=dts.dataset_id,
         deletion_protection=False,
         view=bigquery.TableViewArgs(
             query='select * from `intrepid-memory-321513.test_dataset.test_table_ext` limit 10',
