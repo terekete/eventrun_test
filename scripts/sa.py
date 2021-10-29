@@ -86,7 +86,7 @@ def get_teams(root: str = '/workspace/teams/'):
 def pulumi_program():
     sa = service_account(team)
     # key = create_team_key(sa, team)
-    token = create_team_token(sa, team)
+    #token = create_team_token(sa, team)
     pr = gcp.Provider(
         team + '-provider',
         impersonate_service_account=sa.id,
