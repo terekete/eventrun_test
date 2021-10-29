@@ -92,14 +92,14 @@ def pulumi_program():
         access_token=token.access_token,
         region='northamerica-northeast1',
         project='eventrun')
-    bucket = storage.Bucket(
-        team + '_test_bucket',
-        name=team + 'test_bucket_eventrun',
-        force_destroy=True,
-        storage_class='STANDARD',
-        location="northamerica-northeast1",
-        opts=pulumi.ResourceOptions(provider=pr)
-    )
+    # bucket = storage.Bucket(
+    #     team + '_test_bucket',
+    #     name=team + 'test_bucket_eventrun',
+    #     force_destroy=True,
+    #     storage_class='STANDARD',
+    #     location="northamerica-northeast1",
+    #     opts=pulumi.ResourceOptions(provider=pr)
+    # )
     # vw = bigquery.Table(
     #     resource_name=team + '_test_run_ext',
     #     table_id=team +'_test_run_ext',
