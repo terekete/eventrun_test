@@ -108,6 +108,7 @@ def pulumi_program():
         delete_contents_on_destroy=False,
         location='northamerica-northeast1'
     )
+    
     # vw = bigquery.Table(
     #     resource_name=team + '_test_run_ext',
     #     table_id=team +'_test_run_ext',
