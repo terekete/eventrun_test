@@ -119,20 +119,20 @@ def pulumi_program():
         ),
         opts=pulumi.ResourceOptions(provider=pr)
     )
-    # scheduled = bigquery.DataTransferConfig(
-    #     resource_name=team + '_test_scheduled',
-    #     display_name=team + '_test_scheduled',
-    #     data_source_id='scheduled_query',
-    #     schedule='every 25 minutes',
-    #     destination_dataset_id='tsbt_new_dataset',
-    #     location='northamerica-northeast1',
-    #     params={
-    #         'destination_table_name_template': team + '_test_scheduled',
-    #         'write_disposition': 'WRITE_TRUNCATE',
-    #         'query': 'select * from `intrepid-memory-321513:test_dataset.test_table_ext` limit 10'
-    #     },
-    #     opts=pulumi.ResourceOptions(provider=pr)
-    # )
+    scheduled = bigquery.DataTransferConfig(
+        resource_name=team + '_test_scheduled',
+        display_name=team + '_test_scheduled',
+        data_source_id='scheduled_query',
+        schedule='every 25 minutes',
+        destination_dataset_id='tsbt_new_dataset',
+        location='northamerica-northeast1',
+        params={
+            'destination_table_name_template': team + '_test_scheduled',
+            'write_disposition': 'WRITE_TRUNCATE',
+            'query': 'select * from `intrepid-memory-321513:test_dataset.test_table_ext` limit 10'
+        },
+        opts=pulumi.ResourceOptions(provider=pr)
+    )
     # pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
     # pulumi.export(team + '_token', token.access_token)
 
