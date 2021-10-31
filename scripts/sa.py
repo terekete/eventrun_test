@@ -102,13 +102,13 @@ def pulumi_program():
         opts=pulumi.ResourceOptions(provider=pr)
     )
     dts = bigquery.Dataset(
-        resource_name='tsbt_new_dataset',
-        dataset_id='tsbt_new_dataset',
-        description='tsbt_new_dataset',
+        resource_name=team + '_new_dataset',
+        dataset_id=team + '_new_dataset',
+        description=team + '_new_dataset',
         delete_contents_on_destroy=False,
         location='northamerica-northeast1'
     )
-    
+
     # vw = bigquery.Table(
     #     resource_name=team + '_test_run_ext',
     #     table_id=team +'_test_run_ext',
