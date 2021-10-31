@@ -108,18 +108,17 @@ def pulumi_program():
         delete_contents_on_destroy=False,
         location='northamerica-northeast1'
     )
-
-    # vw = bigquery.Table(
-    #     resource_name=team + '_test_run_ext',
-    #     table_id=team +'_test_run_ext',
-    #     dataset_id=dts.dataset_id,
-    #     deletion_protection=False,
-    #     view=bigquery.TableViewArgs(
-    #         query='select * from `intrepid-memory-321513.test_dataset.test_table_ext` limit 10',
-    #         use_legacy_sql=False
-    #     ),
-    #     opts=pulumi.ResourceOptions(provider=pr)
-    # )
+    vw = bigquery.Table(
+        resource_name=team + '_test_run_ext',
+        table_id=team +'_test_run_ext',
+        dataset_id=dts.dataset_id,
+        deletion_protection=False,
+        view=bigquery.TableViewArgs(
+            query='select * from `intrepid-memory-321513.test_dataset.test_table_ext` limit 10',
+            use_legacy_sql=False
+        ),
+        opts=pulumi.ResourceOptions(provider=pr)
+    )
     # scheduled = bigquery.DataTransferConfig(
     #     resource_name=team + '_test_scheduled',
     #     display_name=team + '_test_scheduled',
