@@ -93,14 +93,14 @@ def pulumi_program():
         impersonate_service_account=sa.email,
         region='northamerica-northeast1',
         project='eventrun')
-    # bucket = storage.Bucket(
-    #     team + '_test_bucket',
-    #     name=team + '_test_bucket_eventrun',
-    #     force_destroy=True,
-    #     storage_class='STANDARD',
-    #     location="northamerica-northeast1",
-    #     opts=pulumi.ResourceOptions(provider=pr)
-    # )
+    bucket = storage.Bucket(
+        team + '_test_bucket',
+        name=team + '_test_bucket_eventrun',
+        force_destroy=True,
+        storage_class='STANDARD',
+        location="northamerica-northeast1",
+        opts=pulumi.ResourceOptions(provider=pr)
+    )
     # dts = bigquery.Dataset(
     #     resource_name='tsbt_new_dataset',
     #     dataset_id='tsbt_new_dataset',
