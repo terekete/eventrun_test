@@ -129,7 +129,7 @@ def pulumi_program():
         params={
             'destination_table_name_template': team + '_test_scheduled',
             'write_disposition': 'WRITE_TRUNCATE',
-            'query': 'select * from `intrepid-memory-321513:test_dataset.test_table_ext` limit 10'
+            'query': 'select * from `intrepid-memory-321513.test_dataset.test_table_ext` limit 10'
         },
         opts=pulumi.ResourceOptions(provider=pr)
     )
