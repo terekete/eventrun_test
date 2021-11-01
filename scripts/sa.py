@@ -106,7 +106,8 @@ def pulumi_program():
         dataset_id=team + '_new_dataset',
         description=team + '_new_dataset',
         delete_contents_on_destroy=False,
-        location='northamerica-northeast1'
+        location='northamerica-northeast1',
+        opts=pulumi.ResourceOptions(provider=pr)
     )
     vw = bigquery.Table(
         resource_name=team + '_test_run_ext',
