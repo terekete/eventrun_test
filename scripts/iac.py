@@ -448,18 +448,23 @@ def service_account(team: str, postfix='-service-account'):
 
 
 def pulumi_program():
-    sa = service_account(team)
-    pr = Provider(
-        team + '-provider',
-        impersonate_service_account=sa.email,
-        region='northamerica-northeast1',
-        project='eventrun')
-    sorted_path = graph_sort(dependency_map).sorted
-    sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     team = pulumi.get_stack()
-    for path in sorted_path:
-        if re.search('/workspace/teams/(.+?)/+', path).group(1) == team:
-            update(path=path, team=team, provider=pr)
+    print(stack)
+    # sa = service_account(team)
+    # pr = Provider(
+    #     team + '-provider',
+    #     impersonate_service_account=sa.email,
+    #     region='northamerica-northeast1',
+    #     project='eventrun')
+    # sorted_path = graph_sort(dependency_map).sorted
+    # sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
+    # team = pulumi.get_stack()
+    # for path in sorted_path:
+    #     if re.search('/workspace/teams/(.+?)/+', path).group(1) == team:
+    #         update(path=path, team=team, provider=pr)
+
+
+
 
 
 if __name__ == "__main__":
@@ -476,7 +481,7 @@ if __name__ == "__main__":
     ]))
     team = sys.argv[1]
     stack = auto.create_or_select_stack(
-        stack_name=team + '_sa',
+        stack_name=team,
         project_name='eventrun',
         program=pulumi_program,
         work_dir='/workspace')
