@@ -120,17 +120,28 @@ def pulumi_program():
         ),
         opts=pulumi.ResourceOptions(provider=pr)
     )
+    vw2 = bigquery.Table(
+        resource_name=team + '_test_run_ext2',
+        table_id=team +'_test_run_ext2',
+        dataset_id=dts.dataset_id,
+        deletion_protection=False,
+        view=bigquery.TableViewArgs(
+            query='select * from `intrepid-memory-321513.test_dataset.test_table_ext` limit 10',
+            use_legacy_sql=False
+        ),
+        opts=pulumi.ResourceOptions(provider=pr)
+    )
     read_vw = bigquery.IamBinding(
             resource_name=team + '_vw_read_iam',
-            dataset_id=vw.dataset_id,
-            table_id=vw.table_id,
+            dataset_id=vw2.dataset_id,
+            table_id=vw2.table_id,
             role='roles/bigquery.dataViewer',
             members=['user:gates.mark@gmail.com'],
             opts=pulumi.ResourceOptions(provider=pr))
     writer_vw = bigquery.IamBinding(
             resource_name=team + '_vw_writer_iam',
-            dataset_id=vw.dataset_id,
-            table_id=vw.table_id,
+            dataset_id=vw2.dataset_id,
+            table_id=vw2.table_id,
             role='roles/bigquery.dataEditor',
             members=['user:gates.mark@gmail.com'],
             opts=pulumi.ResourceOptions(provider=pr))
