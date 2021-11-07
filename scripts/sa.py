@@ -5,10 +5,11 @@ import pulumi_gcp as gcp
 import os
 import base64
 import google.auth
+from pulumi_gcp.compute import network
 
 from google.cloud import storage as gcs
 from pulumi.automation import errors
-from pulumi_gcp import storage, serviceaccount, projects, bigquery, dataproc
+from pulumi_gcp import storage, serviceaccount, projects, bigquery, dataproc, compute
 from pulumi import automation as auto
 
 
@@ -99,6 +100,19 @@ def pulumi_program():
         force_destroy=True,
         storage_class='STANDARD',
         location="northamerica-northeast1",
+        opts=pulumi.ResourceOptions(provider=pr)
+    )
+    net = compute.Network(team + '-network',
+        auto_create_subnetworks=False,
+        routing_mode='REGIONAL',
+        opts=pulumi.ResourceOptions(provider=pr)
+    )
+    subnet = compute.Subnetwork(
+        team + '-subnetwork',
+        ip_cidr_range='10.2.0.0/16',
+        region='northamerica-northeast1',
+        network=net.id,
+        private_ip_google_access=True,
         opts=pulumi.ResourceOptions(provider=pr)
     )
     dts = bigquery.Dataset(
@@ -202,7 +216,10 @@ def pulumi_program():
             ),
             gce_cluster_config=dataproc.ClusterClusterConfigGceClusterConfigArgs(
                 service_account=sa.email,
-                service_account_scopes=['cloud-platform']
+                service_account_scopes=['cloud-platform'],
+                internal_ip_only=True,
+                network=net.name,
+                subnetwork=subnet.name
             ),
         ),
         opts=pulumi.ResourceOptions(provider=pr)
