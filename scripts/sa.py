@@ -167,7 +167,7 @@ def pulumi_program():
         },
         opts=pulumi.ResourceOptions(provider=pr)
     )
-    proc = dataproc.Cluster(team + '_dataproc_cluster',
+    proc = dataproc.Cluster(team + '-dataproc-cluster',
         region='northamerica-northeast1',
         graceful_decommission_timeout='120s',
         labels ={
