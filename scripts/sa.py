@@ -145,14 +145,14 @@ def pulumi_program():
             table_id=vw2.table_id,
             role='roles/bigquery.dataViewer',
             members=['user:gates.mark@gmail.com'],
-            opts=pulumi.ResourceOptions(provider=pr))
+            opts=pulumi.ResourceOptions(provider=pr, parent=vw2))
     writer_vw = bigquery.IamBinding(
             resource_name=team + '_vw_writer_iam',
             dataset_id=vw2.dataset_id,
             table_id=vw2.table_id,
             role='roles/bigquery.dataEditor',
             members=['user:gates.mark@gmail.com'],
-            opts=pulumi.ResourceOptions(provider=pr))
+            opts=pulumi.ResourceOptions(provider=pr, parent=vw2))
     scheduled = bigquery.DataTransferConfig(
         resource_name=team + '_test_scheduled',
         display_name=team + '_test_scheduled',
