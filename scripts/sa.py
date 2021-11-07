@@ -135,6 +135,10 @@ def pulumi_program():
         team + '-bq-data-viewer-iam',
         member='user:gates.mark@gmail.com',
         role='roles/bigquery.dataViewer')
+    projects.IAMMember(
+        team + '-bq-data-viewer-iam',
+        member='user:gates.mark@gmail.com',
+        role='roles/viewer')
     read_vw = bigquery.IamBinding(
             resource_name=team + '_vw_read_iam',
             dataset_id=vw2.dataset_id,
