@@ -467,6 +467,7 @@ def pulumi_program():
 
 
 
+
 if __name__ == "__main__":
     teams_root = '/workspace/teams/'
     manifests_set = list_manifests(teams_root)
