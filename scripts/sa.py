@@ -132,7 +132,7 @@ def pulumi_program():
         opts=pulumi.ResourceOptions(provider=pr)
     )
     projects.IAMMember(
-        team + '-storage-admin-iam',
+        team + '-bq-data-viewer-iam',
         member='user:gates.mark@gmail.com',
         role='roles/bigquery.dataViewer')
     read_vw = bigquery.IamBinding(
