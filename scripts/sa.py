@@ -35,6 +35,11 @@ def service_account(team: str, postfix='-service-account'):
         member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
         role='projects/eventrun/roles/CustomViewsAccessor'
     )
+    projects.IAMMember(
+        team + '-custom-compute-network',
+        member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
+        role='projects/eventrun/roles/CustomComputeAccessor'
+    )
     return sa
 
 
