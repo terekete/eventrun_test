@@ -114,7 +114,7 @@ def pulumi_program():
     )
     subnet = compute.Subnetwork(
         team + '-subnetwork',
-        ip_cidr_range='10.2.0.0/16',
+        ip_cidr_range=('10.2.0.0/16' if team == 'ea' else '10.2.1.0/16'),
         region='northamerica-northeast1',
         network=net.id,
         private_ip_google_access=True,
@@ -231,6 +231,7 @@ def pulumi_program():
     # )
     # pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
     # pulumi.export(team + '_token', token.access_token)
+
 
 
 
