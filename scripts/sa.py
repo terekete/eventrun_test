@@ -110,7 +110,7 @@ def pulumi_program():
     net = compute.Network(team + '-network',
         auto_create_subnetworks=False,
         routing_mode='REGIONAL',
-        opts=pulumi.ResourceOptions(provider=pr)
+        opts=pulumi.ResourceOptions(provider=pr, parent=sa)
     )
     subnet = compute.Subnetwork(
         team + '-subnetwork',
@@ -118,7 +118,7 @@ def pulumi_program():
         region='northamerica-northeast1',
         network=net.id,
         private_ip_google_access=True,
-        opts=pulumi.ResourceOptions(provider=pr)
+        opts=pulumi.ResourceOptions(provider=pr, parent=net)
     )
     dts = bigquery.Dataset(
         resource_name=team + '_new_dataset',
