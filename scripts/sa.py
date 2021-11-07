@@ -120,6 +120,20 @@ def pulumi_program():
         ),
         opts=pulumi.ResourceOptions(provider=pr)
     )
+    read_vw = bigquery.IamBinding(
+            resource_name=team + '_vw_read_iam',
+            dataset_id=vw.dataset_id,
+            table_id=vw.table_id,
+            role='roles/bigquery.dataViewer',
+            members=['user:gates.mark@gmail.com'],
+            opts=pulumi.ResourceOptions(provider=pr))
+    writer_vw = bigquery.IamBinding(
+            resource_name=team + '_vw_writer_iam',
+            dataset_id=vw.dataset_id,
+            table_id=vw.table_id,
+            role='roles/bigquery.dataEditor',
+            members=['user:gates.mark@gmail.com'],
+            opts=pulumi.ResourceOptions(provider=pr))
     scheduled = bigquery.DataTransferConfig(
         resource_name=team + '_test_scheduled',
         display_name=team + '_test_scheduled',
