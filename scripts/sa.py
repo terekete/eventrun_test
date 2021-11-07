@@ -242,6 +242,7 @@ def pulumi_program():
 
 
 
+
 if __name__ == "__main__":
     team = sys.argv[1]
     stack = auto.create_or_select_stack(
