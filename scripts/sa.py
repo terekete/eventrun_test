@@ -179,7 +179,7 @@ def pulumi_program():
                 num_instances=1,
                 machine_type='e2-standard-4',
                 disk_config=dataproc.ClusterClusterConfigMasterConfigDiskConfigArgs(
-                    boot_disk_size_gb='pd-ssd',
+                    boot_disk_type='pd-ssd',
                     boot_disk_size_gb=10,
                 ),
             ),
