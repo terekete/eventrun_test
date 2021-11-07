@@ -223,7 +223,7 @@ def pulumi_program():
                 service_account=sa.email,
                 service_account_scopes=['cloud-platform'],
                 internal_ip_only=True,
-                network=net.id,
+                # network=net.id,
                 subnetwork=subnet.id
             ),
         ),
