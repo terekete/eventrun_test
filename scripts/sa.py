@@ -203,7 +203,7 @@ def pulumi_program():
                 ),
             ),
             worker_config=dataproc.ClusterClusterConfigWorkerConfigArgs(
-                num_instances=1,
+                num_instances=2,
                 machine_type='e2-standard-2',
                 disk_config=dataproc.ClusterClusterConfigWorkerConfigDiskConfigArgs(
                     boot_disk_size_gb=10,
