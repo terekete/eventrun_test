@@ -220,7 +220,6 @@ def pulumi_program():
                 },
             ),
             gce_cluster_config=dataproc.ClusterClusterConfigGceClusterConfigArgs(
-                service_account=sa.email,
                 service_account_scopes=['cloud-platform'],
                 internal_ip_only=True,
                 # network=net.id,
