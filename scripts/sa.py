@@ -90,6 +90,20 @@ def get_teams(root: str = '/workspace/teams/'):
 
 
 
+tbl_schema = """[
+    {
+      "name": "run_id",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "description": "run_id"
+    },
+    {
+      "name": "run_ts",
+      "type": "DATETIME",
+      "mode": "REQUIRED",
+      "description": "run_ts"
+    }]"""
+
 def pulumi_program():
     sa = service_account(team)
     # key = create_team_key(sa, team)
@@ -158,17 +172,24 @@ def pulumi_program():
         team + '-project-viewer-iam',
         member='user:gates.mark@gmail.com',
         role='roles/viewer')
+    tbl = bigquery.Table(
+        resource_name=team + '_table',
+        table_id='test_table'
+        dataset_id=dts.dataset_id,
+        deletion_protection=False,
+        schema=tbl_schema,
+        opts=pulumi.ResourceOptions(provider=provider, parent=dts))
     read_vw = bigquery.IamBinding(
             resource_name=team + '_vw_read_iam',
             dataset_id=vw2.dataset_id,
             table_id=vw2.table_id,
             role='roles/bigquery.dataViewer',
             members=['user:gates.mark@gmail.com'],
-            condition=bigquery.IamBindingConditionArgs(
-                title="condition_desc",
-                description="condition_desc",
-                expression="request.time.getFullYear(\"Europe/Berlin\") == 2022",
-            ),
+            # condition=bigquery.IamBindingConditionArgs(
+            #     title="condition_desc",
+            #     description="condition_desc",
+            #     expression="request.time.getFullYear(\"Europe/Berlin\") == 2022",
+            # ),
             opts=pulumi.ResourceOptions(provider=pr, parent=vw2))
     writer_vw = bigquery.IamBinding(
             resource_name=team + '_vw_writer_iam',
