@@ -167,7 +167,7 @@ def pulumi_program():
             condition=bigquery.IamBindingConditionArgs(
                 title="expires_after_2019_12_31",
                 description="Expiring at midnight of 2019-12-31",
-                expression="request.time < timestamp(\"2020-01-01T00:00:00Z\")",
+                expression="request.time < timestamp(\"2022-01-01T00:00:00Z\")",
             ),
             opts=pulumi.ResourceOptions(provider=pr, parent=vw2))
     writer_vw = bigquery.IamBinding(
