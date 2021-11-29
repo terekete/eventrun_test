@@ -4,7 +4,6 @@ import pulumi
 import pulumi_gcp as gcp
 import os
 import base64
-import google.auth
 from pulumi_gcp.compute import network
 
 from google.cloud import storage as gcs
@@ -185,11 +184,11 @@ def pulumi_program():
             table_id=tbl.table_id,
             role="roles/bigquery.dataOwner",
             members=['user:gates.mark@gmail.com'],
-            # condition=bigquery.IamBindingConditionArgs(
-            #     title="condition_desc",
-            #     description="condition_desc",
-            #     expression="request.time.getFullYear(\"Europe/Berlin\") == 2022",
-            # ),
+            condition=gcp.bigquery.IamBindingConditionArgs(
+                title="condition_desc",
+                description="condition_desc",
+                expression="request.time.getFullYear(\"Europe/Berlin\") == 2022",
+            ),
             opts=pulumi.ResourceOptions(provider=pr, parent=tbl))
     # read_vw = bigquery.IamBinding(
     #         resource_name=team + '_vw_read_iam',
