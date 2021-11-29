@@ -174,7 +174,7 @@ def pulumi_program():
         role='roles/viewer')
     tbl = bigquery.Table(
         resource_name=team + '_table',
-        table_id='test_table'
+        table_id='test_table',
         dataset_id=dts.dataset_id,
         deletion_protection=False,
         schema=tbl_schema,
