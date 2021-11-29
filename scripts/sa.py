@@ -214,7 +214,7 @@ def pulumi_program():
                 num_instances=0,
             ),
             software_config=dataproc.ClusterClusterConfigSoftwareConfigArgs(
-                image_version='1.3.7-deb9',
+                image_version='2.0.24-debian10',
                 override_properties={
                     'dataproc:dataproc.allow.zero.workers': 'true',
                 },
@@ -230,6 +230,7 @@ def pulumi_program():
     )
     # pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
     # pulumi.export(team + '_token', token.access_token)
+
 
 
 
