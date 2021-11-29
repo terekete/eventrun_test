@@ -186,48 +186,48 @@ def pulumi_program():
         },
         opts=pulumi.ResourceOptions(provider=pr)
     )
-    proc = dataproc.Cluster(team + '-dataproc-cluster',
-        region='northamerica-northeast1',
-        graceful_decommission_timeout='120s',
-        labels ={
-            'foo': 'bar'
-        },
-        cluster_config=dataproc.ClusterClusterConfigArgs(
-            staging_bucket=bucket.id,
-            master_config=dataproc.ClusterClusterConfigMasterConfigArgs(
-                num_instances=1,
-                machine_type='e2-standard-4',
-                disk_config=dataproc.ClusterClusterConfigMasterConfigDiskConfigArgs(
-                    boot_disk_type='pd-ssd',
-                    boot_disk_size_gb=10,
-                ),
-            ),
-            worker_config=dataproc.ClusterClusterConfigWorkerConfigArgs(
-                num_instances=2,
-                machine_type='e2-standard-2',
-                disk_config=dataproc.ClusterClusterConfigWorkerConfigDiskConfigArgs(
-                    boot_disk_size_gb=10,
-                    num_local_ssds=1,
-                ),
-            ),
-            preemptible_worker_config=dataproc.ClusterClusterConfigPreemptibleWorkerConfigArgs(
-                num_instances=0,
-            ),
-            software_config=dataproc.ClusterClusterConfigSoftwareConfigArgs(
-                image_version='2.0.24-debian10',
-                override_properties={
-                    'dataproc:dataproc.allow.zero.workers': 'true',
-                },
-            ),
-            gce_cluster_config=dataproc.ClusterClusterConfigGceClusterConfigArgs(
-                service_account_scopes=['cloud-platform'],
-                internal_ip_only=True,
-                # network=net.id,
-                subnetwork=subnet.id
-            ),
-        ),
-        opts=pulumi.ResourceOptions(provider=pr)
-    )
+    # proc = dataproc.Cluster(team + '-dataproc-cluster',
+    #     region='northamerica-northeast1',
+    #     graceful_decommission_timeout='120s',
+    #     labels ={
+    #         'foo': 'bar'
+    #     },
+    #     cluster_config=dataproc.ClusterClusterConfigArgs(
+    #         staging_bucket=bucket.id,
+    #         master_config=dataproc.ClusterClusterConfigMasterConfigArgs(
+    #             num_instances=1,
+    #             machine_type='e2-standard-4',
+    #             disk_config=dataproc.ClusterClusterConfigMasterConfigDiskConfigArgs(
+    #                 boot_disk_type='pd-ssd',
+    #                 boot_disk_size_gb=10,
+    #             ),
+    #         ),
+    #         worker_config=dataproc.ClusterClusterConfigWorkerConfigArgs(
+    #             num_instances=2,
+    #             machine_type='e2-standard-2',
+    #             disk_config=dataproc.ClusterClusterConfigWorkerConfigDiskConfigArgs(
+    #                 boot_disk_size_gb=10,
+    #                 num_local_ssds=1,
+    #             ),
+    #         ),
+    #         preemptible_worker_config=dataproc.ClusterClusterConfigPreemptibleWorkerConfigArgs(
+    #             num_instances=0,
+    #         ),
+    #         software_config=dataproc.ClusterClusterConfigSoftwareConfigArgs(
+    #             image_version='2.0.24-debian10',
+    #             override_properties={
+    #                 'dataproc:dataproc.allow.zero.workers': 'true',
+    #             },
+    #         ),
+    #         gce_cluster_config=dataproc.ClusterClusterConfigGceClusterConfigArgs(
+    #             service_account_scopes=['cloud-platform'],
+    #             internal_ip_only=True,
+    #             # network=net.id,
+    #             subnetwork=subnet.id
+    #         ),
+    #     ),
+    #     opts=pulumi.ResourceOptions(provider=pr)
+    # )
     # pulumi.export(team + '_key', key.private_key.apply(lambda x: base64.b64decode(x).decode('utf-8')))
     # pulumi.export(team + '_token', token.access_token)
 
