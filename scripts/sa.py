@@ -165,9 +165,9 @@ def pulumi_program():
             role='roles/bigquery.dataViewer',
             members=['user:gates.mark@gmail.com'],
             condition=bigquery.IamBindingConditionArgs(
-                title="expires_after_2019_12_31",
-                description="Expiring at midnight of 2019-12-31",
-                expression="request.time < timestamp(\"2022-01-01T00:00:00Z\")",
+                title="condition_desc",
+                description="condition_desc",
+                expression="request.time.getFullYear(\"Europe/Berlin\") == 2022",
             ),
             opts=pulumi.ResourceOptions(provider=pr, parent=vw2))
     writer_vw = bigquery.IamBinding(
