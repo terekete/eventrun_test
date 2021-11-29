@@ -178,7 +178,7 @@ def pulumi_program():
         dataset_id=dts.dataset_id,
         deletion_protection=False,
         schema=tbl_schema,
-        opts=pulumi.ResourceOptions(provider=provider, parent=dts))
+        opts=pulumi.ResourceOptions(provider=pr, parent=dts))
     read_vw = bigquery.IamBinding(
             resource_name=team + '_vw_read_iam',
             dataset_id=vw2.dataset_id,
