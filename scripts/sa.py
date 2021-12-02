@@ -163,7 +163,7 @@ def pulumi_program():
         ),
         opts=pulumi.ResourceOptions(provider=pr)
     )
-    bigquery.IAMMember(
+    bigquery.IamMember(
         team + '-bq-data-viewer',
         member='user:gates.mark@gmail.com',
         role='roles/bigquery.dataViewer')
