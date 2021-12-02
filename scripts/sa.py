@@ -174,13 +174,13 @@ def pulumi_program():
         deletion_protection=False,
         schema=tbl_schema,
         opts=pulumi.ResourceOptions(provider=pr, parent=dts))
-    read_tbl = bigquery.IamMember(
-        team + '-bq-data-viewer',
-        dataset_id=dts.dataset_id,
-        table_id=tbl.table_id,
-        member='user:tereketeketitaka@gmail.com',
-        role='roles/bigquery.dataViewer',
-        opts=pulumi.ResourceOptions(provider=pr, parent=dts))
+    # read_tbl = bigquery.IamMember(
+    #     team + '-bq-data-viewer',
+    #     dataset_id=dts.dataset_id,
+    #     table_id=tbl.table_id,
+    #     member='user:tereketeketitaka@gmail.com',
+    #     role='roles/bigquery.dataViewer',
+    #     opts=pulumi.ResourceOptions(provider=pr, parent=dts))
     # read_tbl = bigquery.IamBinding(
     #         resource_name=team + '_tbl_read_iam',
     #         dataset_id=tbl.dataset_id,
