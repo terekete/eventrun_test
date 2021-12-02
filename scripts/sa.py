@@ -163,10 +163,6 @@ def pulumi_program():
         ),
         opts=pulumi.ResourceOptions(provider=pr)
     )
-    bigquery.IamMember(
-        team + '-bq-data-viewer',
-        member='user:gates.mark@gmail.com',
-        role='roles/bigquery.dataViewer')
     # projects.IAMMember(
     #     team + '-project-viewer-iam',
     #     member='user:gates.mark@gmail.com',
@@ -177,6 +173,13 @@ def pulumi_program():
         dataset_id=dts.dataset_id,
         deletion_protection=False,
         schema=tbl_schema,
+        opts=pulumi.ResourceOptions(provider=pr, parent=dts))
+    bigquery.IamMember(
+        team + '-bq-data-viewer',
+        dataset_id=dts.dataset_id,
+        table_id=tbl.table_id,
+        member='user:gates.mark@gmail.com',
+        role='roles/bigquery.dataViewer',
         opts=pulumi.ResourceOptions(provider=pr, parent=dts))
     read_tbl = bigquery.IamBinding(
             resource_name=team + '_tbl_read_iam',
