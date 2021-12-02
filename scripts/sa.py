@@ -163,14 +163,14 @@ def pulumi_program():
         ),
         opts=pulumi.ResourceOptions(provider=pr)
     )
-    projects.IAMMember(
-        team + '-bq-data-viewer-iam',
+    bigquery.IAMMember(
+        team + '-bq-data-viewer',
         member='user:gates.mark@gmail.com',
         role='roles/bigquery.dataViewer')
-    projects.IAMMember(
-        team + '-project-viewer-iam',
-        member='user:gates.mark@gmail.com',
-        role='roles/viewer')
+    # projects.IAMMember(
+    #     team + '-project-viewer-iam',
+    #     member='user:gates.mark@gmail.com',
+    #     role='roles/viewer')
     tbl = bigquery.Table(
         resource_name=team + '_table',
         table_id='test_table',
