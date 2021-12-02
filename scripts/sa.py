@@ -174,25 +174,25 @@ def pulumi_program():
         deletion_protection=False,
         schema=tbl_schema,
         opts=pulumi.ResourceOptions(provider=pr, parent=dts))
-    bigquery.IamMember(
+    read_tbl = bigquery.IamMember(
         team + '-bq-data-viewer',
         dataset_id=dts.dataset_id,
         table_id=tbl.table_id,
         member='user:gates.mark@gmail.com',
         role='roles/bigquery.dataViewer',
         opts=pulumi.ResourceOptions(provider=pr, parent=dts))
-    read_tbl = bigquery.IamBinding(
-            resource_name=team + '_tbl_read_iam',
-            dataset_id=tbl.dataset_id,
-            table_id=tbl.table_id,
-            role="roles/bigquery.dataOwner",
-            members=['user:gates.mark@gmail.com'],
-            condition=gcp.bigquery.IamBindingConditionArgs(
-                title="condition_desc",
-                description="condition_desc",
-                expression="request.time.getFullYear(\"Europe/Berlin\") == 2022",
-            ),
-            opts=pulumi.ResourceOptions(provider=pr, parent=tbl))
+    # read_tbl = bigquery.IamBinding(
+    #         resource_name=team + '_tbl_read_iam',
+    #         dataset_id=tbl.dataset_id,
+    #         table_id=tbl.table_id,
+    #         role="roles/bigquery.dataOwner",
+    #         members=['user:gates.mark@gmail.com'],
+    #         condition=gcp.bigquery.IamBindingConditionArgs(
+    #             title="condition_desc",
+    #             description="condition_desc",
+    #             expression="request.time.getFullYear(\"Europe/Berlin\") == 2022",
+    #         ),
+    #         opts=pulumi.ResourceOptions(provider=pr, parent=tbl))
     # read_vw = bigquery.IamBinding(
     #         resource_name=team + '_vw_read_iam',
     #         dataset_id=vw2.dataset_id,
