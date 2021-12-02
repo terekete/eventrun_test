@@ -178,7 +178,7 @@ def pulumi_program():
         team + '-bq-data-viewer',
         dataset_id=dts.dataset_id,
         table_id=tbl.table_id,
-        member='user:gates.mark@gmail.com',
+        member='user:tereketeketitaka@gmail.com',
         role='roles/bigquery.dataViewer',
         opts=pulumi.ResourceOptions(provider=pr, parent=dts))
     # read_tbl = bigquery.IamBinding(
