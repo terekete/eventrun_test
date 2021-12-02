@@ -180,6 +180,11 @@ def pulumi_program():
         table_id=vw2.table_id,
         member='user:tereketeketitaka@gmail.com',
         role='roles/bigquery.dataViewer',
+        condition=bigquery.IamMemberConditionArgs(
+                title="condition_desc",
+                description="condition_desc",
+                expression="request.time.getFullYear(\"Europe/Berlin\") == 2022",
+        ),
         opts=pulumi.ResourceOptions(provider=pr, parent=dts))
     # read_tbl = bigquery.IamBinding(
     #         resource_name=team + '_tbl_read_iam',
