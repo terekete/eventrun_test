@@ -23,7 +23,7 @@
                 'type': 'string',
                 'nullable': False
             },
-            'bds': {
+            'bds_email': {
                 'required': True,
                 'type': 'string',
                 'nullable': False
@@ -43,12 +43,14 @@
     'storage_class': {
         'required': False,
         'type': 'string',
-        'nullable': True
+        'nullable': True,
+        'allowed': ['STANDARD', 'ARCHIVE', 'NEARLINE']
     },
     'lifecycle_type': {
         'required': False,
         'type': 'string',
-        'nullable': True
+        'nullable': True,
+        'allowed': ['SetStorageClass', 'Delete']
     },
     'lifecycle_age_days': {
         'required': False,
@@ -67,12 +69,14 @@
             'readers': {
                 'required': True,
                 'type': 'list',
-                'nullable': True
+                'nullable': True,
+                'regex': '^(user:|serviceAccount:)([a-zA-Z0-9_.+-]+)@([a-zA-Z0-9-]+)\.([a-zA-Z0-9-.]+)$'
             },
             'writers': {
                 'required': True,
                 'type': 'list',
-                'nullable': True
+                'nullable': True,
+                'regex': '^(user:|serviceAccount:)([a-zA-Z0-9_.+-]+)@([a-zA-Z0-9-]+)\.([a-zA-Z0-9-.]+)$'
             }
         }
     }

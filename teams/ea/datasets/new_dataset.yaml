@@ -3,7 +3,7 @@ kind: dataset
 metadata:
   cost_center: "1"
   dep: "12"
-  bds: "test_user"
+  bds_email: "test_user"
 team: ea
 description: "EA Test Dataset Info"
 resource_name: new_dataset

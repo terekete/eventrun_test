@@ -23,7 +23,7 @@
                 'type': 'string',
                 'nullable': False
             },
-            'bds': {
+            'bds_email': {
                 'required': True,
                 'type': 'string',
                 'nullable': False
@@ -31,6 +31,11 @@
         }
     },
     'team': {
+        'required': True,
+        'type': 'string',
+        'nullable': False
+    },
+    'stage': {
         'required': True,
         'type': 'string',
         'nullable': False
@@ -45,7 +50,7 @@
         'type': 'string',
         'nullable': False
     },
-    'dataset_name': {
+    'dataset_id': {
         'required': True,
         'type': 'string',
         'nullable': False
@@ -72,12 +77,14 @@
             'readers': {
                 'required': True,
                 'type': 'list',
-                'nullable': True
+                'nullable': True,
+                'regex': '^(user:|serviceAccount:)([a-zA-Z0-9_.+-]+)@([a-zA-Z0-9-]+)\.([a-zA-Z0-9-.]+)$'
             },
             'writers': {
                 'required': True,
                 'type': 'list',
-                'nullable': True
+                'nullable': True,
+                'regex': '^(user:|serviceAccount:)([a-zA-Z0-9_.+-]+)@([a-zA-Z0-9-]+)\.([a-zA-Z0-9-.]+)$'
             }
         }
     }

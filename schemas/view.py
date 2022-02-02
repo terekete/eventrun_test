@@ -35,6 +35,11 @@
         'type': 'string',
         'nullable': False
     },
+    'stage': {
+        'required': True,
+        'type': 'string',
+        'nullable': False
+    },
     'description': {
         'required': True,
         'type': 'string',
@@ -55,31 +60,20 @@
         'type': 'string',
         'nullable': True
     },
+    'query': {
+        'required': True,
+        'type': 'string',
+        'nullable': False
+    },
+    'use_legacy_sql': {
+        'required': False,
+        'type': 'string',
+        'nullable': True
+    },
     'dependencies': {
         'required': False,
         'type': 'list',
         'nullable': True
-    },
-    'params': {
-        'required': True,
-        'type': 'dict',
-        'schema': {
-            'query': {
-                'required': True,
-                'type': 'string',
-                'nullable': False
-            },
-            'refresh': {
-                'required': True,
-                'type': 'boolean',
-                'nullable': False             
-            },
-            'refresh_ms': {
-                'required': True,
-                'type': 'number',
-                'nullable': False            
-            }
-        }
     },
     'users': {
         'required': True,

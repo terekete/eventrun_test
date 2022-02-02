@@ -5,14 +5,46 @@ import sys
 import os
 import base64
 import time
+import re
 
-from google.oauth2 import service_account as osa
 from collections import defaultdict, namedtuple
-from pulumi import resource, Output
-from pulumi.automation import errors
-from pulumi_gcp import storage, bigquery, serviceaccount, projects
+from pulumi import Output
+from pulumi_gcp import provider, storage, bigquery, serviceaccount, projects, Provider
 from pulumi import automation as auto
 from cerberus import Validator
+
+
+def validate_resource_name(
+    resource_name,
+    team: str,
+    prefix: str = None):
+
+    if prefix:
+        return (
+            resource_name
+            if re.search('(' + prefix + ')_(' + team + ')_(.*)', resource_name)
+            else prefix + '_' + team + '_' + resource_name
+        )
+    else:
+        return (
+            resource_name
+            if re.search('(' + team + ')_(.*)', resource_name)
+            else team + '_' + resource_name
+        )
+
+
+def validate_manifest(
+    manifest: str,
+    schema_path: str):
+
+    schema = eval(open(schema_path).read())
+    validator = Validator(schema)
+    try:
+        if validator.validate(manifest, schema):
+            return
+    except:
+        print("##### Schema Exception - " + manifest['resource_name'].lower())
+        raise auto.InlineSourceRuntimeError(validator.errors)
 
 
 results = namedtuple('results', ['sorted', 'cyclic'])
@@ -37,37 +69,28 @@ def graph_sort(l: str):
     return results(ordered, cyclic)
 
 
-def validate_dataset_manifest(manifest: str):
-    schema = eval(open('./schemas/dataset.py', 'r').read())
-    validator = Validator(schema)
-    try:
-        if validator.validate(manifest, schema):
-            return
-    except:
-        print("##### Dataset Exception - " + manifest['dataset_id'])
-        raise auto.InlineSourceRuntimeError(validator.errors)
-
-
 def dataset(
     manifest: str,
     team: str,
-    delay: int = 3):
+    delay: int = 5,
+    provider: Provider = None):
 
-    validate_dataset_manifest(manifest)
+    validate_manifest(manifest, './schemas/dataset.py')
 
     dts = bigquery.Dataset(
-        resource_name=manifest['resource_name'] + '_dataset',
-        dataset_id=team + '_' + manifest['resource_name'],
+        resource_name=manifest['resource_name'].lower() + '_dataset',
+        dataset_id=validate_resource_name(manifest['resource_name'].lower(), team),
         description=manifest['description'],
         delete_contents_on_destroy=False,
         labels={
             'cost_center': manifest['metadata']['cost_center'],
             'dep': manifest['metadata']['dep'],
-            'bds': manifest['metadata']['bds'],
+            'bds_email': manifest['metadata']['bds_email'].lower(),
         },
         default_table_expiration_ms=manifest['table_expiration_ms'],
-        location='northamerica-northeast1'
-    )
+        location='northamerica-northeast1',
+        opts=pulumi.ResourceOptions(provider=provider))
+
     readers = [
         reader.replace('user:', '').replace('serviceAccount:', '') 
         for reader in manifest['users']['readers']
@@ -81,89 +104,74 @@ def dataset(
             resource_name=manifest['resource_name'] + '_reader_iam',
             dataset_id=dts.dataset_id,
             user_by_email=reader,
-            role='roles/bigquery.dataViewer'
-        )
+            role='roles/bigquery.dataViewer',
+            opts=pulumi.ResourceOptions(provider=provider))
     for writer in writers:
         bigquery.DatasetAccess(
             resource_name=manifest['resource_name'] + '_writer_iam',
             dataset_id=dts.dataset_id,
             user_by_email=writer,
-            role='roles/bigquery.dataEditor'
-        )
+            role='roles/bigquery.dataEditor',
+            opts=pulumi.ResourceOptions(provider=provider))
     time.sleep(delay)
-
-
-def validate_table_manifest(manifest: str):
-    schema = eval(open('./schemas/table.py', 'r').read())
-    validator = Validator(schema)
-    try:
-        if validator.validate(manifest, schema):
-            return
-    except:
-        print("##### Table Exception - " + manifest['table_id'])
-        raise auto.InlineSourceRuntimeError(validator.errors)
 
 
 def table(
     manifest: str,
     team: str,
-    delay: int = 1):
+    delay: int = 1,
+    prefix: str = 'bq',
+    provider: Provider = None):
 
-    validate_table_manifest(manifest)
+    validate_manifest(manifest, './schemas/table.py')
 
-    readers = [reader for reader in manifest['users']['readers']]
-    writers = [writer for writer in manifest['users']['writers']]
+    readers = [reader for reader in manifest['users']['readers'] or []]
+    writers = [writer for writer in manifest['users']['writers'] or []]
 
     tbl = bigquery.Table(
-        resource_name=manifest['resource_name'] + '_table',
-        dataset_id=manifest['dataset_name'],
-        table_id= 'bq_' + team + '_' + manifest['resource_name'],
+        resource_name=manifest['resource_name'].lower() + '_table',
+        table_id=validate_resource_name(manifest['resource_name'].lower(), team, prefix),
+        dataset_id=manifest['dataset_id'].lower(),
         deletion_protection=False,
         expiration_time=manifest['expiration_ms'],
         labels={
             'cost_center': manifest['metadata']['cost_center'],
             'dep': manifest['metadata']['dep'],
-            'bds': manifest['metadata']['bds'],
+            'bds_email': manifest['metadata']['bds_email'].lower(),
         },
-        schema=manifest['schema']
-    )
-    readers = bigquery.IamBinding(
-        resource_name=manifest['resource_name'] + '_read_iam',
-        dataset_id=tbl.dataset_id,
-        table_id=tbl.table_id,
-        role='roles/bigquery.dataViewer',
-        members=readers
-    )
-    writers = bigquery.IamBinding(
-        resource_name=manifest['resource_name'] + '_write_iam',
-        dataset_id=tbl.dataset_id,
-        table_id=tbl.table_id,
-        role='roles/bigquery.dataEditor',
-        members=writers
-    )
+        schema=manifest['schema'],
+        opts=pulumi.ResourceOptions(provider=provider))
+
+    if readers:
+        bigquery.IamBinding(
+            resource_name=manifest['resource_name'] + '_read_iam',
+            dataset_id=tbl.dataset_id,
+            table_id=tbl.table_id,
+            role='roles/bigquery.dataViewer',
+            members=readers,
+            opts=pulumi.ResourceOptions(provider=provider))
+    if writers:
+        bigquery.IamBinding(
+            resource_name=manifest['resource_name'] + '_write_iam',
+            dataset_id=tbl.dataset_id,
+            table_id=tbl.table_id,
+            role='roles/bigquery.dataEditor',
+            members=writers,
+            opts=pulumi.ResourceOptions(provider=provider))
     time.sleep(delay)
-
-
-def validate_materialized_manifest(manifest: str):
-    schema = eval(open('./schemas/materialized.py', 'r').read())
-    validator = Validator(schema)
-    try:
-        if validator.validate(manifest, schema):
-            return
-    except:
-        print("##### Materialized Exception - " + manifest['table_id'])
-        raise auto.InlineSourceRuntimeError(validator.errors)
 
 
 def materialized(
     manifest: str,
     team: str,
-    delay: int = 1):
+    delay: int = 1,
+    prefix: str = 'bq',
+    provider: Provider = None):
 
-    validate_materialized_manifest(manifest)
+    validate_manifest(manifest, './schemas/materialized.py')
 
-    readers = [reader for reader in manifest['users']['readers']]
-    writers = [writer for writer in manifest['users']['writers']]
+    readers = [reader for reader in manifest['users']['readers'] or []]
+    writers = [writer for writer in manifest['users']['writers'] or []]
 
     mat = bigquery.TableMaterializedViewArgs(
         query=manifest['params']['query'],
@@ -173,81 +181,76 @@ def materialized(
     tbl = bigquery.Table(
         resource_name=manifest['resource_name'],
         dataset_id=manifest['dataset_id'],
-        table_id=manifest['table_id'],
+        table_id=validate_resource_name(manifest['resource_name'].lower(), team, prefix),
         deletion_protection=False,
         expiration_time=manifest['expiration_ms'],
-        friendly_name=manifest['friendly_name'],
         labels={
             'cost_center': manifest['metadata']['cost_center'],
             'dep': manifest['metadata']['dep'],
-            'bds': manifest['metadata']['bds'],
+            'bds_email': manifest['metadata']['bds_email'].lower(),
         },
-        materialized_view=mat
-    )
-    readers = bigquery.IamBinding(
-        resource_name=manifest['resource_name'] + '_read_iam',
-        dataset_id=tbl.dataset_id,
-        table_id=tbl.table_id,
-        role='roles/bigquery.dataViewer',
-        members=readers
-    )
-    writers = bigquery.IamBinding(
-        resource_name=manifest['resource_name'] + '_write_iam',
-        dataset_id=tbl.dataset_id,
-        table_id=tbl.table_id,
-        role='roles/bigquery.dataEditor',
-        members=writers
-    )
+        materialized_view=mat,
+        opts=pulumi.ResourceOptions(provider=provider))
+
+    if readers:
+        bigquery.IamBinding(
+            resource_name=manifest['resource_name'] + '_read_iam',
+            dataset_id=tbl.dataset_id,
+            table_id=tbl.table_id,
+            role='roles/bigquery.dataViewer',
+            members=readers,
+            opts=pulumi.ResourceOptions(provider=provider))
+    if writers:
+        bigquery.IamBinding(
+            resource_name=manifest['resource_name'] + '_write_iam',
+            dataset_id=tbl.dataset_id,
+            table_id=tbl.table_id,
+            role='roles/bigquery.dataEditor',
+            members=writers,
+            opts=pulumi.ResourceOptions(provider=provider))
     time.sleep(delay)
 
 
 def scheduled(
     manifest: str,
     team: str,
-    delay: int = 1):
+    delay: int = 1,
+    prefix: str = 'bq',
+    provider: Provider = None):
 
-    validate_scheduled_manifest(manifest)
+    validate_manifest(manifest, './schemas/scheduled.py')
 
     scheduled = bigquery.DataTransferConfig(
-        resource_name=manifest['resource_name'],
-        display_name=manifest['display_name'],
+        resource_name=manifest['resource_name'].lower(),
+        display_name=manifest['resource_name'].lower(),
         data_source_id='scheduled_query',
         schedule=manifest['schedule'],
         destination_dataset_id=manifest['destination_dataset_id'],
         location='northamerica-northeast1',
         params={
-            'destination_table_name_template': manifest['params']['destination_table_name'],
-            'write_disposition': manifest['params']['write_disposition'],
-            'query': manifest['params']['query']
-        })
+            'destination_table_name_template': validate_resource_name(manifest['destination_table_id'], team, prefix),
+            'write_disposition': manifest['write_disposition'],
+            'query': manifest['query']
+        },
+        opts=pulumi.ResourceOptions(provider=provider))
     time.sleep(delay)
-
-
-def validate_scheduled_manifest(manifest: str):
-    schema = eval(open('./schemas/scheduled.py').read())
-    validator = Validator(schema)
-    try:
-        if validator.validate(manifest, schema):
-            return
-    except:
-        print("##### Scheduled Exception - " + manifest['display_name'])
-        raise auto.InlineSourceRuntimeError(validator.errors)
 
 
 def bucket(
     manifest: str,
     team: str,
-    delay: int = 1):
+    delay: int = 1,
+    prefix: str = 'gcs',
+    provider: Provider = None):
 
-    validate_bucket_manifest(manifest)
+    validate_manifest(manifest, './schemas/bucket.py')
 
     readers = [reader for reader in manifest['users']['readers'] or []]
     writers = [writer for writer in manifest['users']['writers'] or []]
     
-
     bucket = storage.Bucket(
-        manifest['resource_name'],
-        name= 'gcs_' + team + '_' + manifest['resource_name'],
+        manifest['resource_name'].lower() + '_bucket',
+        name=validate_resource_name(manifest['resource_name'], team, prefix),
         force_destroy=True,
         storage_class='STANDARD' if not manifest['storage_class'] else manifest['storage_class'],
         lifecycle_rules=[storage.BucketLifecycleRuleArgs(
@@ -262,33 +265,73 @@ def bucket(
         labels={
             'cost_center': manifest['metadata']['cost_center'],
             'dep': manifest['metadata']['dep'],
-            'bds': manifest['metadata']['bds'],
-        }
-    )
+            'bds_email': manifest['metadata']['bds_email'].lower(),
+        },
+        opts=pulumi.ResourceOptions(provider=provider))
+
     if readers:
         storage.BucketIAMBinding(
             resource_name=manifest['resource_name'] + '_read_iam',
             bucket=bucket.id,
             role="roles/storage.objectViewer",
-            members=readers)
+            members=readers,
+            opts=pulumi.ResourceOptions(provider=provider))
     if writers:
         storage.BucketIAMBinding(
             resource_name=manifest['resource_name'] + '_write_iam',
             bucket=bucket.id,
             role="roles/storage.objectAdmin",
-            members=writers)
+            members=writers,
+            opts=pulumi.ResourceOptions(provider=provider))
     time.sleep(delay)
 
 
-def validate_bucket_manifest(manifest: str):
-    schema = eval(open('./schemas/bucket.py').read())
-    validator = Validator(schema)
-    try:
-        if validator.validate(manifest, schema):
-            return
-    except:
-        print("##### Bucket Exception - " + manifest['bucket_name'])
-        raise auto.InlineSourceRuntimeError(validator.errors)
+def view(
+    manifest: str,
+    team: str,
+    delay: int = 1,
+    prefix: str = 'gcs',
+    provider: Provider = None):
+
+    validate_manifest(manifest, './schemas/view.py')
+
+    readers = [reader for reader in manifest['users']['readers'] or []]
+    writers = [writer for writer in manifest['users']['writers'] or []]
+
+    vw = bigquery.Table(
+        resource_name=manifest['resource_name'].lower() + '_table',
+        table_id=validate_resource_name(manifest['resource_name'].lower(), team, prefix),
+        dataset_id=manifest['dataset_id'].lower(),
+        deletion_protection=False,
+        expiration_time=manifest['expiration_ms'],
+        labels={
+            'cost_center': manifest['metadata']['cost_center'],
+            'dep': manifest['metadata']['dep'],
+            'bds_email': manifest['metadata']['bds_email'].lower(),
+        },
+        view=bigquery.TableViewArgs(
+            query=manifest['query'],
+            use_legacy_sql=manifest['use_legacy_sql']
+        ),
+        opts=pulumi.ResourceOptions(provider=provider))
+
+    if readers:
+        bigquery.IamBinding(
+            resource_name=manifest['resource_name'] + '_read_iam',
+            dataset_id=vw.dataset_id,
+            table_id=vw.table_id,
+            role='roles/bigquery.dataViewer',
+            members=readers,
+            opts=pulumi.ResourceOptions(provider=provider))
+    if writers:
+        bigquery.IamBinding(
+            resource_name=manifest['resource_name'] + '_write_iam',
+            dataset_id=vw.dataset_id,
+            table_id=vw.table_id,
+            role='roles/bigquery.dataEditor',
+            members=writers,
+            opts=pulumi.ResourceOptions(provider=provider))
+        time.sleep(delay)
 
 
 def read_yml(path: str):
@@ -332,25 +375,23 @@ def list_manifests(root: str):
 
 def update(
     path: str,
-    team: str):
+    team: str,
+    provider):
 
     yml = read_yml(path)
     try:
         if yml and yml['kind'] == 'dataset':
-            validate_dataset_manifest(yml)
-            dataset(yml, team)
+            dataset(yml, team, provider)
+        if yml and yml['kind'] == 'view':
+            view(yml, team, provider)
         if yml and yml['kind'] == 'table':
-            validate_table_manifest(yml)
-            table(yml, team)
+            table(yml, team, provider)
         if yml and yml['kind'] == 'materialized':
-            validate_materialized_manifest(yml)
-            materialized(yml, team)
+            materialized(yml, team, provider)
         if yml and yml['kind'] == 'scheduled':
-            validate_scheduled_manifest(yml)
-            scheduled(yml, team)
+            scheduled(yml, team, provider)
         if yml and yml['kind'] == 'bucket':
-            validate_bucket_manifest(yml)
-            bucket(yml, team)
+            bucket(yml, team, provider)
     except auto.errors.CommandError as e:
         raise e
 
@@ -381,13 +422,50 @@ def render_user_data(key) -> Output:
     return temp_str
 
 
+def service_account(team: str, postfix='-service-account'):
+    sa = serviceaccount.Account(
+        team + postfix,
+        account_id=team + postfix,
+        display_name=team + ' - service account')
+    projects.IAMMember(
+        team + '-storage-admin-iam',
+        member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
+        role='roles/storage.admin')
+    projects.IAMMember(
+        team + '-bq-admin-iam',
+        member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
+        role='roles/bigquery.admin')
+    projects.IAMMember(
+        team + '-cloudbuild-editor-iam',
+        member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
+        role='roles/cloudbuild.builds.editor')
+    projects.IAMMember(
+        team + '-custom-view-access-iam',
+        member=sa.email.apply(lambda e: f"serviceAccount:{e}"),
+        role='projects/eventrun/roles/CustomViewsAccessor'
+    )
+    return sa
+
+
 def pulumi_program():
-    sorted_path = graph_sort(dependency_map).sorted
-    sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
     team = pulumi.get_stack()
-    for path in sorted_path:
-        if re.search('/workspace/teams/(.+?)/+', path).group(1) == team:
-            update(path, team)
+    print(stack)
+    # sa = service_account(team)
+    # pr = Provider(
+    #     team + '-provider',
+    #     impersonate_service_account=sa.email,
+    #     region='northamerica-northeast1',
+    #     project='eventrun')
+    # sorted_path = graph_sort(dependency_map).sorted
+    # sorted_path.extend(list(set(manifests_set) - set(graph_sort(dependency_map).sorted)))
+    # team = pulumi.get_stack()
+    # for path in sorted_path:
+    #     if re.search('/workspace/teams/(.+?)/+', path).group(1) == team:
+    #         update(path=path, team=team, provider=pr)
+
+
+
+
 
 
 if __name__ == "__main__":
@@ -403,7 +481,6 @@ if __name__ == "__main__":
         and root_manifest != dep_manifest
     ]))
     team = sys.argv[1]
-    print("TEAM in MAIN: " + team)
     stack = auto.create_or_select_stack(
         stack_name=team,
         project_name='eventrun',
@@ -411,8 +488,7 @@ if __name__ == "__main__":
         work_dir='/workspace')
     stack.set_config("gpc:region", auto.ConfigValue("northamerica-northeast1"))
     stack.set_config("gcp:project", auto.ConfigValue("eventrun"))
-    print('##################### Preview Changes for Team: ' + team + ' #####################')
-    stack.refresh(on_output=print)
-    preview = stack.preview(on_output=print)
+    print('##################### IAC Changes for Team: ' + team + ' #####################')
+    stack.refresh()
+    preview = stack.preview()
     up = stack.up(on_output=print)
-

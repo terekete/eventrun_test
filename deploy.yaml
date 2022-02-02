@@ -1,0 +1,18 @@
+steps:
+  - name: 'gcr.io/eventrun/pulumi:latest'
+    id: 'build-sa'
+    entrypoint: 'bash'
+    args: [
+      '/workspace/scripts/deploy_iac.sh'
+    ]
+    env: [
+      'TEAM=${_TEAM}'
+    ]
+
+
+options:
+  substitution_option: 'ALLOW_LOOSE'
+
+
+timeout: 600s
+

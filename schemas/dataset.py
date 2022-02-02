@@ -23,7 +23,7 @@
                 'type': 'string',
                 'nullable': False
             },
-            'bds': {
+            'bds_email': {
                 'required': True,
                 'type': 'string',
                 'nullable': False
@@ -43,7 +43,8 @@
     'resource_name': {
         'required': True,
         'type': 'string',
-        'nullable': False
+        'nullable': False,
+        'regex': '^[a-z0-9_-]+$'
     },
     'partition_expiration_ms': {
         'required': False,
@@ -62,12 +63,14 @@
             'readers': {
                 'required': True,
                 'type': 'list',
-                'nullable': True
+                'nullable': True,
+                'regex': '^(user:|serviceAccount:)([a-zA-Z0-9_.+-]+)@([a-zA-Z0-9-]+)\.([a-zA-Z0-9-.]+)$'
             },
             'writers': {
                 'required': True,
                 'type': 'list',
-                'nullable': True
+                'nullable': True,
+                'regex': '^(user:|serviceAccount:)([a-zA-Z0-9_.+-]+)@([a-zA-Z0-9-]+)\.([a-zA-Z0-9-.]+)$'
             }
         }
     }

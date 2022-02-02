@@ -59,43 +59,51 @@ steps:
     - -exc
     - |
       mkdir staging
-  # - name: 'gcr.io/eventrun/pulumi:latest'
-  #   id: 'build-pulumi'
-  #   entrypoint: 'bash'
-  #   args: [
-  #     '/workspace/scripts/get_iac.sh'
-  #   ]
-  #   env: [
-  #     'PROJECT_ID=${_KEY_PROJECT}'
-  #   ]
-  #   waitFor: ['create-staging-dir']
   - name: 'gcr.io/eventrun/pulumi:latest'
-    id: 'build-pulumi'
+    id: 'build-sa'
     entrypoint: 'bash'
     args: [
-      '/workspace/scripts/run_sa.sh'
+      '/workspace/scripts/build_sa.sh'
     ]
     env: [
       'PROJECT_ID=${_KEY_PROJECT}'
     ]
-    waitFor: ['create-staging-dir']
-  # - name: 'gcr.io/cloud-builders/git'
-  #   id: 'list-dir'
+  # - name: 'gcr.io/cloud-builders/gcloud'
+  #   id: 'build-artifact'
   #   entrypoint: 'bash'
   #   args:
-  #   - -exc
-  #   - |
-  #     ls -la
+  #     - '-c'
+  #     - |
+  #       echo "Creating artifact to: ${_ARTIFACT_BUCKET}"
+  #       commit=$(cat commit.txt)
+  #       apt-get -qq update
+  #       apt-get install -qq -o=Dpkg::Use-Pty=0 -y zip
+  #       zip -qqr "${commit}.zip" . -x ./.git/**\*
+  #       gsutil cp "${commit}.zip" "gs://${_ARTIFACT_BUCKET}/"
+  # - name: 'gcr.io/cloud-builders/gcloud'
+  #   id: 'deploy-iac'
+  #   entrypoint: 'bash'
+  #   args: [
+  #     '/workspace/scripts/build_iac.sh'
+  #   ]
+  #   env: [
+  #     'ARTIFACT_BUCKET=${_ARTIFACT_BUCKET}',
+  #     'STAGE_PROJECT=${_STAGE_PROJECT}',
+  #     'ENV=${_ENV}',
+  #     'CUSTOM_TAG=${_CUSTOM_TAG}'
+  #   ]
+  #   waitFor: ['build-sa']
+
 
 options:
   substitution_option: 'ALLOW_LOOSE'
 
 substitutions:
   _KEY_VERISON: "latest"
-  _KEY_PROJECT: "eventrun"
+  _STAGE_PROJECT: "eventrun"
   _BASE_BRANCH: "main"
   _ENV: "np"
-  _CUSTOM_TAG: ""
-  _SNAPSHOT_ARTIFACTS_BUCKET: ""
+  _CUSTOM_TAG:
+  _ARTIFACT_BUCKET: "eventrun-artifacts"
 
 timeout: 600s

@@ -3,7 +3,7 @@ kind: dataset
 metadata:
   cost_center: "1"
   dep: "12"
-  bds: "test_user"
+  bds_email: "test_user"
 team: tsbt
 description: "TSBT Test Dataset"
 resource_name: new_dataset
@@ -15,3 +15,4 @@ users:
     - user:gates.mark@gmail.com
   writers:
     - user:gates.mark@gmail.com
+
