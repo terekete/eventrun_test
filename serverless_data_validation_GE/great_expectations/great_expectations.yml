@@ -1,0 +1,29 @@
+config_version: 3.0
+datasources: {}
+config_variables_file_path: uncommitted/config_variables.yml
+stores: 
+  expectations_gcs_store:
+    class_name: ExpectationsStore
+  validations_gcs_store:
+    class_name: ValidationsStore
+  evaluation_parameter_store:
+    class_name: EvaluationParameterStore
+evaluation_parameter_store_name: evaluation_parameter_store
+expectations_store_name: expectations_gcs_store
+validations_store_name: validations_gcs_store
+data_docs_sites:
+  gcs_site:
+    class_name: SiteBuilder
+    store_backend:
+      class_name: TupleGCSStoreBackend
+      project: cio-exegol-lab-3dabae
+      bucket: cio-exegol-lab-3dabae-ge-test
+    site_index_builder:
+      class_name: DefaultSiteIndexBuilder
+anonymous_usage_statistics:
+  enabled: true
+  data_context_id: 00000000-0000-0000-0000-00000000e003
+concurrency:
+  enabled: false
+plugins_directory:
+notebooks:
